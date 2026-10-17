@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- Outer subtle aura ring -->
+  <circle cx="50" cy="50" r="46" stroke="#5CF2C0" stroke-width="1.5" stroke-opacity="0.15" />
+  
+  <!-- Outer Blockchain Node Hexagon Frame -->
+  <path d="M50 12 L83 31 V69 L50 88 L17 69 V31 Z" 
+        stroke="rgba(255, 255, 255, 0.22)" 
+        stroke-width="2" 
+        stroke-linejoin="round" />
+
+  <!-- 6 Blockchain Node Corner Lights in Signature Mint -->
+  <circle cx="50" cy="12" r="2.8" fill="#5CF2C0" />
+  <circle cx="83" cy="31" r="2.8" fill="#5CF2C0" />
+  <circle cx="83" cy="69" r="2.8" fill="#5CF2C0" />
+  <circle cx="50" cy="88" r="2.8" fill="#5CF2C0" />
+  <circle cx="17" cy="69" r="2.8" fill="#5CF2C0" />
+  <circle cx="17" cy="31" r="2.8" fill="#5CF2C0" />
+
+  <!-- Internal subtle connecting diagonal grid rays -->
+  <path d="M50 12 L50 26 M50 74 L50 88 M17 31 L29 38 M71 62 L83 69 M17 69 L29 62 M71 38 L83 31" 
+        stroke="#5CF2C0" 
+        stroke-width="1.5" 
+        stroke-opacity="0.3" 
+        stroke-linecap="round" />
+
+  <!-- MONOGRAM: Clean Precision 'B' (White) + 'K' (Mint #5CF2C0) -->
+  <!-- Letter B: Spine + Double Balanced Loops -->
+  <path d="M33 27 H50 C58 27 63 31 63 37 C63 42 59 45.5 53 47 C60 48.5 65 53 65 60 C65 67 59 73 50 73 H33 V27 Z" 
+        fill="none" 
+        stroke="#FFFFFF" 
+        stroke-width="5.5" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" />
+  
+  <!-- Middle waist bar of B -->
+  <path d="M33 48 H52" 
+        stroke="#FFFFFF" 
+        stroke-width="5.5" 
+        stroke-linecap="round" />
+
+  <!-- Letter K: Upper and lower dynamic chevrons / diagonals in Mint -->
+  <path d="M52 47.5 L73 27" 
+        stroke="#5CF2C0" 
+        stroke-width="5.5" 
+        stroke-linecap="round" />
+  <path d="M50 48.5 L73 73" 
+        stroke="#5CF2C0" 
+        stroke-width="5.5" 
+        stroke-linecap="round" />
+
+  <!-- Core Junction Node Point in Mint -->
+  <circle cx="51.5" cy="48" r="3" fill="#5CF2C0" />
+</svg>

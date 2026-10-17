@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: #060B1E;
+    color: #FFFFFF;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Inter Tight', 'Inter', system-ui, -apple-system, sans-serif;
+    letter-spacing: -0.02em;
+  }
+}
+
+.font-heading {
+  font-family: 'Inter Tight', 'Inter', system-ui, -apple-system, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.font-body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #060B1E;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(92, 242, 192, 0.35);
+}
+
+/* Marquee continuous animation */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 30s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+  }
+}
+
+.pc-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;max-width:1280px;margin:0 auto}
+@media (max-width:1024px){.pc-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.pc-grid{grid-template-columns:1fr}}
+.pc-card{background:#0B1430;border:1px solid rgba(255,255,255,.06);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;transition:transform .3s ease}
+.pc-card:hover{transform:translateY(-2px)}
+.pc-hero{position:relative;height:230px;overflow:hidden;background:radial-gradient(circle at 100% 50%,color-mix(in srgb,var(--b) 10%,transparent),transparent 60%)}
+.pc-coin{position:absolute;width:250px;height:250px;right:-60px;top:50%;transform:translateY(-50%);border-radius:50%;background:color-mix(in srgb,var(--b) 16%,#0B1430);box-shadow:0 0 80px color-mix(in srgb,var(--b) 14%,transparent);display:grid;place-items:center;transition:transform .4s ease}
+.pc-card:hover .pc-coin{transform:translateY(-50%) scale(1.04)}
+.pc-inner{width:196px;height:196px;border-radius:50%;background:color-mix(in srgb,var(--b) 8%,#070D22);box-shadow:inset 0 0 30px rgba(0,0,0,.55);display:grid;place-items:center}
+.pc-inner img{width:58%;height:58%;object-fit:contain;opacity:.32;transition:opacity .4s ease}
+.pc-card:hover .pc-inner img{opacity:.45}
+.pc-top{position:absolute;top:20px;right:20px;display:flex;gap:8px;z-index:2}
+.pc-pill{font-size:11px;letter-spacing:.06em;padding:6px 10px;border-radius:999px;color:#fff;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(6px)}
+.pc-pill.risk{color:#FF8A8A;border-color:rgba(255,138,138,.35)}
+.pc-txt{position:absolute;left:28px;top:28px;right:150px;z-index:2}
+.pc-av{width:48px;height:48px;border-radius:50%;background:#fff;display:grid;place-items:center;overflow:hidden;margin-bottom:18px}
+.pc-av img{width:72%;height:72%;object-fit:contain}
+.pc-av.tile{background:transparent}
+.pc-av.tile img{width:100%;height:100%;object-fit:cover}
+.pc-cat{font-size:11px;letter-spacing:.1em;color:rgba(255,255,255,.55)}
+.pc-name{font-size:34px;font-weight:700;letter-spacing:-.02em;margin:4px 0 6px;color:#fff}
+.pc-rw{font-size:14px;color:#5CF2C0;line-height:1.4}
+.pc-det{padding:20px 28px 22px;border-top:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;gap:12px;flex:1}
+.pc-li{font-size:13.5px;color:rgba(255,255,255,.6)}
+.pc-code{display:flex;align-items:center;gap:12px;height:46px;padding:0 14px;border-radius:12px;background:rgba(0,0,0,.25);border:0;color:#fff;cursor:pointer;text-align:left}
+.pc-code .k{font-size:10px;letter-spacing:.1em;color:rgba(255,255,255,.45)}
+.pc-code .v{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:600;flex:1}
+.pc-code .c{font-size:12px;color:rgba(255,255,255,.6)}
+.pc-btn{margin-top:auto;height:44px;border-radius:999px;display:grid;place-items:center;font-weight:600;font-size:14.5px;color:#fff;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);transition:background .2s,color .2s}
+.pc-btn:hover,.pc-btn.feat{background:#5CF2C0;color:#02124A;border-color:#5CF2C0}
+.pc-foot{display:flex;justify-content:space-between;font-size:12.5px;color:rgba(255,255,255,.5);background:none;border:0;padding:0;cursor:pointer}
