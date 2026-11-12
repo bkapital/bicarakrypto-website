@@ -13,9 +13,10 @@ import { Footer } from './components/Footer';
 // Pages
 import { HomePage } from './pages/HomePage';
 import { ClassDetailPage } from './pages/ClassDetailPage';
-import { CardPage } from './pages/CardPage';
-import { WalletPage } from './pages/WalletPage';
-import { ExchangePage } from './pages/ExchangePage';
+// Halaman Kad Kripto, Wallet Kripto, & Platform Kripto disembunyikan buat sementara:
+// import { CardPage } from './pages/CardPage';
+// import { WalletPage } from './pages/WalletPage';
+// import { ExchangePage } from './pages/ExchangePage';
 import { ContactPage } from './pages/ContactPage';
 import { PolicyPage } from './pages/PolicyPage';
 
@@ -41,32 +42,23 @@ const AppContent: React.FC = () => {
         return <ClassDetailPage slug="kita" />;
       case '/kelas/combo':
         return <ClassDetailPage slug="combo" />;
+      // Disembunyikan sementara per permintaan pengguna
       case '/kad-kripto':
-        return <CardPage />;
       case '/wallet-kripto':
       case '/crypto-wallet':
-        return (
-          <div className="max-w-xl mx-auto px-4 py-28 text-center space-y-4">
-            <span className="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider border border-white/10 bg-white/[0.04] text-white/50">
-              Akan Datang
-            </span>
-            <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-[-0.02em]">
-              Panduan Wallet Kripto
-            </h1>
-            <p className="text-sm text-white/60 max-w-md mx-auto leading-relaxed">
-              Halaman ini sedang disiapkan. Nantikan panduan keselamatan dan perbandingan wallet kripto terbaik akan datang.
-            </p>
-          </div>
-        );
       case '/beli-jual-kripto':
-        return <ExchangePage />;
+        return <HomePage />;
       case '/hubungi':
         return <ContactPage />;
       case '/polisi-privasi':
+      case '/privacy-policy':
         return <PolicyPage type="privasi" />;
       case '/polisi-refund':
+      case '/refund-policy':
         return <PolicyPage type="refund" />;
       case '/terma-syarat':
+      case '/terms-and-conditions':
+      case '/terms':
         return <PolicyPage type="terma" />;
       default:
         return <HomePage />;

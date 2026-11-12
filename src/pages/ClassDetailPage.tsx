@@ -270,14 +270,13 @@ export const ClassDetailPage: React.FC<ClassDetailPageProps> = ({ slug }) => {
 
             {/* CTAs: Big Mint Button & WhatsApp Outline Button (No arrow) */}
             <div className="space-y-2.5">
-              <a
-                href={currentLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full min-h-[48px] py-3.5 px-6 rounded-lg bg-[#5CF2C0] text-[#060B1E] font-semibold text-sm flex items-center justify-center hover:opacity-95 transition-all text-center cursor-pointer shadow-md"
+              <button
+                type="button"
+                disabled
+                className="w-full min-h-[48px] py-3.5 px-6 rounded-lg bg-[#5CF2C0]/60 text-[#060B1E]/80 font-semibold text-sm flex items-center justify-center text-center cursor-not-allowed select-none shadow-md"
               >
                 <span>Daftar sekarang (RM{currentPrice})</span>
-              </a>
+              </button>
 
               <div className="flex items-center gap-2.5">
                 <a
@@ -531,7 +530,7 @@ export const ClassDetailPage: React.FC<ClassDetailPageProps> = ({ slug }) => {
                     </div>
                     <div className="h-6 w-px bg-white/10" />
                     <div>
-                      <span className="font-bold text-white block">1000+</span>
+                      <span className="font-bold text-white block">500+</span>
                       <span className="text-[11px] text-white/40">Alumni Kelas</span>
                     </div>
                   </div>
@@ -919,7 +918,7 @@ export const ClassDetailPage: React.FC<ClassDetailPageProps> = ({ slug }) => {
                     </div>
                     <div className="h-6 w-px bg-white/10" />
                     <div>
-                      <span className="font-bold text-white block">1000+</span>
+                      <span className="font-bold text-white block">500+</span>
                       <span className="text-[11px] text-white/40">Alumni Kelas</span>
                     </div>
                   </div>
@@ -1249,14 +1248,13 @@ export const ClassDetailPage: React.FC<ClassDetailPageProps> = ({ slug }) => {
               <MessageCircle className="w-4 h-4" />
             </a>
 
-            <a
-              href={currentLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="min-h-[44px] px-5 py-2.5 rounded-lg bg-[#5CF2C0] text-[#060B1E] font-semibold text-xs sm:text-sm hover:opacity-95 transition-opacity shadow-md flex items-center justify-center text-center"
+            <button
+              type="button"
+              disabled
+              className="min-h-[44px] px-5 py-2.5 rounded-lg bg-[#5CF2C0]/60 text-[#060B1E]/80 font-semibold text-xs sm:text-sm shadow-md flex items-center justify-center text-center cursor-not-allowed select-none"
             >
               <span>Daftar sekarang</span>
-            </a>
+            </button>
           </div>
         </div>
       </aside>

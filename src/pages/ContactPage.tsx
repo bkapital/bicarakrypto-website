@@ -75,11 +75,13 @@ export const ContactPage: React.FC = () => {
             <h3>Kolaborasi & Jemputan</h3>
           </div>
           <p className="text-xs sm:text-sm text-white/60 leading-relaxed">
-            Untuk kerjasama media, ulasan projek blockchain, jemputan penceramah jemputan atau bimbingan korporat, sila hubungi kami terus melalui email rasmi.
+            Untuk kerjasama media, ulasan projek blockchain, jemputan penceramah jemputan atau bimbingan korporat, sila hubungi kami terus melalui WhatsApp.
           </p>
           <div className="pt-2">
             <a
-              href={`mailto:${CONFIG.brand.email}?subject=Permohonan%20Kolaborasi%20Bicara%20Krypto`}
+              href={CONFIG.whatsappLink || CONFIG.brand.whatsappLink || 'https://wa.me/60103394725'}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center px-5 py-2.5 rounded-full bg-white/[0.08] border border-white/[0.12] text-xs font-semibold text-white hover:bg-[#5CF2C0] hover:text-[#060B1E] hover:border-[#5CF2C0] transition-all"
             >
               <span>Hantar permohonan kolaborasi</span>

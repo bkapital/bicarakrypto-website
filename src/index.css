@@ -66,6 +66,22 @@
   animation-play-state: paused;
 }
 
+@keyframes chartDrift {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-chart-drift {
+  display: flex;
+  width: max-content;
+  animation: chartDrift 60s linear infinite;
+  will-change: transform;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-marquee {
     animation: none;
@@ -120,8 +136,6 @@
 .pc-btn{margin-top:auto;min-height:44px;padding:0 18px;border-radius:999px;display:grid;place-items:center;font-weight:600;font-size:14.5px;color:#fff;text-decoration:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);transition:background .2s,color .2s}
 .pc-btn:hover,.pc-btn.feat{background:#5CF2C0;color:#02124A;border-color:#5CF2C0}
 .pc-foot{display:flex;align-items:center;justify-content:space-between;min-height:36px;font-size:12.5px;color:rgba(255,255,255,.5);background:none;border:0;padding:0;cursor:pointer}
-
-/* Small mobile optimizations */
 @media (max-width:640px){
   .pc-hero{height:205px}
   .pc-txt{left:20px;top:20px;right:25px}

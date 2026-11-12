@@ -13,10 +13,102 @@ import {
   ChevronDown, 
   Star, 
   ExternalLink, 
-  Video, 
   User,
-  X
+  X,
+  Check
 } from 'lucide-react';
+
+const CANDLE_DATA = [
+  { high: 30, low: 220, open: 80, close: 170, isMint: false },
+  { high: 70, low: 260, open: 160, close: 100, isMint: true },
+  { high: 50, low: 200, open: 110, close: 180, isMint: false },
+  { high: 100, low: 290, open: 190, close: 120, isMint: true },
+  { high: 80, low: 240, open: 130, close: 90, isMint: true },
+  { high: 60, low: 210, open: 90, close: 160, isMint: false },
+  { high: 110, low: 270, open: 170, close: 110, isMint: true },
+  { high: 70, low: 230, open: 120, close: 70, isMint: true },
+  { high: 40, low: 190, open: 70, close: 140, isMint: false },
+  { high: 90, low: 250, open: 150, close: 190, isMint: false },
+  { high: 120, low: 280, open: 190, close: 130, isMint: true },
+  { high: 80, low: 230, open: 140, close: 90, isMint: true },
+  { high: 60, low: 200, open: 100, close: 160, isMint: false },
+  { high: 100, low: 260, open: 160, close: 110, isMint: true },
+  { high: 70, low: 220, open: 110, close: 60, isMint: true },
+  { high: 30, low: 180, open: 70, close: 130, isMint: false },
+  { high: 80, low: 240, open: 140, close: 80, isMint: true },
+  { high: 60, low: 210, open: 90, close: 150, isMint: false },
+  { high: 110, low: 270, open: 160, close: 100, isMint: true },
+  { high: 70, low: 230, open: 110, close: 70, isMint: true },
+  { high: 40, low: 190, open: 70, close: 130, isMint: false },
+  { high: 90, low: 250, open: 140, close: 190, isMint: false },
+  { high: 130, low: 300, open: 200, close: 140, isMint: true },
+  { high: 100, low: 260, open: 150, close: 100, isMint: true },
+  { high: 70, low: 220, open: 110, close: 60, isMint: true },
+  { high: 40, low: 180, open: 70, close: 140, isMint: false },
+  { high: 90, low: 240, open: 150, close: 90, isMint: true },
+  { high: 60, low: 210, open: 100, close: 160, isMint: false },
+  { high: 110, low: 280, open: 170, close: 110, isMint: true },
+  { high: 80, low: 230, open: 120, close: 70, isMint: true },
+];
+
+const CandlestickTrack: React.FC = () => {
+  const candleWidth = 12;
+  const candleGap = 42;
+  const totalCandles = CANDLE_DATA.length;
+  const trackWidth = totalCandles * candleGap;
+
+  return (
+    <svg
+      width={trackWidth}
+      height="340"
+      viewBox={`0 0 ${trackWidth} 340`}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="shrink-0"
+    >
+      <path
+        d={CANDLE_DATA.map((c, i) => `${i === 0 ? 'M' : 'L'} ${i * candleGap + candleWidth / 2} ${(c.high + c.low) / 2}`).join(' ')}
+        stroke="#5CF2C0"
+        strokeWidth="1.5"
+        strokeOpacity="0.25"
+        strokeDasharray="4 4"
+        fill="none"
+      />
+      {CANDLE_DATA.map((c, i) => {
+        const x = i * candleGap;
+        const wickX = x + candleWidth / 2;
+        const topY = Math.min(c.open, c.close);
+        const bodyHeight = Math.max(Math.abs(c.close - c.open), 8);
+        const strokeColor = c.isMint ? '#5CF2C0' : 'rgba(255, 255, 255, 0.3)';
+        const fillColor = c.isMint ? 'rgba(92, 242, 192, 0.85)' : 'rgba(255, 255, 255, 0.15)';
+
+        return (
+          <g key={i}>
+            <line
+              x1={wickX}
+              y1={c.high}
+              x2={wickX}
+              y2={c.low}
+              stroke={strokeColor}
+              strokeWidth="1.5"
+              strokeOpacity={c.isMint ? '0.7' : '0.4'}
+            />
+            <rect
+              x={x}
+              y={topY}
+              width={candleWidth}
+              height={bodyHeight}
+              rx="1.5"
+              fill={fillColor}
+              stroke={strokeColor}
+              strokeWidth="1"
+            />
+          </g>
+        );
+      })}
+    </svg>
+  );
+};
 
 export const HomePage: React.FC = () => {
   const { navigate } = useRouter();
@@ -26,6 +118,9 @@ export const HomePage: React.FC = () => {
 
   // Waitlist Modal State
   const [waitlistProduct, setWaitlistProduct] = useState<ProductItem | null>(null);
+
+  // Masalah Section Tab ("Saya nak melabur" vs "Saya nak trade")
+  const [masalahTab, setMasalahTab] = useState<'melabur' | 'trade'>('melabur');
 
   // Accordion FAQ state
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -100,6 +195,19 @@ export const HomePage: React.FC = () => {
     }
   };
 
+  const scrollToClass = (classId: string) => {
+    setActiveCategory('Semua');
+    setTimeout(() => {
+      const el = document.getElementById(`kelas-${classId}`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else {
+        const sec = document.getElementById('kelas');
+        if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 50);
+  };
+
   const faqItems = [
     {
       q: 'Saya baru dalam kripto, sesuai ke?',
@@ -136,89 +244,298 @@ export const HomePage: React.FC = () => {
       {/* ================================================== */}
       {/* A. HERO */}
       {/* ================================================== */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-16">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          {/* Left Column */}
-          <div className="lg:col-span-7 space-y-6">
-            {/* Hero Headline: sentence case, white, -0.02em tracking */}
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-white tracking-[-0.02em] leading-[1.1]">
-              Penat belajar kripto sendiri tapi masih rugi?
-            </h1>
+      {/* ================================================== */}
+      {/* A. HERO (Full width, ~85vh, rounded bottom corners, bold editorial) */}
+      {/* ================================================== */}
+      <section className="relative w-full bg-[#060B1E] rounded-b-3xl sm:rounded-b-[40px] border-b border-white/[0.08] overflow-hidden min-h-[80vh] lg:min-h-[85vh] flex flex-col justify-between pt-8 sm:pt-14 pb-10 sm:pb-14">
+        {/* Background Candlestick Animation or CONFIG.heroImage */}
+        {CONFIG.heroImage ? (
+          <div className="absolute inset-0 pointer-events-none select-none overflow-hidden">
+            <img
+              src={CONFIG.heroImage}
+              alt="Hero Background"
+              className="w-full h-full object-cover object-center"
+            />
+            <div className="absolute inset-0 bg-[#060B1E]/85 backdrop-blur-[1px]" />
+          </div>
+        ) : (
+          <div className="absolute inset-0 overflow-hidden pointer-events-none select-none opacity-20 flex items-center">
+            <div className="animate-chart-drift flex">
+              <CandlestickTrack />
+              <CandlestickTrack />
+            </div>
+          </div>
+        )}
 
-            {/* List with small thin × line icon in rgba(255,255,255,0.4) */}
-            <div className="space-y-2.5 py-1">
-              {[
-                'Lepas beli, harga turun. Lepas jual, harga naik.',
-                'Tak tahu nak pilih coin yang mana.',
-                'Beli crypto sebab ikut orang, tapi tak faham apa yang dibeli.',
-                'Dah trade bertahun, tapi rugi lebih dari untung.',
-                'Tak tahu nak semak projek tu betul atau scam.',
-                'Takut kena scam, tak tahu platform mana yang selamat.',
-              ].map((item, idx) => (
-                <div key={idx} className="flex items-start gap-3 text-white/80 text-sm sm:text-base leading-relaxed">
-                  <span className="w-5 h-5 rounded-full bg-white/[0.04] border border-white/10 flex items-center justify-center shrink-0 mt-0.5">
-                    <X className="w-3 h-3 text-white/40" />
-                  </span>
-                  <span>{item}</span>
-                </div>
-              ))}
+        {/* Dark gradient from the left so the text stays readable */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#060B1E] via-[#060B1E]/95 md:via-[#060B1E]/85 to-transparent pointer-events-none z-[1]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#060B1E] via-transparent to-[#060B1E]/40 pointer-events-none z-[1]" />
+
+        {/* Content Container */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex-1 flex flex-col justify-between relative z-10 space-y-10 sm:space-y-14">
+          {/* Top & Middle Block */}
+          <div className="space-y-6 sm:space-y-8 pt-4 sm:pt-6">
+            {/* 2. Small pill above the headline */}
+            <div>
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/10 bg-white/[0.04] text-xs sm:text-sm text-white/80 font-medium tracking-wide">
+                <span className="text-[#5CF2C0]">✱</span>
+                <span>Kelas Crypto Live · Malaysia</span>
+              </div>
             </div>
 
-            {/* Subheadline kecil */}
-            <p className="text-white/60 text-sm sm:text-base leading-relaxed pt-1 max-w-xl">
-              Belajar dengan Tuan Asyraf: Pakar Crypto sejak 2015 · Pengasas Bicara Krypto & SentysisLab.
-            </p>
+            {/* 3. Headline (very large, bold, tight line-height, up to 4 lines) */}
+            <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-[5.25rem] xl:text-[5.75rem] font-black text-white tracking-[-0.03em] leading-[1.05] sm:leading-[1.02] max-w-5xl">
+              Penat belajar kripto sendiri tapi masih{' '}
+              <span className="font-serif italic font-normal text-[#5CF2C0] tracking-normal">
+                rugi?
+              </span>
+            </h1>
 
-            {/* Actions: Primary button "Lihat Kelas" (mint, navy text, 8px radius) */}
-            <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-              <Link
-                to="/#kelas"
-                className="w-full sm:w-auto px-7 py-3.5 rounded-lg bg-[#5CF2C0] text-[#060B1E] font-semibold text-sm hover:opacity-95 transition-all shadow-md min-h-[46px] flex items-center justify-center text-center"
-              >
-                Lihat Kelas
-              </Link>
+            {/* 4. Under headline, an outlined pill */}
+            <div>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/15 bg-white/[0.02] text-xs sm:text-sm text-white/80 shadow-sm">
+                <span className="w-2 h-2 rounded-full bg-[#5CF2C0] shadow-[0_0_8px_#5CF2C0]" />
+                <span>Dikendalikan oleh</span>
+                <span className="font-semibold text-[#5CF2C0]">HRD Corp Certified Trainer</span>
+              </div>
             </div>
           </div>
 
-          {/* Right Column: Tall, photo-style card with Tuan Asyraf and caption card overlay */}
-          <div className="lg:col-span-5">
-            <div className="relative w-full aspect-[3/4] max-w-md mx-auto rounded-xl overflow-hidden bg-[#0B1430] border border-white/[0.08] shadow-2xl flex flex-col justify-between p-6 group">
-              {/* Tuan Asyraf Photo */}
-              <img
-                src={TUAN_ASYRAF_PHOTO_URL}
-                alt="Tuan Asyraf Ahamed"
-                className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-                onError={(e) => {
-                  const target = e.currentTarget as HTMLImageElement;
-                  if (target.src !== TUAN_ASYRAF_LOCAL_PHOTO) {
-                    target.src = TUAN_ASYRAF_LOCAL_PHOTO;
-                  }
-                }}
-              />
+          {/* 5. Bottom of the hero, two columns */}
+          <div className="pt-8 sm:pt-12 border-t border-white/[0.08] flex flex-col lg:flex-row lg:items-end justify-between gap-6 sm:gap-8">
+            {/* Left Column */}
+            <div className="max-w-md">
+              <p className="text-lg sm:text-xl font-bold text-white tracking-tight leading-snug">
+                Belajar dengan pelan, bukan ikut orang.
+              </p>
+            </div>
 
-              {/* Atmospheric Gradient Overlays */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#060B1E] via-[#060B1E]/30 to-[#060B1E]/60 pointer-events-none z-10" />
-
-              {/* Top tag */}
-              <div className="relative z-20 flex justify-between items-center">
-                <span className="px-2.5 py-1 rounded bg-[#060B1E]/80 backdrop-blur-md border border-white/10 text-[11px] uppercase tracking-[0.08em] text-white font-medium">
-                  Pengajar Utama
-                </span>
-                <span className="w-2.5 h-2.5 rounded-full bg-[#5CF2C0] shadow-[0_0_8px_#5CF2C0]" />
-              </div>
-
-              {/* Caption Card Overlay at the bottom */}
-              <div className="relative z-20 p-4 rounded-lg bg-[#060B1E]/90 backdrop-blur-md border border-white/[0.12] shadow-xl">
-                <div className="text-sm font-semibold text-white">
-                  Tuan Asyraf Ahamed
-                </div>
-                <div className="text-xs text-white/70 mt-0.5">
-                  Pakar Crypto sejak 2015 · Pengasas Bicara Krypto & SentysisLab
-                </div>
+            {/* Right Column */}
+            <div className="space-y-4 max-w-lg lg:text-right flex flex-col lg:items-end">
+              <p className="text-sm sm:text-base text-white/60 leading-relaxed">
+                Kelas live 2 hari melalui Zoom. Mula dari kosong pun boleh.
+              </p>
+              <div className="flex flex-wrap items-center gap-3.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const el = document.getElementById('kelas');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="px-6 py-3.5 rounded-lg bg-[#5CF2C0] text-[#060B1E] font-semibold text-sm hover:opacity-95 transition-all shadow-md min-h-[46px] flex items-center justify-center cursor-pointer"
+                >
+                  Lihat Kelas
+                </button>
+                <a
+                  href={CONFIG.whatsappLink || CONFIG.brand.whatsappLink || 'https://wa.me/60103394725'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-6 py-3.5 rounded-lg border border-white/20 hover:border-[#5CF2C0] bg-white/[0.02] hover:bg-[#5CF2C0]/10 text-white hover:text-[#5CF2C0] font-semibold text-sm transition-all min-h-[46px] flex items-center justify-center"
+                >
+                  WhatsApp Kami
+                </a>
               </div>
             </div>
           </div>
         </div>
+      </section>
+
+      {/* ================================================== */}
+      {/* B. NEW "MASALAH" SECTION (directly after the hero) */}
+      {/* ================================================== */}
+      {/* ================================================== */}
+      {/* B. NEW "MASALAH" SECTION (directly after the hero) */}
+      {/* ================================================== */}
+      <section id="masalah" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-24 space-y-8">
+        <div className="space-y-4 max-w-2xl">
+          <div className="space-y-2">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#5CF2C0]">
+              CABARAN & PENYELESAIAN
+            </div>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight">
+              Kenal situasi ini?
+            </h2>
+          </div>
+
+          {/* 1. Tab Switch: Pill Toggle */}
+          <div className="flex items-center gap-3 pt-1">
+            <button
+              type="button"
+              onClick={() => setMasalahTab('melabur')}
+              className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${
+                masalahTab === 'melabur'
+                  ? 'bg-[#5CF2C0] text-[#060B1E] shadow-sm'
+                  : 'border border-white/20 text-white/70 hover:text-white hover:border-white/40 bg-white/[0.02]'
+              }`}
+            >
+              Saya nak melabur
+            </button>
+            <button
+              type="button"
+              onClick={() => setMasalahTab('trade')}
+              className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer ${
+                masalahTab === 'trade'
+                  ? 'bg-[#5CF2C0] text-[#060B1E] shadow-sm'
+                  : 'border border-white/20 text-white/70 hover:text-white hover:border-white/40 bg-white/[0.02]'
+              }`}
+            >
+              Saya nak trade
+            </button>
+          </div>
+        </div>
+
+        {/* Tab Content with fade animation */}
+        {masalahTab === 'melabur' ? (
+          <div key="melabur" className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 animate-fadeIn">
+            {/* Left Card: Pelabur */}
+            <div className="rounded-2xl bg-[#0B1430] border border-white/[0.08] p-6 sm:p-8 space-y-6 flex flex-col justify-between shadow-xl">
+              <div className="space-y-4">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-white/50">
+                  SEBELUM: KESILAPAN BIASA PELABUR
+                </div>
+                <div className="space-y-3">
+                  {[
+                    'Beli crypto sebab ikut orang, tapi tak faham apa yang dibeli.',
+                    'Tak tahu nak pilih coin yang mana.',
+                    'Lepas beli, harga turun. Lepas jual, harga naik.',
+                    'Portfolio jatuh teruk setiap kali pasaran crash.',
+                    'Tak tahu nak semak projek tu betul atau scam.',
+                    'Takut kena scam, tak tahu platform mana yang selamat.',
+                    'Terlepas airdrop, atau buat banyak tugasan tapi tak dapat apa-apa.',
+                  ].map((item, idx) => (
+                    <div key={idx} className="flex items-start gap-3.5 text-white/80 text-sm sm:text-base leading-relaxed">
+                      <span className="w-5 h-5 rounded-full bg-white/[0.04] border border-white/10 flex items-center justify-center shrink-0 mt-0.5">
+                        <X className="w-3 h-3 text-white/40" />
+                      </span>
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Right Card: Selepas CAB */}
+            <div className="relative rounded-2xl bg-[#0B1430] border border-white/[0.08] p-6 sm:p-8 space-y-6 flex flex-col justify-between shadow-xl overflow-hidden">
+              {/* Faint mint glow in top-right corner */}
+              <div
+                className="pointer-events-none absolute -top-16 -right-16 w-52 h-52 bg-[#5CF2C0]/10 rounded-full blur-3xl"
+                aria-hidden="true"
+              />
+
+              <div className="relative z-10 space-y-4">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#5CF2C0]">
+                  SELEPAS CRYPTO ALPHA BOOTCAMP (CAB)
+                </div>
+                <div className="space-y-3">
+                  {[
+                    'Faham apa yang dibeli, tak perlu ikut orang',
+                    'Tahu cara cari & nilai projek sendiri',
+                    'Ada pelan DCA & bila nak ambil untung',
+                    'Portfolio yang tahan bull & bear market',
+                    'Boleh semak projek guna data onchain',
+                    'Tahu platform selamat & cara jaga wallet',
+                    'Tahu cara cari & layak untuk airdrop dengan selamat',
+                  ].map((item, idx) => (
+                    <div key={idx} className="flex items-start gap-3.5 text-white text-sm sm:text-base leading-relaxed">
+                      <span className="w-5 h-5 rounded-full bg-[#5CF2C0]/10 border border-[#5CF2C0]/30 flex items-center justify-center shrink-0 mt-0.5">
+                        <Check className="w-3 h-3 text-[#5CF2C0]" />
+                      </span>
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Bottom: Chip + Mint Button */}
+              <div className="relative z-10 pt-5 border-t border-white/[0.08] flex flex-wrap items-center justify-between gap-3">
+                <div className="inline-flex items-center px-3 py-1.5 rounded-full border border-white/20 bg-white/[0.02] text-white/80 text-xs font-medium">
+                  Level 1 · Pemula
+                </div>
+                <button
+                  type="button"
+                  onClick={() => scrollToClass('cab')}
+                  className="px-5 py-2.5 rounded-lg bg-[#5CF2C0] text-[#060B1E] font-semibold text-xs sm:text-sm hover:opacity-95 transition-all shadow-md cursor-pointer flex items-center justify-center"
+                >
+                  Lihat kelas CAB
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div key="trade" className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 animate-fadeIn">
+            {/* Left Card: Trader */}
+            <div className="rounded-2xl bg-[#0B1430] border border-white/[0.08] p-6 sm:p-8 space-y-6 flex flex-col justify-between shadow-xl">
+              <div className="space-y-4">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-white/50">
+                  SEBELUM: KESILAPAN BIASA TRADER
+                </div>
+                <div className="space-y-3">
+                  {[
+                    'Masuk trade ikut perasaan dan FOMO.',
+                    'Stop loss kena, lepas tu harga naik balik.',
+                    'Satu trade rugi besar habiskan untung sebulan.',
+                    'Tengok carta tapi tak tahu bila nak masuk.',
+                    'Bila rugi, terus revenge trade.',
+                    'Dah lama trade, tapi akaun tak membesar.',
+                  ].map((item, idx) => (
+                    <div key={idx} className="flex items-start gap-3.5 text-white/80 text-sm sm:text-base leading-relaxed">
+                      <span className="w-5 h-5 rounded-full bg-white/[0.04] border border-white/10 flex items-center justify-center shrink-0 mt-0.5">
+                        <X className="w-3 h-3 text-white/40" />
+                      </span>
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Right Card: Selepas KITA */}
+            <div className="relative rounded-2xl bg-[#0B1430] border border-white/[0.08] p-6 sm:p-8 space-y-6 flex flex-col justify-between shadow-xl overflow-hidden">
+              {/* Faint mint glow in top-right corner */}
+              <div
+                className="pointer-events-none absolute -top-16 -right-16 w-52 h-52 bg-[#5CF2C0]/10 rounded-full blur-3xl"
+                aria-hidden="true"
+              />
+
+              <div className="relative z-10 space-y-4">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#5CF2C0]">
+                  SELEPAS KITA
+                </div>
+                <div className="space-y-3">
+                  {[
+                    'Ada Trading Plan S-R-P sendiri',
+                    'Faham perangkap market maker & cara elak',
+                    'Saiz posisi & risk:reward yang betul',
+                    'Baca carta guna 4 alat teras',
+                    'Kawal emosi dengan rutin & trading journal',
+                    'Framework untuk grow akaun secara konsisten',
+                  ].map((item, idx) => (
+                    <div key={idx} className="flex items-start gap-3.5 text-white text-sm sm:text-base leading-relaxed">
+                      <span className="w-5 h-5 rounded-full bg-[#5CF2C0]/10 border border-[#5CF2C0]/30 flex items-center justify-center shrink-0 mt-0.5">
+                        <Check className="w-3 h-3 text-[#5CF2C0]" />
+                      </span>
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Bottom: Chip + Mint Button */}
+              <div className="relative z-10 pt-5 border-t border-white/[0.08] flex flex-wrap items-center justify-between gap-3">
+                <div className="inline-flex items-center px-3 py-1.5 rounded-full border border-white/20 bg-white/[0.02] text-white/80 text-xs font-medium">
+                  Level 2 · Trader
+                </div>
+                <button
+                  type="button"
+                  onClick={() => scrollToClass('kita')}
+                  className="px-5 py-2.5 rounded-lg bg-[#5CF2C0] text-[#060B1E] font-semibold text-xs sm:text-sm hover:opacity-95 transition-all shadow-md cursor-pointer flex items-center justify-center"
+                >
+                  Lihat kelas KITA
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* ================================================== */}
@@ -260,11 +577,12 @@ export const HomePage: React.FC = () => {
         {/* Product Cards Grid: 3 columns desktop, 2 tablet, 1 mobile */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {displayedProducts.map((product) => (
-            <ClassPoster
-              key={product.id}
-              product={product}
-              onClick={() => handleProductClick(product)}
-            />
+            <div key={product.id} id={`kelas-${product.id}`} className="scroll-mt-28">
+              <ClassPoster
+                product={product}
+                onClick={() => handleProductClick(product)}
+              />
+            </div>
           ))}
         </div>
       </section>
@@ -310,14 +628,13 @@ export const HomePage: React.FC = () => {
             <p className="text-sm text-white/60">
               Faham dulu, kemudian trade. Laluan 2 minggu dari pemula ke trader.
             </p>
-            <a
-              href={CONFIG.combo.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-6 py-3 rounded-lg bg-[#5CF2C0] text-[#060B1E] font-semibold text-sm hover:opacity-95 transition-all text-center shrink-0"
+            <button
+              type="button"
+              disabled
+              className="px-6 py-3 rounded-lg bg-[#5CF2C0]/60 text-[#060B1E]/80 font-semibold text-sm text-center shrink-0 cursor-not-allowed select-none shadow-sm"
             >
               Daftar Combo RM{CONFIG.combo.price}
-            </a>
+            </button>
           </div>
         </div>
       </section>
@@ -469,16 +786,25 @@ export const HomePage: React.FC = () => {
       {/* ================================================== */}
       {/* F. KENALI TUAN ASYRAF */}
       {/* ================================================== */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="p-8 sm:p-12 rounded-xl bg-[#0B1430] border border-white/[0.08]">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-            {/* Photo Left */}
-            <div className="lg:col-span-5 space-y-4">
-              <div className="relative w-full aspect-[4/3] rounded-lg bg-[#060B1E] border border-white/[0.08] overflow-hidden flex flex-col justify-end p-6 group shadow-lg">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
+        {/* 1. Section heading (centred, large) */}
+        <div className="text-center max-w-3xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white tracking-[-0.02em]">
+            Belajar dengan pelan, bukan ikut orang
+          </h2>
+        </div>
+
+        {/* Card wrapper: Photo & Follow Saya on the left, text on the right (stacked on mobile) */}
+        <div className="p-6 sm:p-10 lg:p-12 rounded-2xl bg-[#0B1430] border border-white/[0.08]">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+            {/* Left Column: Photo & Follow Saya Block */}
+            <div className="lg:col-span-5 space-y-6 max-w-md mx-auto w-full">
+              {/* Photo */}
+              <div className="relative aspect-[4/5] sm:aspect-square lg:aspect-[4/5] w-full rounded-2xl overflow-hidden bg-[#060B1E] border border-white/[0.08] shadow-2xl">
                 <img
                   src={TUAN_ASYRAF_PHOTO_URL}
                   alt="Tuan Asyraf Ahamed"
-                  className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                  className="w-full h-full object-cover object-top"
                   onError={(e) => {
                     const target = e.currentTarget as HTMLImageElement;
                     if (target.src !== TUAN_ASYRAF_LOCAL_PHOTO) {
@@ -486,62 +812,167 @@ export const HomePage: React.FC = () => {
                     }
                   }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#060B1E] via-[#060B1E]/40 to-transparent pointer-events-none z-10" />
-                <div className="relative z-20">
-                  <div className="text-base font-semibold text-white">
-                    Tuan Asyraf Ahamed
-                  </div>
-                  <div className="text-xs text-white/75 mt-0.5">
-                    Pakar Crypto sejak 2015 · Pengasas Bicara Krypto & SentysisLab
-                  </div>
-                </div>
               </div>
 
-              {/* YouTube Thumbnail Card */}
-              <a
-                href={CONFIG.youtubeVideo}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group p-3.5 rounded-lg bg-[#060B1E] border border-white/[0.08] hover:border-white/20 transition-colors flex items-center justify-between"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-red-600/10 text-red-400 flex items-center justify-center shrink-0">
-                    <Video className="w-4 h-4 text-[#5CF2C0]" />
-                  </div>
-                  <div>
-                    <div className="text-xs font-semibold text-white group-hover:text-[#5CF2C0] transition-colors">
-                      YouTube Rasmi Bicara Krypto
-                    </div>
-                    <div className="text-[11px] text-white/50">
-                      Tonton video penerangan & analisa pasaran
-                    </div>
-                  </div>
+              {/* Follow Saya Block */}
+              <div className="space-y-3 pt-1">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#5CF2C0]">
+                  FOLLOW SAYA
                 </div>
-                <ExternalLink className="w-4 h-4 text-white/40 group-hover:text-[#5CF2C0]" />
-              </a>
+                <div className="flex items-center gap-3 flex-wrap">
+                  {/* YouTube */}
+                  <a
+                    href={CONFIG.socials.youtube}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="YouTube"
+                    aria-label="YouTube"
+                    className="w-12 h-12 min-w-[48px] min-h-[48px] rounded-full bg-[#060B1E] border border-white/[0.08] flex items-center justify-center text-[#5CF2C0] hover:text-white hover:border-[#5CF2C0]/60 hover:bg-white/[0.04] transition-all duration-200 shrink-0 shadow-sm"
+                  >
+                    <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                    </svg>
+                  </a>
+
+                  {/* TikTok */}
+                  <a
+                    href={CONFIG.socials.tiktok}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="TikTok"
+                    aria-label="TikTok"
+                    className="w-12 h-12 min-w-[48px] min-h-[48px] rounded-full bg-[#060B1E] border border-white/[0.08] flex items-center justify-center text-[#5CF2C0] hover:text-white hover:border-[#5CF2C0]/60 hover:bg-white/[0.04] transition-all duration-200 shrink-0 shadow-sm"
+                  >
+                    <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.24 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
+                    </svg>
+                  </a>
+
+                  {/* Facebook */}
+                  <a
+                    href={CONFIG.socials.facebook}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Facebook"
+                    aria-label="Facebook"
+                    className="w-12 h-12 min-w-[48px] min-h-[48px] rounded-full bg-[#060B1E] border border-white/[0.08] flex items-center justify-center text-[#5CF2C0] hover:text-white hover:border-[#5CF2C0]/60 hover:bg-white/[0.04] transition-all duration-200 shrink-0 shadow-sm"
+                  >
+                    <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M14 13.5h2.5l1-4H14v-2c0-1.03 0-2 2-2h1.5V2.14c-.326-.043-1.52-.14-2.73-.14-2.83 0-4.77 1.73-4.77 4.9v2.6H7v4h3.1v10.5h3.9V13.5z"/>
+                    </svg>
+                  </a>
+
+                  {/* Threads */}
+                  <a
+                    href={CONFIG.socials.threads}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Threads"
+                    aria-label="Threads"
+                    className="w-12 h-12 min-w-[48px] min-h-[48px] rounded-full bg-[#060B1E] border border-white/[0.08] flex items-center justify-center text-[#5CF2C0] hover:text-white hover:border-[#5CF2C0]/60 hover:bg-white/[0.04] transition-all duration-200 shrink-0 shadow-sm"
+                  >
+                    <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M12.001 2c-5.523 0-10 4.477-10 10s4.477 10 10 10c2.81 0 5.344-1.157 7.168-3.023l-1.428-1.428C16.19 19.123 14.214 20 12.001 20c-4.411 0-8-3.589-8-8s3.589-8 8-8c4.27 0 7.766 3.354 7.986 7.568.012.24.014.453.014.632 0 2.213-.895 3.51-2.43 3.51-.976 0-1.705-.624-1.921-1.571.93-.475 1.554-1.42 1.554-2.639 0-1.654-1.346-3-3-3-1.654 0-3 1.346-3 3s1.346 3 3 3c.691 0 1.328-.235 1.838-.631.332.969 1.258 1.631 2.399 1.631 2.502 0 4.19-2.028 4.19-5.11 0-.214-.002-.457-.015-.729C20.354 6.002 16.592 2 12.001 2zm.203 12.2c-.663 0-1.203-.54-1.203-1.2 0-.661.54-1.2 1.203-1.2.662 0 1.202.539 1.202 1.2 0 .66-.54 1.2-1.202 1.2z" />
+                    </svg>
+                  </a>
+
+                  {/* X */}
+                  <a
+                    href={CONFIG.socials.x}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="X"
+                    aria-label="X"
+                    className="w-12 h-12 min-w-[48px] min-h-[48px] rounded-full bg-[#060B1E] border border-white/[0.08] flex items-center justify-center text-[#5CF2C0] hover:text-white hover:border-[#5CF2C0]/60 hover:bg-white/[0.04] transition-all duration-200 shrink-0 shadow-sm"
+                  >
+                    <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                  </a>
+
+                  {/* LinkedIn */}
+                  <a
+                    href={CONFIG.socials.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="LinkedIn"
+                    aria-label="LinkedIn"
+                    className="w-12 h-12 min-w-[48px] min-h-[48px] rounded-full bg-[#060B1E] border border-white/[0.08] flex items-center justify-center text-[#5CF2C0] hover:text-white hover:border-[#5CF2C0]/60 hover:bg-white/[0.04] transition-all duration-200 shrink-0 shadow-sm"
+                  >
+                    <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/>
+                    </svg>
+                  </a>
+                </div>
+              </div>
             </div>
 
             {/* Text Right */}
-            <div className="lg:col-span-7 space-y-4">
-              <div className="text-[11px] uppercase tracking-[0.08em] text-white/60 font-medium">
-                Pengasas & Pengajar
+            <div className="lg:col-span-7 space-y-6">
+              {/* 2. Name & 3. Subtitle in mint */}
+              <div className="space-y-1.5">
+                <h3 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                  Tuan Asyraf Ahamed
+                </h3>
+                <div className="text-sm sm:text-base font-semibold text-[#5CF2C0]">
+                  Pengasas Bicara Krypto & Sentysis | HRD Corp Certified Trainer
+                </div>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-semibold text-white tracking-[-0.02em]">
-                Kenali pengajar anda
-              </h2>
-              <p className="text-white/70 text-sm sm:text-base leading-relaxed">
-                Tuan Asyraf mula melabur dalam Bitcoin sejak 2015 dan mengasaskan Bicara Krypto pada 2018. Hari ini, Bicara Krypto mempunyai lebih 100,000 pengikut dan ahli komuniti di pelbagai media sosial. Beliau dikenali kerana penerangan yang mudah difahami, jujur dan tidak menjual hype, dalam Bahasa Melayu.
-              </p>
 
-              <div className="grid grid-cols-2 gap-4 pt-2">
-                <div className="p-4 rounded-lg bg-[#060B1E] border border-white/[0.08]">
-                  <div className="text-xl font-bold text-white">2015</div>
-                  <div className="text-xs text-white/50 mt-0.5">Pelabur Crypto aktif</div>
+              {/* 4. Two paragraphs (muted text) */}
+              <div className="space-y-3.5 text-sm sm:text-base text-white/70 leading-relaxed">
+                <p>
+                  Tuan Asyraf Ahamed antara pencipta kandungan crypto terawal di Malaysia. Sebagai pengguna awal DeFi, beliau antara segelintir yang menerima airdrop Uniswap pada 2020, dan sejak itu konsisten menemui trend, naratif dan peluang baru lebih awal untuk komuniti Malaysia.
+                </p>
+                <p>
+                  Beliau mengasaskan Bicara Krypto pada 2018, kini dengan lebih 100,000 pengikut, dan{' '}
+                  <a
+                    href="https://sentysis.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#5CF2C0] hover:underline font-semibold"
+                  >
+                    Sentysis
+                  </a>
+                  , platform Web3 Media Intelligence onchain di blockchain Base. Sebelum itu, beliau membina lebih 10 tahun pengalaman dalam ekonomi digital dan fintech di MDEC dan Kiplepay, serta menerajui pemasaran exchange crypto Bitflex. Beliau memegang Ijazah Sarjana Pengurusan dari UIAM.
+                </p>
+              </div>
+
+              {/* 5. REKOD DALAM CRYPTO checklist */}
+              <div className="space-y-3 pt-1">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#5CF2C0]">
+                  REKOD DALAM CRYPTO
                 </div>
-                <div className="p-4 rounded-lg bg-[#060B1E] border border-white/[0.08]">
-                  <div className="text-xl font-bold text-white">100,000+</div>
-                  <div className="text-xs text-white/50 mt-0.5">Pengikut & ahli komuniti</div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {[
+                    'Pengguna awal DeFi: ganjaran airdrop bernilai 6 angka',
+                    'Grow akaun trading dari USD 1,000 ke USD 100,000*',
+                    'Portfolio yang terus berkembang dalam bull & bear market',
+                    'Melancarkan dApp sendiri: Sentysis di Base',
+                    '500+ alumni kelas CAB & KITA',
+                  ].map((item, idx) => (
+                    <div key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-white/80">
+                      <Check className="w-4 h-4 text-[#5CF2C0] shrink-0 mt-0.5" />
+                      <span>{item}</span>
+                    </div>
+                  ))}
                 </div>
+                <p className="text-xs italic text-white/50 pt-0.5">
+                  *Pengalaman peribadi, bukan jaminan hasil.
+                </p>
+              </div>
+
+              {/* 6. Highlighted Block */}
+              <div className="rounded-xl bg-[#060B1E] border border-white/[0.08] border-l-4 border-l-[#5CF2C0] p-5 sm:p-6 space-y-3 shadow-md">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#5CF2C0]">
+                  KEKAL SEBAGAI FIGURA KRIPTO SEJAK 2018
+                </div>
+                <blockquote className="text-base sm:text-lg font-semibold text-white leading-snug">
+                  &ldquo;Ramai &lsquo;sifu crypto&rsquo; muncul bila pasaran naik, dan hilang bila pasaran jatuh. Saya kekal, dan terus membina.&rdquo;
+                </blockquote>
+                <p className="text-xs sm:text-sm text-white/60 leading-relaxed">
+                  Sejak 2018, Tuan Asyraf telah melalui beberapa kitaran bull dan bear market, termasuk kejatuhan pasaran 2018, 2022 dan 10 Oktober 2025. Ketika ramai berhenti, beliau terus mengajar, membina portfolio, dan menyumbang kepada industri melalui Bicara Krypto dan Sentysis. Ketahanan inilah yang beliau ajar dalam setiap kelas: bukan sekadar masuk bila semua orang teruja, tetapi kekal dan berkembang dalam apa jua keadaan pasaran.
+                </p>
               </div>
             </div>
           </div>
@@ -656,14 +1087,13 @@ export const HomePage: React.FC = () => {
                   </p>
                 </div>
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 shrink-0 pt-2 sm:pt-0">
-                  <a
-                    href={recommendation.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="min-h-[44px] px-5 py-2.5 rounded-lg bg-[#5CF2C0] text-[#060B1E] font-semibold text-xs hover:opacity-95 transition-opacity flex items-center justify-center text-center"
+                  <button
+                    type="button"
+                    disabled
+                    className="min-h-[44px] px-5 py-2.5 rounded-lg bg-[#5CF2C0]/60 text-[#060B1E]/80 font-semibold text-xs flex items-center justify-center text-center cursor-not-allowed select-none shadow-sm"
                   >
                     Daftar (RM{recommendation.product.price})
-                  </a>
+                  </button>
                   <Link
                     to={recommendation.product.route}
                     className="min-h-[44px] px-3 text-xs text-white/70 hover:text-[#5CF2C0] flex items-center justify-center text-center font-medium"

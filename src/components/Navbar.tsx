@@ -3,21 +3,25 @@ import { Logo } from './Logo';
 import { Link, useRouter } from '../router';
 import { Menu, X } from 'lucide-react';
 
+interface NavLinkItem {
+  label: string;
+  path: string;
+  tag?: string;
+  disabled?: boolean;
+}
+
 export const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { currentPath } = useRouter();
 
-  const navLinks = [
+  const navLinks: NavLinkItem[] = [
     { label: 'Kelas', path: '/#kelas' },
-    { label: 'Kad Kripto', path: '/kad-kripto' },
-    { label: 'Platform Kripto', path: '/beli-jual-kripto' },
-    { label: 'Wallet Kripto', path: '#', disabled: true, tag: 'Akan Datang' },
     { label: 'Hubungi Kami', path: '/hubungi' },
   ];
 
   const isLinkActive = (path: string) => {
     if (path.includes('#')) {
-      return currentPath === '/';
+      return false;
     }
     return currentPath === path;
   };
@@ -62,26 +66,32 @@ export const Navbar: React.FC = () => {
                 <Link
                   key={link.label}
                   to={link.path}
-                  className={`text-sm font-medium transition-colors hover:text-[#5CF2C0] py-2 ${
+                  className={`flex items-center gap-1.5 text-sm font-medium transition-colors hover:text-[#5CF2C0] py-2 ${
                     isLinkActive(link.path)
                       ? 'text-[#5CF2C0]'
                       : 'text-white/60 hover:text-white'
                   }`}
                 >
-                  {link.label}
+                  <span>{link.label}</span>
+                  {link.tag && (
+                    <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold tracking-wider uppercase border border-white/10 bg-white/[0.04] text-white/50">
+                      {link.tag}
+                    </span>
+                  )}
                 </Link>
               );
             })}
           </nav>
 
-          {/* Right Action: Mint Button "Daftar Kelas" (No arrow) */}
+          {/* Right Action: Button "Daftar Kelas" (Non-clickable) */}
           <div className="hidden lg:flex items-center gap-4">
-            <Link
-              to="/#kelas"
-              className="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-[#5CF2C0] text-[#060B1E] font-semibold text-xs sm:text-sm tracking-tight hover:opacity-95 transition-opacity shadow-sm min-h-[40px]"
+            <button
+              type="button"
+              disabled
+              className="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-[#5CF2C0]/60 text-[#060B1E]/80 font-semibold text-xs sm:text-sm tracking-tight cursor-not-allowed select-none shadow-sm min-h-[40px]"
             >
               <span>Daftar Kelas</span>
-            </Link>
+            </button>
           </div>
 
           {/* Mobile menu button */}
@@ -133,18 +143,23 @@ export const Navbar: React.FC = () => {
                   }`}
                 >
                   <span>{link.label}</span>
+                  {link.tag && (
+                    <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold tracking-wider uppercase border border-white/10 bg-white/[0.04] text-white/50">
+                      {link.tag}
+                    </span>
+                  )}
                 </Link>
               );
             })}
 
             <div className="pt-3 border-t border-white/[0.08] mt-2">
-              <Link
-                to="/#kelas"
-                onClick={() => setMobileMenuOpen(false)}
-                className="w-full min-h-[46px] flex items-center justify-center py-3 rounded-lg bg-[#5CF2C0] text-[#060B1E] font-semibold text-sm shadow-sm hover:opacity-95 transition-opacity"
+              <button
+                type="button"
+                disabled
+                className="w-full min-h-[46px] flex items-center justify-center py-3 rounded-lg bg-[#5CF2C0]/60 text-[#060B1E]/80 font-semibold text-sm shadow-sm cursor-not-allowed select-none"
               >
                 <span>Daftar Kelas</span>
-              </Link>
+              </button>
             </div>
           </div>
         </div>

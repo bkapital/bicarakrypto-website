@@ -552,13 +552,15 @@ export const PLATFORMS: ExchangePlatformItem[] = [
 ];
 
 export const CONFIG = {
+  heroImage: "",
+  whatsappLink: "https://wa.me/60103394725",
   intakeMonth: "November 2026",
   seatsPerClass: 40,
 
   cab: {
     price: 299,
     dates: "14 - 15 November 2026",
-    link: "https://bicarakrypto.com/checkout/cab",
+    link: "#",
     poster: CAB_POSTER_URL,
     label: "LEVEL 1 · PEMULA · LIVE ZOOM 2 HARI",
     subtitle: "Bina portfolio yang tahan bull & bear",
@@ -569,7 +571,7 @@ export const CONFIG = {
   kita: {
     price: 499,
     dates: "28 - 29 November 2026",
-    link: "https://bicarakrypto.com/checkout/kita",
+    link: "#",
     poster: KITA_POSTER_URL,
     label: "LEVEL 2 · TRADER · LIVE ZOOM 2 HARI",
     subtitle: "Trade ikut pelan, bukan ikut perasaan",
@@ -580,7 +582,16 @@ export const CONFIG = {
   combo: {
     price: 699,
     saving: 99,
-    link: "https://bicarakrypto.com/checkout/combo",
+    link: "#",
+  },
+
+  socials: {
+    youtube: "https://www.youtube.com/@BICARAKRYPTO",
+    facebook: "https://www.facebook.com/BicaraKrypto/",
+    tiktok: "https://www.tiktok.com/@bicarakrypto",
+    threads: "https://www.threads.com/@bicarakrypto",
+    x: "https://x.com/0xAsyraf",
+    linkedin: "https://www.linkedin.com/in/asyraf-ahamed/"
   },
 
   youtubeVideo: "https://www.youtube.com/@BICARAKRYPTO",

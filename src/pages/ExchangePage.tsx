@@ -14,7 +14,8 @@ import {
   X, 
   HelpCircle, 
   SlidersHorizontal, 
-  GraduationCap 
+  GraduationCap,
+  Info 
 } from 'lucide-react';
 
 import PlatformCard from '../components/PlatformCard';
@@ -267,7 +268,12 @@ export const ExchangePage: React.FC = () => {
       {/* ================================================== */}
       {/* A. PAGE HEADER */}
       {/* ================================================== */}
-      <section className="max-w-[1280px] w-full mx-auto px-4 sm:px-6 lg:px-8 text-center pt-2 pb-1">
+      <section className="max-w-[1280px] w-full mx-auto px-4 sm:px-6 lg:px-8 text-center pt-2 pb-1 space-y-2.5">
+        <div>
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider border border-white/10 bg-white/[0.04] text-white/50">
+            Akan Datang
+          </span>
+        </div>
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-[-0.02em] leading-tight">
           Direktori Platform & Exchange Kripto
         </h1>
@@ -301,7 +307,7 @@ export const ExchangePage: React.FC = () => {
                 Lihat platform
               </button>
 
-              {/* 3 Overlapping round logo placeholders: Luno, HATA, Bybit */}
+              {/* 2 Overlapping round logo placeholders: Luno, HATA */}
               <div className="flex items-center -space-x-2.5">
                 <div
                   className="w-9 h-9 rounded-full border-2 border-[#0B1430] flex items-center justify-center p-1.5 shadow overflow-hidden bg-white"
@@ -326,18 +332,6 @@ export const ExchangePage: React.FC = () => {
                     referrerPolicy="no-referrer"
                     loading="lazy"
                     className="w-full h-full object-cover"
-                  />
-                </div>
-                <div
-                  className="w-9 h-9 rounded-full border-2 border-[#0B1430] flex items-center justify-center p-1.5 shadow overflow-hidden bg-white"
-                  title="Bybit"
-                >
-                  <img
-                    src="https://lh3.googleusercontent.com/d/1c_lDg-rckRYX0BcqhlaVhPjGcQ86Z97G"
-                    alt="Bybit"
-                    referrerPolicy="no-referrer"
-                    loading="lazy"
-                    className="w-full h-full object-contain"
                   />
                 </div>
               </div>
@@ -556,18 +550,29 @@ export const ExchangePage: React.FC = () => {
               return (
                 <div key={catKey} className="space-y-6">
                   {/* Category Header (dausdk style) */}
-                  <div className="flex flex-col md:flex-row md:items-end justify-between gap-2 border-b border-white/[0.08] pb-4">
-                    <div>
-                      <div className="text-[11px] font-semibold text-[#5CF2C0] uppercase tracking-[0.08em]">
-                        — KATEGORI {catInfo.num}
+                  <div className="border-b border-white/[0.08] pb-4 space-y-2.5">
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-2">
+                      <div>
+                        <div className="text-[11px] font-semibold text-[#5CF2C0] uppercase tracking-[0.08em]">
+                          — KATEGORI {catInfo.num}
+                        </div>
+                        <h2 className="text-2xl font-bold text-white tracking-[-0.02em] mt-0.5">
+                          {catInfo.label}
+                        </h2>
                       </div>
-                      <h2 className="text-2xl font-bold text-white tracking-[-0.02em] mt-0.5">
-                        {catInfo.label}
-                      </h2>
+                      <p className="text-xs sm:text-sm text-white/60 max-w-md leading-relaxed md:text-right">
+                        {catInfo.desc}
+                      </p>
                     </div>
-                    <p className="text-xs sm:text-sm text-white/60 max-w-md leading-relaxed md:text-right">
-                      {catInfo.desc}
-                    </p>
+
+                    {catKey === 'antarabangsa' && (
+                      <div className="pt-0.5 flex justify-start md:justify-end">
+                        <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.1] text-white/60 text-xs">
+                          <Info className="w-3.5 h-3.5 text-white/40 shrink-0" />
+                          <span>Untuk pengguna bukan Malaysia seperti Brunei dan Indonesia. Semak syarat negara anda sebelum mendaftar.</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* pc-grid */}
@@ -601,18 +606,29 @@ export const ExchangePage: React.FC = () => {
           // Flat Filtered / Searched Grid
           <div className="space-y-6">
             {selectedCategory !== 'Semua' && (
-              <div className="flex flex-col md:flex-row md:items-end justify-between gap-2 border-b border-white/[0.08] pb-4">
-                <div>
-                  <div className="text-[11px] font-semibold text-[#5CF2C0] uppercase tracking-[0.08em]">
-                    — KATEGORI {CATEGORY_MAP[selectedCategory].num}
+              <div className="border-b border-white/[0.08] pb-4 space-y-2.5">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-2">
+                  <div>
+                    <div className="text-[11px] font-semibold text-[#5CF2C0] uppercase tracking-[0.08em]">
+                      — KATEGORI {CATEGORY_MAP[selectedCategory].num}
+                    </div>
+                    <h2 className="text-2xl font-bold text-white tracking-[-0.02em] mt-0.5">
+                      {CATEGORY_MAP[selectedCategory].label}
+                    </h2>
                   </div>
-                  <h2 className="text-2xl font-bold text-white tracking-[-0.02em] mt-0.5">
-                    {CATEGORY_MAP[selectedCategory].label}
-                  </h2>
+                  <p className="text-xs sm:text-sm text-white/60 max-w-md leading-relaxed md:text-right">
+                    {CATEGORY_MAP[selectedCategory].desc}
+                  </p>
                 </div>
-                <p className="text-xs sm:text-sm text-white/60 max-w-md leading-relaxed md:text-right">
-                  {CATEGORY_MAP[selectedCategory].desc}
-                </p>
+
+                {selectedCategory === 'antarabangsa' && (
+                  <div className="pt-0.5 flex justify-start md:justify-end">
+                    <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.1] text-white/60 text-xs">
+                      <Info className="w-3.5 h-3.5 text-white/40 shrink-0" />
+                      <span>Untuk pengguna bukan Malaysia seperti Brunei dan Indonesia. Semak syarat negara anda sebelum mendaftar.</span>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -903,7 +919,7 @@ const PlatformDetailModal: React.FC<PlatformDetailModalProps> = ({
         </button>
 
         {/* Header */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3.5">
           <div
             className={`w-12 h-12 rounded-full border border-white/10 ${platform.avatarStyle === 'tile' ? 'p-0 overflow-hidden' : 'p-2 bg-white'} flex items-center justify-center shrink-0 shadow-inner`}
             style={{
@@ -929,13 +945,37 @@ const PlatformDetailModal: React.FC<PlatformDetailModalProps> = ({
           </div>
           <div>
             <div className="text-[11px] uppercase tracking-[0.08em] text-white/50 font-medium">
-              Panduan & Soalan Lazim
+              Panduan Pendaftaran & Ganjaran
             </div>
             <h3 className="text-xl font-bold text-white tracking-[-0.02em]">
               {platform.name}
             </h3>
           </div>
         </div>
+
+        {/* Offer line in mint */}
+        {(platform.reward || platform.description) && (
+          <div className="p-3.5 rounded-xl bg-[#5CF2C0]/10 border border-[#5CF2C0]/25 text-[#5CF2C0] font-semibold text-xs sm:text-sm leading-relaxed">
+            {platform.reward || platform.description}
+          </div>
+        )}
+
+        {/* ✓ Steps (Conditions moved from card front) */}
+        {platform.conditions && platform.conditions.length > 0 && (
+          <div className="p-4 rounded-xl bg-[#060B1E] border border-white/[0.08] space-y-2">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-white/50">
+              Syarat Utama Untuk Claim:
+            </div>
+            <ul className="space-y-1.5 text-xs text-white/85">
+              {platform.conditions.map((c, i) => (
+                <li key={i} className="flex items-start gap-2">
+                  <span className="text-[#5CF2C0] font-bold">✓</span>
+                  <span className="leading-relaxed">{c}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {/* Tab buttons */}
         <div className="flex items-center gap-2 border-b border-white/[0.08] pb-2 text-xs">
@@ -1065,7 +1105,7 @@ const PlatformDetailModal: React.FC<PlatformDetailModalProps> = ({
             rel="sponsored noopener"
             className="w-full h-[48px] rounded-full bg-[#5CF2C0] text-[#060B1E] font-semibold text-sm flex items-center justify-center hover:opacity-95 transition-opacity"
           >
-            <span>Buka Laman Rasmi {platform.name}</span>
+            <span>Daftar {platform.name}</span>
           </a>
         </div>
       </div>

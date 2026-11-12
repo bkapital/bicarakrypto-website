@@ -8,10 +8,7 @@ import {
   Facebook, 
   Instagram, 
   Twitter, 
-  Video,
-  CreditCard,
-  Building2,
-  Wallet
+  Video 
 } from 'lucide-react';
 
 export const Footer: React.FC = () => {
@@ -25,7 +22,7 @@ export const Footer: React.FC = () => {
             <Link to="/" className="inline-block focus:outline-none">
               <Logo size="md" showTagline={true} />
             </Link>
-            <p className="text-white/60 text-sm max-w-md leading-relaxed">
+            <p className="text-white/60 text-sm leading-relaxed max-w-lg">
               Platform pendidikan rasmi Bicara Krypto. Belajar pelaburan dan trading kripto berlandaskan ilmu asas fundamental, analisis teknikal dan pengurusan risiko tanpa sebarang janji keuntungan.
             </p>
 
@@ -114,16 +111,6 @@ export const Footer: React.FC = () => {
                   Pakej Combo CAB + KITA
                 </Link>
               </li>
-              <li>
-                <Link to="/kad-kripto" className="hover:text-white transition-colors">
-                  Direktori kad kripto
-                </Link>
-              </li>
-              <li>
-                <Link to="/beli-jual-kripto" className="hover:text-white transition-colors">
-                  Platform Kripto
-                </Link>
-              </li>
             </ul>
           </div>
 
@@ -172,11 +159,15 @@ export const Footer: React.FC = () => {
           </div>
           <div className="flex items-center gap-4 flex-wrap justify-center">
             <Link to="/polisi-privasi" className="hover:text-white transition-colors">
-              Polisi Privasi
+              Privacy Policy
+            </Link>
+            <span className="text-white/20">·</span>
+            <Link to="/polisi-refund" className="hover:text-white transition-colors">
+              Refund Policy
             </Link>
             <span className="text-white/20">·</span>
             <Link to="/terma-syarat" className="hover:text-white transition-colors">
-              Terma & Syarat
+              Terms & Condition
             </Link>
           </div>
         </div>
