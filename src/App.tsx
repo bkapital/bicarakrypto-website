@@ -13,10 +13,10 @@ import { Footer } from './components/Footer';
 // Pages
 import { HomePage } from './pages/HomePage';
 import { ClassDetailPage } from './pages/ClassDetailPage';
-// Halaman Kad Kripto, Wallet Kripto, & Platform Kripto disembunyikan buat sementara:
+// Halaman Kad Kripto & Wallet Kripto disembunyikan buat sementara:
 // import { CardPage } from './pages/CardPage';
 // import { WalletPage } from './pages/WalletPage';
-// import { ExchangePage } from './pages/ExchangePage';
+import { ExchangePage } from './pages/ExchangePage';
 import { ContactPage } from './pages/ContactPage';
 import { PolicyPage } from './pages/PolicyPage';
 
@@ -42,11 +42,13 @@ const AppContent: React.FC = () => {
         return <ClassDetailPage slug="kita" />;
       case '/kelas/combo':
         return <ClassDetailPage slug="combo" />;
+      case '/beli-jual-kripto':
+      case '/platform-kripto':
+        return <ExchangePage />;
       // Disembunyikan sementara per permintaan pengguna
       case '/kad-kripto':
       case '/wallet-kripto':
       case '/crypto-wallet':
-      case '/beli-jual-kripto':
         return <HomePage />;
       case '/hubungi':
         return <ContactPage />;

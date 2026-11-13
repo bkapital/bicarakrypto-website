@@ -111,6 +111,11 @@ export const Footer: React.FC = () => {
                   Pakej Combo CAB + KITA
                 </Link>
               </li>
+              <li>
+                <Link to="/beli-jual-kripto" className="hover:text-white transition-colors">
+                  Platform Kripto
+                </Link>
+              </li>
             </ul>
           </div>
 

@@ -1,26 +1,38 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { CONFIG, ExchangePlatformItem } from '../config';
-import { Link, useRouter } from '../router';
+import { CONFIG } from '../config';
+import { Link } from '../router';
 import { 
   Search, 
   Check, 
-  Copy, 
-  ExternalLink, 
-  MoreVertical, 
-  Share2, 
-  Play, 
-  Zap, 
   AlertTriangle, 
   X, 
-  HelpCircle, 
   SlidersHorizontal, 
   GraduationCap,
+  HelpCircle,
   Info 
 } from 'lucide-react';
 
 import PlatformCard from '../components/PlatformCard';
+import { SemakPlatformSection } from '../components/SemakPlatformSection';
 
-type CategoryFilterKey = 'Semua' | 'berdaftar' | 'antarabangsa' | 'bot' | 'copytrade' | 'perpdex' | 'terminal' | 'tools';
+function getScBadgeForPlatform(id: string): { text: string; variant: 'mint' | 'muted' } | undefined {
+  switch (id) {
+    case 'luno':
+    case 'hata':
+      return { text: '✓ Berdaftar dengan SC', variant: 'mint' };
+    case 'bybit':
+      return { text: 'Telah dikeluarkan dari Senarai Amaran SC (Apr 2026)', variant: 'muted' };
+    case 'gate':
+      return { text: 'Tidak berdaftar di Malaysia', variant: 'muted' };
+    case 'gmgn':
+    case 'fomo':
+    case 'tradingview':
+    default:
+      return undefined;
+  }
+}
+
+type CategoryFilterKey = 'Semua' | 'berdaftar' | 'antarabangsa' | 'terminal' | 'tools';
 type SortOption = 'semua' | 'az' | 'ganjaran';
 
 const CATEGORY_MAP: Record<
@@ -39,32 +51,14 @@ const CATEGORY_MAP: Record<
     sectionName: 'EXCHANGE ANTARABANGSA',
     desc: 'Pilihan Coin yang banyak dengan pelbagai fungsi trading. Sesuai untuk yang mempunyai asas trading atau yang berpengalaman.',
   },
-  bot: {
-    num: '03',
-    label: 'Bot Trading',
-    sectionName: 'BOT TRADING',
-    desc: 'Automasikan trading dengan menggunakan Bot mengikut strategi',
-  },
-  copytrade: {
-    num: '04',
-    label: 'Copy Trade',
-    sectionName: 'COPY TRADE',
-    desc: 'Cari dan tiru posisi trader berpengalaman secara automatik',
-  },
-  perpdex: {
-    num: '05',
-    label: 'Perp DEX',
-    sectionName: 'PERP DEX',
-    desc: 'Trading Kontrak Crypto Perpetual terus di atas Blockchain tanpa perantara/broker. Hanya perlu gunakan wallet Kripto',
-  },
   terminal: {
-    num: '06',
+    num: '03',
     label: 'Terminal Trading',
     sectionName: 'TERMINAL TRADING',
     desc: 'Trading Crypto terus di atas Blockchain tanpa perantara/broker. Hanya perlu gunakan wallet Kripto',
   },
   tools: {
-    num: '07',
+    num: '04',
     label: 'Tools',
     sectionName: 'TOOLS',
     desc: 'Perisian yang berkaitan dengan Trading Kripto',
@@ -72,7 +66,6 @@ const CATEGORY_MAP: Record<
 };
 
 export const ExchangePage: React.FC = () => {
-  const { navigate } = useRouter();
   const searchInputRef = useRef<HTMLInputElement>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);
 
@@ -85,21 +78,29 @@ export const ExchangePage: React.FC = () => {
   // Mobile Filter Sheet State
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
-  // Active Menu / Dropdown per card
-  const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+  // Semak Platform trigger from PlatformCard pills
+  const [semakSearchTrigger, setSemakSearchTrigger] = useState<{ query: string; nonce: number } | null>(null);
 
-  // Detail Modal (Cara Claim, Syarat, FAQ)
-  const [activeModalPlatform, setActiveModalPlatform] = useState<ExchangePlatformItem | null>(null);
-
-  // Toast Notification
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-
-  const showToast = (msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => {
-      setToastMessage(null);
-    }, 2800);
+  const handleScBadgeClick = (platformName: string) => {
+    setSemakSearchTrigger({ query: platformName, nonce: Date.now() });
+    const el = document.getElementById('semak-platform');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
+
+  // Scroll to #semak-platform on mount if hash is present
+  useEffect(() => {
+    if (window.location.hash === '#semak-platform') {
+      const timer = setTimeout(() => {
+        const el = document.getElementById('semak-platform');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 120);
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   // Keyboard shortcut "/" to focus search
   useEffect(() => {
@@ -114,22 +115,12 @@ export const ExchangePage: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // Close card 3-dot menus on outside click
-  useEffect(() => {
-    const handleClickOutside = () => setActiveMenuId(null);
-    window.addEventListener('click', handleClickOutside);
-    return () => window.removeEventListener('click', handleClickOutside);
-  }, []);
-
   // Category counts
   const categoryCounts = useMemo(() => {
     return {
       Semua: CONFIG.platforms.length,
       berdaftar: CONFIG.platforms.filter((p) => p.category === 'berdaftar').length,
       antarabangsa: CONFIG.platforms.filter((p) => p.category === 'antarabangsa').length,
-      bot: CONFIG.platforms.filter((p) => p.category === 'bot').length,
-      copytrade: CONFIG.platforms.filter((p) => p.category === 'copytrade').length,
-      perpdex: CONFIG.platforms.filter((p) => p.category === 'perpdex').length,
       terminal: CONFIG.platforms.filter((p) => p.category === 'terminal').length,
       tools: CONFIG.platforms.filter((p) => p.category === 'tools').length,
     };
@@ -178,44 +169,6 @@ export const ExchangePage: React.FC = () => {
     });
   }, [searchQuery, selectedCategory, filterPemula, sortBy]);
 
-  // Copy referral code
-  const handleCopyCode = (code: string) => {
-    if (!code) return;
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(code);
-      showToast('Kod disalin!');
-    }
-  };
-
-  // Copy link from 3-dot menu
-  const handleCopyLink = (p: ExchangePlatformItem) => {
-    const link = p.affiliateLink || (CONFIG.exchanges as Record<string, string>)[p.id] || window.location.href;
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(link);
-      showToast('Pautan disalin!');
-    }
-    setActiveMenuId(null);
-  };
-
-  // Share
-  const handleShare = async (p: ExchangePlatformItem) => {
-    const link = p.affiliateLink || (CONFIG.exchanges as Record<string, string>)[p.id] || window.location.href;
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `Daftar ${p.name} - Bicara Krypto`,
-          text: `Daftar ${p.name} dengan rujukan Bicara Krypto:`,
-          url: link,
-        });
-      } catch {
-        handleCopyLink(p);
-      }
-    } else {
-      handleCopyLink(p);
-    }
-    setActiveMenuId(null);
-  };
-
   // Banner 1 action: filter berlesen Malaysia and scroll to toolbar
   const handleBannerPemula = () => {
     setSelectedCategory('berdaftar');
@@ -248,32 +201,17 @@ export const ExchangePage: React.FC = () => {
   const categoryOrder: Array<Exclude<CategoryFilterKey, 'Semua'>> = [
     'berdaftar',
     'antarabangsa',
-    'bot',
-    'copytrade',
-    'perpdex',
     'terminal',
     'tools',
   ];
 
   return (
     <div className="space-y-12 sm:space-y-16 pb-28 pt-6">
-      {/* Toast Notification */}
-      {toastMessage && (
-        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-full bg-[#0B1430] border border-[#5CF2C0]/50 text-white font-medium text-xs sm:text-sm shadow-2xl flex items-center gap-2 animate-fadeIn">
-          <Check className="w-4 h-4 text-[#5CF2C0]" />
-          <span>{toastMessage}</span>
-        </div>
-      )}
 
       {/* ================================================== */}
       {/* A. PAGE HEADER */}
       {/* ================================================== */}
       <section className="max-w-[1280px] w-full mx-auto px-4 sm:px-6 lg:px-8 text-center pt-2 pb-1 space-y-2.5">
-        <div>
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider border border-white/10 bg-white/[0.04] text-white/50">
-            Akan Datang
-          </span>
-        </div>
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-[-0.02em] leading-tight">
           Direktori Platform & Exchange Kripto
         </h1>
@@ -399,7 +337,7 @@ export const ExchangePage: React.FC = () => {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Cari: luno, binance, ETF, DEX, bot..."
+                placeholder="Cari: luno, bybit, gmgn…"
                 className="w-full min-h-[44px] pl-11 pr-14 py-2.5 rounded-full bg-[#0B1430] border border-white/[0.08] text-white placeholder-white/40 text-sm focus:outline-none focus:border-[#5CF2C0] transition-colors"
               />
               {/* Keyboard Shortcut Hint / Clear button */}
@@ -594,7 +532,9 @@ export const ExchangePage: React.FC = () => {
                         iconWhite={platform.iconWhite}
                         avatarStyle={platform.avatarStyle}
                         featured={platform.id === 'luno' || platform.featured}
-                        onOpenDetails={() => setActiveModalPlatform(platform)}
+                        showLevelBadge={platform.id === 'luno' || platform.id === 'hata'}
+                        scBadge={getScBadgeForPlatform(platform.id)}
+                        onScBadgeClick={() => handleScBadgeClick(platform.name)}
                       />
                     ))}
                   </div>
@@ -652,7 +592,9 @@ export const ExchangePage: React.FC = () => {
                     iconWhite={platform.iconWhite}
                     avatarStyle={platform.avatarStyle}
                     featured={platform.id === 'luno' || platform.featured}
-                    onOpenDetails={() => setActiveModalPlatform(platform)}
+                    showLevelBadge={platform.id === 'luno' || platform.id === 'hata'}
+                    scBadge={getScBadgeForPlatform(platform.id)}
+                    onScBadgeClick={() => handleScBadgeClick(platform.name)}
                   />
                 );
               })}
@@ -660,6 +602,11 @@ export const ExchangePage: React.FC = () => {
           </div>
         )}
       </section>
+
+      {/* ================================================== */}
+      {/* SEMAK PLATFORM SECTION                             */}
+      {/* ================================================== */}
+      <SemakPlatformSection externalSearch={semakSearchTrigger} />
 
       {/* ================================================== */}
       {/* F. CTA BAND (bottom - two dark cards side by side) */}
@@ -822,7 +769,7 @@ export const ExchangePage: React.FC = () => {
                           : 'bg-[#060B1E] text-white/70 border-white/[0.08]'
                       }`}
                     >
-                      {CATEGORY_MAP[catKey].label}
+                      {CATEGORY_MAP[catKey].label} ({categoryCounts[catKey] || 0})
                     </button>
                   ))}
                 </div>
@@ -868,247 +815,6 @@ export const ExchangePage: React.FC = () => {
           </div>
         </div>
       )}
-
-      {/* Detail Modal: Cara Claim · Syarat · FAQ */}
-      {activeModalPlatform && (
-        <PlatformDetailModal
-          platform={activeModalPlatform}
-          onClose={() => setActiveModalPlatform(null)}
-          onCopyCode={handleCopyCode}
-        />
-      )}
-    </div>
-  );
-};
-
-/* ================================================== */
-/* DETAIL MODAL: Cara Claim · Syarat · FAQ */
-/* ================================================== */
-interface PlatformDetailModalProps {
-  platform: ExchangePlatformItem;
-  onClose: () => void;
-  onCopyCode: (code: string) => void;
-}
-
-const PlatformDetailModal: React.FC<PlatformDetailModalProps> = ({
-  platform,
-  onClose,
-  onCopyCode,
-}) => {
-  const [activeTab, setActiveTab] = useState<'claim' | 'syarat' | 'faq'>('claim');
-
-  const targetLink =
-    platform.affiliateLink || (CONFIG.exchanges as Record<string, string>)[platform.id] || '#';
-
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn"
-      onClick={onClose}
-    >
-      <div
-        className="relative w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-[20px] bg-[#0B1430] border border-white/[0.08] p-6 sm:p-8 shadow-2xl space-y-6"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Close Button */}
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute top-5 right-5 p-2 rounded-lg bg-[#060B1E] text-white/60 hover:text-white border border-white/[0.08] hover:border-white/20 transition-colors cursor-pointer"
-        >
-          <X className="w-4 h-4" />
-        </button>
-
-        {/* Header */}
-        <div className="flex items-center gap-3.5">
-          <div
-            className={`w-12 h-12 rounded-full border border-white/10 ${platform.avatarStyle === 'tile' ? 'p-0 overflow-hidden' : 'p-2 bg-white'} flex items-center justify-center shrink-0 shadow-inner`}
-            style={{
-              boxShadow: `0 0 16px ${platform.brandColor}25`,
-            }}
-          >
-            <img
-              src={platform.iconColor}
-              alt={platform.name}
-              referrerPolicy="no-referrer"
-              loading="lazy"
-              onError={(e) => {
-                const img = e.currentTarget;
-                if (!img.dataset.retried) {
-                  img.dataset.retried = '1';
-                  img.src = img.src.replace('https://googleusercontent.com', 'https://lh3.googleusercontent.com').replace(/\/$/, '');
-                } else {
-                  img.style.display = 'none';
-                }
-              }}
-              className={`w-full h-full ${platform.avatarStyle === 'tile' ? 'object-cover' : 'object-contain'}`}
-            />
-          </div>
-          <div>
-            <div className="text-[11px] uppercase tracking-[0.08em] text-white/50 font-medium">
-              Panduan Pendaftaran & Ganjaran
-            </div>
-            <h3 className="text-xl font-bold text-white tracking-[-0.02em]">
-              {platform.name}
-            </h3>
-          </div>
-        </div>
-
-        {/* Offer line in mint */}
-        {(platform.reward || platform.description) && (
-          <div className="p-3.5 rounded-xl bg-[#5CF2C0]/10 border border-[#5CF2C0]/25 text-[#5CF2C0] font-semibold text-xs sm:text-sm leading-relaxed">
-            {platform.reward || platform.description}
-          </div>
-        )}
-
-        {/* ✓ Steps (Conditions moved from card front) */}
-        {platform.conditions && platform.conditions.length > 0 && (
-          <div className="p-4 rounded-xl bg-[#060B1E] border border-white/[0.08] space-y-2">
-            <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-white/50">
-              Syarat Utama Untuk Claim:
-            </div>
-            <ul className="space-y-1.5 text-xs text-white/85">
-              {platform.conditions.map((c, i) => (
-                <li key={i} className="flex items-start gap-2">
-                  <span className="text-[#5CF2C0] font-bold">✓</span>
-                  <span className="leading-relaxed">{c}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {/* Tab buttons */}
-        <div className="flex items-center gap-2 border-b border-white/[0.08] pb-2 text-xs">
-          <button
-            type="button"
-            onClick={() => setActiveTab('claim')}
-            className={`pb-1.5 font-medium transition-colors cursor-pointer ${
-              activeTab === 'claim'
-                ? 'border-b-2 border-[#5CF2C0] text-white font-semibold'
-                : 'text-white/50 hover:text-white'
-            }`}
-          >
-            Cara Claim
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab('syarat')}
-            className={`pb-1.5 font-medium transition-colors cursor-pointer ${
-              activeTab === 'syarat'
-                ? 'border-b-2 border-[#5CF2C0] text-white font-semibold'
-                : 'text-white/50 hover:text-white'
-            }`}
-          >
-            Syarat & Terma
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab('faq')}
-            className={`pb-1.5 font-medium transition-colors cursor-pointer ${
-              activeTab === 'faq'
-                ? 'border-b-2 border-[#5CF2C0] text-white font-semibold'
-                : 'text-white/50 hover:text-white'
-            }`}
-          >
-            FAQ
-          </button>
-        </div>
-
-        {/* Tab Content */}
-        <div className="space-y-4 text-xs text-white/70 leading-relaxed min-h-[140px]">
-          {activeTab === 'claim' && (
-            <div className="space-y-3">
-              {platform.claimSteps && platform.claimSteps.length > 0 ? (
-                <ol className="space-y-2 list-decimal list-inside text-white/80">
-                  {platform.claimSteps.map((step, idx) => (
-                    <li key={idx} className="leading-relaxed">
-                      {step}
-                    </li>
-                  ))}
-                </ol>
-              ) : (
-                <div className="p-4 rounded-lg bg-[#060B1E] border border-white/[0.06] space-y-2">
-                  <p className="font-semibold text-white">Langkah Permulaan:</p>
-                  <ol className="space-y-1.5 list-decimal list-inside text-white/70">
-                    <li>Tekan butang pendaftaran rasmi di bawah.</li>
-                    <li>
-                      {platform.code ? `Gunakan kod rujukan ${platform.code} semasa mendaftar.` : 'Lengkapkan pendaftaran akaun melalui pautan rasmi.'}
-                    </li>
-                    <li>Selesaikan pengesahan identiti (KYC) jika diperlukan.</li>
-                    <li>Deposit atau mulakan dagangan pertama mengikut terma promosi.</li>
-                  </ol>
-                </div>
-              )}
-            </div>
-          )}
-
-          {activeTab === 'syarat' && (
-            <div className="space-y-3">
-              {platform.terms && platform.terms.length > 0 ? (
-                <ul className="space-y-2 list-disc list-inside text-white/80">
-                  {platform.terms.map((t, idx) => (
-                    <li key={idx} className="leading-relaxed">
-                      {t}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <div className="p-4 rounded-lg bg-[#060B1E] border border-white/[0.06] space-y-1.5">
-                  <p className="font-semibold text-white">Terma Umum:</p>
-                  <p>
-                    Ganjaran dan promosi tertakluk kepada budi bicara pihak {platform.name}. Syarat kelayakan mungkin memerlukan deposit minimum atau volum dagangan tertentu dalam tempoh terhad. Sila rujuk laman terma rasmi platform sebelum membuat transaksi.
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
-
-          {activeTab === 'faq' && (
-            <div className="space-y-3">
-              {platform.faq && platform.faq.length > 0 ? (
-                platform.faq.map((item, idx) => (
-                  <div key={idx} className="p-3 rounded-lg bg-[#060B1E] border border-white/[0.06] space-y-1">
-                    <p className="font-semibold text-white">{item.q}</p>
-                    <p className="text-white/60">{item.a}</p>
-                  </div>
-                ))
-              ) : (
-                <div className="p-4 rounded-lg bg-[#060B1E] border border-white/[0.06] space-y-1.5">
-                  <p className="font-semibold text-white">Soalan Lazim:</p>
-                  <p className="text-white/60">
-                    Ada pertanyaan lanjut mengenai pendaftaran {platform.name}? Anda boleh bertanyakan terus dalam komuniti Telegram Bicara Krypto atau hubungi sokongan teknikal platform.
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Code & CTA button */}
-        <div className="pt-2 border-t border-white/[0.08] space-y-3">
-          {platform.code && (
-            <div
-              onClick={() => platform.code && onCopyCode(platform.code)}
-              className="p-3 rounded-[12px] bg-[#060B1E] border border-white/[0.08] flex items-center justify-between cursor-pointer hover:border-white/20 transition-colors"
-            >
-              <div>
-                <span className="text-[10px] text-white/40 block">KOD RUJUKAN:</span>
-                <span className="font-mono text-sm font-bold text-white">{platform.code}</span>
-              </div>
-              <span className="text-xs font-semibold text-[#5CF2C0]">⧉ SALIN KOD</span>
-            </div>
-          )}
-
-          <a
-            href={targetLink}
-            target="_blank"
-            rel="sponsored noopener"
-            className="w-full h-[48px] rounded-full bg-[#5CF2C0] text-[#060B1E] font-semibold text-sm flex items-center justify-center hover:opacity-95 transition-opacity"
-          >
-            <span>Daftar {platform.name}</span>
-          </a>
-        </div>
-      </div>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 type Platform = {
   id: string;
@@ -15,7 +15,9 @@ type Platform = {
   iconWhite?: string;
   avatarStyle?: "tile";
   featured?: boolean;
-  onOpenDetails?: () => void;
+  showLevelBadge?: boolean;
+  scBadge?: { text: string; variant: 'mint' | 'muted' };
+  onScBadgeClick?: () => void;
 };
 
 function fallback(e: React.SyntheticEvent<HTMLImageElement>) {
@@ -29,30 +31,14 @@ function fallback(e: React.SyntheticEvent<HTMLImageElement>) {
 }
 
 export default function PlatformCard(p: Platform) {
-  const [copied, setCopied] = useState(false);
-
-  const copy = async () => {
-    if (!p.code) return;
-    try {
-      await navigator.clipboard.writeText(p.code);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch {}
-  };
-
   const brandColor = p.brandColor || "#1F5BFF";
 
-  const levelLabel =
-    p.level === "pemula"
-      ? "PEMULA"
-      : p.level === "risikoTinggi"
-      ? "RISIKO TINGGI"
-      : "BERPENGALAMAN";
+  const showPemulaBadge =
+    p.showLevelBadge ?? (p.id === "luno" || p.id === "hata");
 
-  const steps =
-    p.conditions && p.conditions.length > 0
-      ? p.conditions.slice(0, 3)
-      : ["Daftar akaun", "Sahkan identiti (KYC)"];
+  const useWhiteBgLogo =
+    p.id === "hata" || p.id === "fomo" || p.id === "tradingview" || p.id === "bybit";
+  const bgLogoSrc = useWhiteBgLogo && p.iconWhite ? p.iconWhite : p.iconColor;
 
   return (
     <div className="pc-card group" style={{ ["--b" as any]: brandColor }}>
@@ -62,7 +48,7 @@ export default function PlatformCard(p: Platform) {
         <div className="pc-coin">
           <div className="pc-inner">
             <img
-              src={p.iconColor}
+              src={bgLogoSrc}
               alt=""
               referrerPolicy="no-referrer"
               loading="lazy"
@@ -71,55 +57,55 @@ export default function PlatformCard(p: Platform) {
           </div>
         </div>
 
-        {/* Level Badge in top right */}
-        <div className="pc-top">
-          <span className={"pc-pill" + (p.level === "risikoTinggi" ? " risk" : "")}>
-            {levelLabel}
-          </span>
-        </div>
+        {/* Level Badge in top right (PEMULA on Luno & HATA only) */}
+        {showPemulaBadge && (
+          <div className="pc-top">
+            <span className="pc-pill">
+              PEMULA
+            </span>
+          </div>
+        )}
 
         {/* Brand Avatar, Category Label, Name & Offer */}
         <div className="pc-txt">
-          <div className={"pc-av" + (p.avatarStyle === "tile" ? " tile" : "")}>
-            <img
-              src={p.iconColor}
-              alt={p.name}
-              referrerPolicy="no-referrer"
-              loading="lazy"
-              onError={fallback}
-            />
-          </div>
+          <div
+            className="pc-av"
+            role="img"
+            aria-label={p.name}
+            style={{
+              backgroundColor: "#FFFFFF",
+              backgroundImage: `url('${p.iconColor}')`,
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "center",
+              backgroundSize: p.id === "hata" || p.id === "fomo" ? "100%" : "68%",
+            }}
+          />
           {p.categoryLabel && <div className="pc-cat">{p.categoryLabel}</div>}
           <div className="pc-name">{p.name}</div>
-          <div className="pc-rw">{p.reward || p.description}</div>
+          {p.scBadge && (
+            <div>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  p.onScBadgeClick?.();
+                }}
+                className={
+                  p.scBadge.variant === "mint"
+                    ? "inline-flex items-center px-2 py-0.5 rounded-full text-[10.5px] font-medium bg-[#5CF2C0]/15 text-[#5CF2C0] border border-[#5CF2C0]/30 hover:bg-[#5CF2C0]/25 transition-colors mb-1.5 cursor-pointer text-left"
+                    : "inline-flex items-center px-2 py-0.5 rounded-full text-[10.5px] font-medium bg-white/[0.06] text-white/60 border border-white/10 hover:border-white/25 hover:text-white/85 transition-colors mb-1.5 cursor-pointer text-left"
+                }
+              >
+                {p.scBadge.text}
+              </button>
+            </div>
+          )}
+          {p.reward ? <div className="pc-rw">{p.reward}</div> : null}
         </div>
       </div>
 
       {/* Bottom Details Panel */}
       <div className="pc-det">
-        {/* Checkmark steps */}
-        <div className="space-y-1.5">
-          {steps.map((st, i) => (
-            <div key={i} className="pc-li">
-              ✓ {st}
-            </div>
-          ))}
-        </div>
-
-        {/* Referral Code Box */}
-        {Boolean(p.code && p.code.trim()) && (
-          <button
-            type="button"
-            className="pc-code"
-            onClick={copy}
-            title="Salin kod rujukan"
-          >
-            <span className="k">KOD</span>
-            <span className="v">{p.code}</span>
-            <span className="c">{copied ? "Disalin!" : "⧉ Salin"}</span>
-          </button>
-        )}
-
         {/* Register CTA Button */}
         <a
           className={"pc-btn" + (p.featured ? " feat" : "")}
@@ -129,16 +115,6 @@ export default function PlatformCard(p: Platform) {
         >
           <span>Daftar {p.name}</span>
         </a>
-
-        {/* Modal trigger: Cara claim · Syarat · FAQ */}
-        <button
-          type="button"
-          className="pc-foot"
-          onClick={p.onOpenDetails}
-        >
-          <span>Cara claim · Syarat · FAQ</span>
-          <span>→</span>
-        </button>
       </div>
     </div>
   );

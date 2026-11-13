@@ -17,7 +17,7 @@ export interface TestimonialItem {
 export interface ExchangePlatformItem {
   id: string;
   name: string;
-  category: "berdaftar" | "antarabangsa" | "bot" | "copytrade" | "perpdex" | "terminal" | "tools";
+  category: "berdaftar" | "antarabangsa" | "terminal" | "tools";
   level: "pemula" | "berpengalaman" | "risikoTinggi";
   brandColor: string;
   iconColor: string;
@@ -293,12 +293,12 @@ export const PLATFORMS: ExchangePlatformItem[] = [
     level: "pemula",
     brandColor: "#1F5BFF",
     description: "Exchange berdaftar di Malaysia. Beli Bitcoin terus dengan RM.",
-    affiliateLink: "https://www.luno.com/invite/SDQ5G",
+    affiliateLink: "https://www.luno.com/wallet/rewards/enter_code?code=SDQ5G",
     code: "SDQ5G",
-    iconColor: "https://googleusercontent.com/d/1ULvTumhsUJduuX3U7fVJaDrwfmK4evoI/",
+    iconColor: "https://lh3.googleusercontent.com/d/1ULvTumhsUJduuX3U7fVJaDrwfmK4evoI",
     iconWhite: "https://googleusercontent.com/d/1d78jDCwkZp1TRaKfBO8gCGpBEdnTLJ_s/",
     featured: true,
-    reward: "Beli RM250 kripto, dapat RM50 Bitcoin percuma",
+    reward: "Deposit RM250, dapat Bitcoin RM25 percuma",
     conditions: ["Deposit minimum RM250", "Beli apa-apa kripto dalam akaun", "Pegang selama 30 hari"],
     claimSteps: ["Daftar akaun Luno dengan kod SDQ5G", "Lengkapkan pengesahan identiti (KYC)", "Deposit RM250 melalui FPX", "Beli kripto pilihan anda untuk dapatkan RM50 BTC"],
     terms: ["Tertakluk kepada terma & syarat Luno Malaysia", "Hanya sah untuk pengguna baharu"],
@@ -317,10 +317,10 @@ export const PLATFORMS: ExchangePlatformItem[] = [
     description: "Exchange berdaftar di Malaysia dengan yuran rendah.",
     affiliateLink: "https://hata.io/signup?ref=HAA6052",
     code: "HAA6052",
-    iconColor: "https://googleusercontent.com/d/1Pi5zw2Nei8OYfVK4kGG9nZQ5MF5NuHx1/",
-    iconWhite: "https://googleusercontent.com/d/1XV3T2m6_w2cNc1Nv0SAThYj1Gc3F-3eU/",
+    iconColor: "https://lh3.googleusercontent.com/d/1Pi5zw2Nei8OYfVK4kGG9nZQ5MF5NuHx1",
+    iconWhite: "https://lh3.googleusercontent.com/d/1XV3T2m6_w2cNc1Nv0SAThYj1Gc3F-3eU",
     featured: false,
-    reward: "Diskaun yuran dagangan dengan kod rujukan",
+    reward: "Rebat 10% trading fees",
     conditions: ["Daftar akaun baharu", "Lengkapkan KYC"],
     claimSteps: ["Tekan pautan daftar HATA", "Masukkan kod rujukan HAA6052", "Selesaikan KYC dan mula deposit"],
     terms: ["Sah untuk warganegara dan pemastautin Malaysia"],
@@ -337,75 +337,15 @@ export const PLATFORMS: ExchangePlatformItem[] = [
     description: "Exchange antarabangsa popular untuk trading spot dan derivatif.",
     affiliateLink: "https://partner.bybitglobal.com/b/bicarakrypto",
     code: "",
-    iconColor: "https://googleusercontent.com/d/1c_lDg-rckRYX0BcqhlaVhPjGcQ86Z97G/",
-    iconWhite: "https://googleusercontent.com/d/16kog1kG8K1faUsPWNP-GGUCpYUOr2cYf/",
+    iconColor: "https://lh3.googleusercontent.com/d/1c_lDg-rckRYX0BcqhlaVhPjGcQ86Z97G",
+    iconWhite: "https://lh3.googleusercontent.com/d/16kog1kG8K1faUsPWNP-GGUCpYUOr2cYf",
     featured: false,
-    reward: "Akses bonus eksklusif komuniti Bicara Krypto",
+    reward: "Ganjaran Sehingga USD 100 + TradFi USD 5,030",
     conditions: ["Daftar melalui link rujukan", "Deposit & capai volum trading"],
     claimSteps: ["Daftar menggunakan link Bicara Krypto", "Buat deposit pertama", "Tuntut ganjaran di Rewards Hub"],
     terms: ["Bonus dagangan tertakluk kepada volum trading"],
     faq: [
       { q: "Bolehkah saya guna Bybit dari Malaysia?", a: "Bybit adalah bursa antarabangsa yang boleh diakses untuk pengguna berpengalaman dengan pelbagai instrumen canggih." }
-    ]
-  },
-  {
-    id: "binance",
-    name: "Binance",
-    category: "antarabangsa",
-    level: "berpengalaman",
-    brandColor: "#F0B90B",
-    description: "Exchange terbesar dunia dengan pilihan coin yang sangat banyak.",
-    affiliateLink: "https://www.binance.info/activity/referral-entry/CPA/together-v4?hl=en&ref=CPA_00J27B927R",
-    code: "CPA_00J27B927R",
-    iconColor: "https://googleusercontent.com/d/1LkvVC6dvuwADoIG7uZB0Y7Jawx3zAc4U/",
-    iconWhite: "https://googleusercontent.com/d/1VrMrDTjmH55ONNRz6oDicbNMCRHj1dfE/",
-    featured: false,
-    reward: "Voucher rebat yuran dagangan 100 USDT",
-    conditions: ["Deposit $50 dalam tempoh 14 hari pendaftaran"],
-    claimSteps: ["Daftar dengan kod CPA_00J27B927R", "Sahkan KYC", "Deposit minima $50"],
-    terms: ["Voucher sah selama tempoh promosi"],
-    faq: [
-      { q: "Berapa banyak coin di Binance?", a: "Binance mempunyai lebih 350 mata wang kripto dan kecairan tertinggi di dunia." }
-    ]
-  },
-  {
-    id: "mexc",
-    name: "MEXC",
-    category: "antarabangsa",
-    level: "berpengalaman",
-    brandColor: "#0246FF",
-    description: "Exchange dengan banyak token baru dan yuran trading rendah.",
-    affiliateLink: "https://www.mexc.co/register?inviteCode=mexc-bicarak",
-    code: "mexc-bicarak",
-    iconColor: "https://googleusercontent.com/d/1V_RnBpDNUqF8fK_u9RkMr9iqkqQWANkB/",
-    iconWhite: "https://googleusercontent.com/d/1kbOm0SGSyvVGBT-yjLBjORNeLlNNmAe8/",
-    featured: false,
-    reward: "Yuran dagangan spot 0% & bonus niaga hadapan",
-    conditions: ["Daftar akaun baharu melalui pautan Bicara Krypto"],
-    claimSteps: ["Daftar akaun MEXC", "Masukkan kod rujukan mexc-bicarak", "Nikmati yuran terendah pasaran"],
-    terms: ["Tertakluk kepada terma MEXC"],
-    faq: [
-      { q: "Mengapa ramai guna MEXC?", a: "MEXC terkenal dengan penyenaraian token baharu terpantas serta yuran spot 0%." }
-    ]
-  },
-  {
-    id: "bitget",
-    name: "Bitget",
-    category: "antarabangsa",
-    level: "berpengalaman",
-    brandColor: "#1DA2B4",
-    description: "Exchange antarabangsa dengan ciri copy trading.",
-    affiliateLink: "https://partner.bitgetapp.com/bg/F7WAGD",
-    code: "F7WAGD",
-    iconColor: "https://googleusercontent.com/d/1RnAsbM1w1t1kHXuSfyTLR2DRycCI4fwQ/",
-    iconWhite: "https://googleusercontent.com/d/1CMfNEd3J4zsO6GCsZ3MrxuDoUh-fSUjn/",
-    featured: false,
-    reward: "Akses ciri Copy Trading terkemuka & bonus alu-aluan",
-    conditions: ["Daftar dengan kod F7WAGD"],
-    claimSteps: ["Daftar di Bitget", "Sahkan identiti", "Aktifkan akaun copy trading"],
-    terms: ["Pengurusan risiko modal adalah tanggungjawab pedagang"],
-    faq: [
-      { q: "Bagaimana copy trading berfungsi?", a: "Anda boleh memilih pedagang berprestasi tinggi dan sistem akan menyalin posisi dagangan mereka secara automatik." }
     ]
   },
   {
@@ -417,75 +357,15 @@ export const PLATFORMS: ExchangePlatformItem[] = [
     description: "Exchange lama dengan pilihan altcoin yang luas.",
     affiliateLink: "https://www.gate.io/signup/BgASAV5W?ref_type=103",
     code: "BgASAV5W",
-    iconColor: "https://googleusercontent.com/d/105SFme1vcBKIIYidb4f24Td_L2vPmkDe/",
+    iconColor: "https://lh3.googleusercontent.com/d/105SFme1vcBKIIYidb4f24Td_L2vPmkDe",
     iconWhite: "https://googleusercontent.com/d/1OVshnxrT92IxFNt5VuC6jAC1LUIx3iDA/",
     featured: false,
-    reward: "Akses kepada ribuan altcoin awal",
+    reward: "Baucar posisi USD 185 sebaik daftar",
     conditions: ["Daftar dengan kod BgASAV5W"],
     claimSteps: ["Buka akaun Gate.io", "Lengkapkan pengesahan akaun", "Mula teroka ribuan pilihan altcoin"],
     terms: ["Sila pastikan keselamatan akaun dengan 2FA"],
     faq: [
       { q: "Berapa lama Gate.io beroperasi?", a: "Gate.io diasaskan sejak tahun 2013 dan merupakan antara bursa tertua dalam industri kripto." }
-    ]
-  },
-  {
-    id: "bingx",
-    name: "BingX",
-    category: "antarabangsa",
-    level: "berpengalaman",
-    brandColor: "#2A63F6",
-    description: "Exchange antarabangsa dengan ciri copy trading dan futures.",
-    affiliateLink: "https://bingx.com/invite/XX44WJ",
-    code: "XX44WJ",
-    iconColor: "https://googleusercontent.com/d/1DUPxug1bIMGxALtWIsAd1WeMSu5wBLRv/",
-    iconWhite: "https://googleusercontent.com/d/1ob1FlMofctyQ4AsIyI2fVpMl0gKeW0AR/",
-    featured: false,
-    reward: "Pakej ganjaran alu-aluan dan rebat dagangan",
-    conditions: ["Daftar dengan kod XX44WJ"],
-    claimSteps: ["Daftar akaun BingX", "Lengkapkan tugas pemula di Reward Center"],
-    terms: ["Tertakluk kepada syarat BingX"],
-    faq: [
-      { q: "Apakah keistimewaan BingX?", a: "Antara muka mesra pengguna, sokongan integrasi terus, dan komuniti copy trading yang luas." }
-    ]
-  },
-  {
-    id: "pionex",
-    name: "Pionex",
-    category: "bot",
-    level: "berpengalaman",
-    brandColor: "#E26B2B",
-    description: "Exchange dengan bot trading terbina dalam (grid, DCA) dan copy trading.",
-    affiliateLink: "https://accounts.pionex.com/en/signUp?r=HEQl1ebP",
-    code: "HEQl1ebP",
-    iconColor: "https://googleusercontent.com/d/1r19vy3-N2ZUSJbYnKwStzetxvImActdv/",
-    iconWhite: "https://googleusercontent.com/d/1ieblaPMvCOmv1oeEDdRtooHX8jxce2xW/",
-    featured: false,
-    reward: "Akses 16 jenis bot trading automatik percuma",
-    conditions: ["Daftar dengan kod HEQl1ebP"],
-    claimSteps: ["Daftar akaun Pionex", "Pilih jenis bot (Grid Trading, Martingale, dsb)", "Tetapkan julat harga dan aktifkan"],
-    terms: ["Bot beroperasi mengikut algoritma berdisiplin tanpa emosi"],
-    faq: [
-      { q: "Adakah bot Pionex ada bayaran bulanan?", a: "Tiada, semua bot terbina dalam adalah percuma, hanya yuran transaksi standard yang sangat rendah." }
-    ]
-  },
-  {
-    id: "hyperliquid",
-    name: "Hyperliquid",
-    category: "perpdex",
-    level: "risikoTinggi",
-    brandColor: "#50E3C2",
-    description: "DEX perpetual pantas tanpa perantara.",
-    affiliateLink: "https://app.hyperliquid.xyz/join/BICARAKRYPTO",
-    code: "BICARAKRYPTO",
-    iconColor: "https://googleusercontent.com/d/1-Y5AUnLTxZN9NLwr37ill43aUpq_FpRD/",
-    iconWhite: "https://googleusercontent.com/d/1khmO_wLDg_EY3JS11UncTXvjvd2AYFP4/",
-    featured: false,
-    reward: "Diskaun 4% yuran transaksi perpetual on-chain",
-    conditions: ["Guna kod rujukan BICARAKRYPTO semasa menyambung wallet"],
-    claimSteps: ["Sambungkan Web3 Wallet", "Masukkan kod rujukan BICARAKRYPTO", "Deposit USDC di rangkaian Arbitrum"],
-    terms: ["Self-custody penuh. Urus private key anda dengan selamat."],
-    faq: [
-      { q: "Mengapa Hyperliquid popular?", a: "Perp DEX terpantas berasaskan L1 khusus dengan buku pesanan on-chain sepenuhnya dan tiada yuran gas untuk transaksi." }
     ]
   },
   {
@@ -495,12 +375,12 @@ export const PLATFORMS: ExchangePlatformItem[] = [
     level: "risikoTinggi",
     brandColor: "#22C55E",
     description: "Terminal trading untuk cari dan trade token baru di Solana dan rangkaian lain.",
-    affiliateLink: "https://gmgn.ai/?ref=riFoiaxD&chain=sol",
+    affiliateLink: "https://gmgn.ai/r/LxGu0oO8",
     code: "riFoiaxD",
-    iconColor: "https://googleusercontent.com/d/1C5mu5kRljsRHUBcU3fQpsY5UcYZ-ySxv/",
+    iconColor: "https://lh3.googleusercontent.com/d/1C5mu5kRljsRHUBcU3fQpsY5UcYZ-ySxv",
     iconWhite: "https://googleusercontent.com/d/1yHIKllyhLdzSiZRbJYgm60FyAQqxTd3n/",
     featured: false,
-    reward: "Alat analisis aliran smart money masa nyata",
+    reward: "",
     conditions: ["Akses menggunakan kod riFoiaxD"],
     claimSteps: ["Buka pautan GMGN", "Sambungkan wallet atau gunakan bot Telegram GMGN", "Pantau dan laksana pesanan pantas"],
     terms: ["Perdagangan token baharu/memecoin membawa risiko kerugian tinggi."],
@@ -511,17 +391,17 @@ export const PLATFORMS: ExchangePlatformItem[] = [
   {
     id: "fomo",
     name: "FOMO",
-    category: "copytrade",
+    category: "terminal",
     level: "risikoTinggi",
     brandColor: "#8B5CF6",
     avatarStyle: "tile",
     description: "Aplikasi terminal trading dan copy trade terus dari wallet.",
-    affiliateLink: "https://fomo.family/r/bkr2026",
+    affiliateLink: "https://fomo.family/r/0xAsyraf",
     code: "bkr2026",
-    iconColor: "https://googleusercontent.com/d/1Bds0JmSbHkUTMgwihXknj1FdxHxe7Ggt/",
-    iconWhite: "https://googleusercontent.com/d/1SOJmKrfymMwX3DPmMzlRd3FV9I2BeILf/",
+    iconColor: "https://lh3.googleusercontent.com/d/1Bds0JmSbHkUTMgwihXknj1FdxHxe7Ggt",
+    iconWhite: "https://lh3.googleusercontent.com/d/1SOJmKrfymMwX3DPmMzlRd3FV9I2BeILf",
     featured: false,
-    reward: "Ciri menyalin transaksi trader on-chain terbaik terus dari wallet",
+    reward: "Jimat 10% trading fees",
     conditions: ["Daftar dengan kod jemputan bkr2026"],
     claimSteps: ["Buka pautan jemputan FOMO", "Masukkan kod bkr2026", "Pautkan wallet untuk mula copy trade on-chain"],
     terms: ["Sentiasa kawal saiz modal mengikut toleransi risiko peribadi."],
@@ -538,10 +418,10 @@ export const PLATFORMS: ExchangePlatformItem[] = [
     description: "Platform carta yang digunakan oleh trader di seluruh dunia, dan dalam kelas KITA.",
     affiliateLink: "https://www.tradingview.com/black-friday/?share_your_love=debonairCraft86352",
     code: "",
-    iconColor: "https://googleusercontent.com/d/1gNJD9WAEjZJMuuyUJCk6DB7NHzFxJf5M/",
-    iconWhite: "https://googleusercontent.com/d/1e1oZl5AemuXdOz7NFa_NbJYlh4a7DWhc/",
+    iconColor: "https://lh3.googleusercontent.com/d/1gNJD9WAEjZJMuuyUJCk6DB7NHzFxJf5M",
+    iconWhite: "https://lh3.googleusercontent.com/d/1e1oZl5AemuXdOz7NFa_NbJYlh4a7DWhc",
     featured: false,
-    reward: "Dapatkan diskaun langganan dan akses indikator profesional",
+    reward: "Diskaun USD 15 untuk pelan berbayar",
     conditions: ["Daftar melalui link rujukan Bicara Krypto"],
     claimSteps: ["Buka pautan TradingView", "Daftar akaun percuma", "Gunakan alat carta teknikal sama seperti diajar dalam kelas KITA"],
     terms: ["Boleh digunakan secara percuma dengan ciri asas lengkap."],
@@ -620,8 +500,13 @@ export const CONFIG = {
     link: "https://bicarakrypto.com/official-wallet",
   },
 
+  semakPlatform: {
+    dataCsvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vT4uEQVuORdiSZe-h7cpsGIY85kCJyOAIKyU8UeHyrFr5Mux8P8N_W2g82W1a02qLo5fFlJiH8rsEYG/pub?gid=24276265&single=true&output=csv",
+    settingsCsvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vT4uEQVuORdiSZe-h7cpsGIY85kCJyOAIKyU8UeHyrFr5Mux8P8N_W2g82W1a02qLo5fFlJiH8rsEYG/pub?gid=595473538&single=true&output=csv",
+  },
+
   exchanges: {
-    luno: "https://www.luno.com/invite/SDQ5G",
+    luno: "https://www.luno.com/wallet/rewards/enter_code?code=SDQ5G",
     hata: "https://hata.io/signup?ref=HAA6052",
     bybit: "https://partner.bybitglobal.com/b/bicarakrypto",
     binance: "https://www.binance.info/activity/referral-entry/CPA/together-v4?hl=en&ref=CPA_00J27B927R",
@@ -631,8 +516,8 @@ export const CONFIG = {
     bingx: "https://bingx.com/invite/XX44WJ",
     pionex: "https://accounts.pionex.com/en/signUp?r=HEQl1ebP",
     hyperliquid: "https://app.hyperliquid.xyz/join/BICARAKRYPTO",
-    gmgn: "https://gmgn.ai/?ref=riFoiaxD&chain=sol",
-    fomo: "https://fomo.family/r/bkr2026",
+    gmgn: "https://gmgn.ai/r/LxGu0oO8",
+    fomo: "https://fomo.family/r/0xAsyraf",
     tradingview: "https://www.tradingview.com/black-friday/?share_your_love=debonairCraft86352",
   },
 
