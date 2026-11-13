@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
   CONFIG, 
   ProductItem, 
@@ -11,12 +11,22 @@ import { ClassPoster } from '../components/ClassPoster';
 import { WaitlistModal } from '../components/WaitlistModal';
 import { 
   ChevronDown, 
+  ChevronLeft,
+  ChevronRight,
   Star, 
   ExternalLink, 
   User,
   X,
   Check
 } from 'lucide-react';
+
+const getGoogleDriveFallback = (url: string) => {
+  const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if (match && match[1]) {
+    return `https://lh3.googleusercontent.com/d/${match[1]}`;
+  }
+  return url;
+};
 
 const CANDLE_DATA = [
   { high: 30, low: 220, open: 80, close: 170, isMint: false },
@@ -124,6 +134,56 @@ export const HomePage: React.FC = () => {
 
   // Accordion FAQ state
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  // Gallery Lightbox State
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [touchEndX, setTouchEndX] = useState<number | null>(null);
+
+  // Close lightbox on Escape, navigate with Left / Right arrow keys
+  useEffect(() => {
+    if (lightboxIndex === null) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setLightboxIndex(null);
+      if (e.key === 'ArrowRight') {
+        setLightboxIndex((prev) => (prev !== null ? (prev + 1) % CONFIG.gallery.length : null));
+      }
+      if (e.key === 'ArrowLeft') {
+        setLightboxIndex((prev) => (prev !== null ? (prev - 1 + CONFIG.gallery.length) % CONFIG.gallery.length : null));
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [lightboxIndex]);
+
+  const handleNextPhoto = () => {
+    setLightboxIndex((prev) => (prev !== null ? (prev + 1) % CONFIG.gallery.length : null));
+  };
+
+  const handlePrevPhoto = () => {
+    setLightboxIndex((prev) => (prev !== null ? (prev - 1 + CONFIG.gallery.length) % CONFIG.gallery.length : null));
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEndX(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartX === null || touchEndX === null) return;
+    const diff = touchStartX - touchEndX;
+    const minSwipeDistance = 50;
+    if (diff > minSwipeDistance) {
+      handleNextPhoto();
+    } else if (diff < -minSwipeDistance) {
+      handlePrevPhoto();
+    }
+    setTouchStartX(null);
+    setTouchEndX(null);
+  };
 
   // Interactive Quiz state
   const [q1, setQ1] = useState<'Ya' | 'Belum' | null>(null);
@@ -584,6 +644,314 @@ export const HomePage: React.FC = () => {
               />
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* ================================================== */}
+      {/* GALLERY BENTO GRID SECTION ("DI SEBALIK TABIR") */}
+      {/* ================================================== */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        {/* Scoped Desktop Grid Template Areas */}
+        <style>{`
+          @media (min-width: 1024px) {
+            .bento-full-grid {
+              display: grid !important;
+              grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+              grid-template-rows: repeat(5, 200px) !important;
+              grid-template-areas:
+                "F F a s1"
+                "F F t b"
+                "w w t c"
+                "d s2 x x"
+                "g h i i" !important;
+            }
+            .bento-area-F  { grid-area: F !important; }
+            .bento-area-a  { grid-area: a !important; }
+            .bento-area-t  { grid-area: t !important; }
+            .bento-area-b  { grid-area: b !important; }
+            .bento-area-w  { grid-area: w !important; }
+            .bento-area-c  { grid-area: c !important; }
+            .bento-area-d  { grid-area: d !important; }
+            .bento-area-x  { grid-area: x !important; }
+            .bento-area-g  { grid-area: g !important; }
+            .bento-area-h  { grid-area: h !important; }
+            .bento-area-i  { grid-area: i !important; }
+            .bento-area-s1 { grid-area: s1 !important; }
+            .bento-area-s2 { grid-area: s2 !important; }
+          }
+        `}</style>
+
+        {/* Header */}
+        <div className="space-y-1.5 max-w-2xl">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#5CF2C0]">
+            DI SEBALIK TABIR
+          </div>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-white tracking-[-0.02em]">
+            Bersama alumni & pemain industri
+          </h2>
+          <p className="text-sm text-white/60">
+            500+ alumni di Kuala Lumpur, dan kehadiran di persidangan crypto hingga ke Dubai.
+          </p>
+        </div>
+
+        {/* Bento Grid: Mobile (2 cols), Tablet (3 cols), Desktop (4 cols with grid-template-areas) */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 auto-rows-[200px] grid-flow-dense bento-full-grid">
+          {/* F = gallery[0] (feature, 2×2 on desktop, full width on mobile/tablet) */}
+          <div
+            onClick={() => setLightboxIndex(0)}
+            className="group col-span-2 md:col-span-3 row-span-2 bento-area-F rounded-[20px] overflow-hidden bg-[#0B1430] border border-white/[0.08] hover:border-white/20 transition-all cursor-pointer relative shadow-sm"
+          >
+            <img
+              src={CONFIG.gallery[0]}
+              alt="Tuan Asyraf bersama alumni dan pemain industri crypto"
+              loading="lazy"
+              className="w-full h-full object-cover object-[center_30%] transition-transform duration-300 group-hover:scale-105"
+              onError={(e) => {
+                const target = e.currentTarget as HTMLImageElement;
+                const fallback = getGoogleDriveFallback(CONFIG.gallery[0]);
+                if (target.src !== fallback) {
+                  target.src = fallback;
+                }
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+          </div>
+
+          {/* a = gallery[1] (1×1) */}
+          <div
+            onClick={() => setLightboxIndex(1)}
+            className="group col-span-1 row-span-1 bento-area-a rounded-[20px] overflow-hidden bg-[#0B1430] border border-white/[0.08] hover:border-white/20 transition-all cursor-pointer relative shadow-sm"
+          >
+            <img
+              src={CONFIG.gallery[1]}
+              alt="Tuan Asyraf bersama alumni dan pemain industri crypto"
+              loading="lazy"
+              className="w-full h-full object-cover object-[center_30%] transition-transform duration-300 group-hover:scale-105"
+              onError={(e) => {
+                const target = e.currentTarget as HTMLImageElement;
+                const fallback = getGoogleDriveFallback(CONFIG.gallery[1]);
+                if (target.src !== fallback) {
+                  target.src = fallback;
+                }
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+          </div>
+
+          {/* s1 = stat tile "500+" / "alumni kelas CAB & KITA" (1×1) */}
+          <div className="col-span-1 row-span-1 bento-area-s1 rounded-[20px] bg-[#0B1430] border border-white/[0.08] p-5 sm:p-6 flex flex-col justify-center relative overflow-hidden shadow-sm">
+            <div className="pointer-events-none absolute -top-12 -right-12 w-32 h-32 bg-[#5CF2C0]/10 rounded-full blur-2xl" />
+            <div className="relative z-10 space-y-1">
+              <div className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#5CF2C0] tracking-tight">
+                500+
+              </div>
+              <div className="text-xs sm:text-sm text-white/60 font-medium leading-snug">
+                alumni kelas CAB & KITA
+              </div>
+            </div>
+          </div>
+
+          {/* t = gallery[2] (tall, 1×2) */}
+          <div
+            onClick={() => setLightboxIndex(2)}
+            className="group col-span-1 row-span-2 bento-area-t rounded-[20px] overflow-hidden bg-[#0B1430] border border-white/[0.08] hover:border-white/20 transition-all cursor-pointer relative shadow-sm"
+          >
+            <img
+              src={CONFIG.gallery[2]}
+              alt="Tuan Asyraf bersama alumni dan pemain industri crypto"
+              loading="lazy"
+              className="w-full h-full object-cover object-[center_30%] transition-transform duration-300 group-hover:scale-105"
+              onError={(e) => {
+                const target = e.currentTarget as HTMLImageElement;
+                const fallback = getGoogleDriveFallback(CONFIG.gallery[2]);
+                if (target.src !== fallback) {
+                  target.src = fallback;
+                }
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+          </div>
+
+          {/* b = gallery[3] (1×1) */}
+          <div
+            onClick={() => setLightboxIndex(3)}
+            className="group col-span-1 row-span-1 bento-area-b rounded-[20px] overflow-hidden bg-[#0B1430] border border-white/[0.08] hover:border-white/20 transition-all cursor-pointer relative shadow-sm"
+          >
+            <img
+              src={CONFIG.gallery[3]}
+              alt="Tuan Asyraf bersama alumni dan pemain industri crypto"
+              loading="lazy"
+              className="w-full h-full object-cover object-[center_30%] transition-transform duration-300 group-hover:scale-105"
+              onError={(e) => {
+                const target = e.currentTarget as HTMLImageElement;
+                const fallback = getGoogleDriveFallback(CONFIG.gallery[3]);
+                if (target.src !== fallback) {
+                  target.src = fallback;
+                }
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+          </div>
+
+          {/* w = gallery[4] (wide, 2×1) */}
+          <div
+            onClick={() => setLightboxIndex(4)}
+            className="group col-span-2 md:col-span-2 row-span-1 bento-area-w rounded-[20px] overflow-hidden bg-[#0B1430] border border-white/[0.08] hover:border-white/20 transition-all cursor-pointer relative shadow-sm"
+          >
+            <img
+              src={CONFIG.gallery[4]}
+              alt="Tuan Asyraf bersama alumni dan pemain industri crypto"
+              loading="lazy"
+              className="w-full h-full object-cover object-[center_30%] transition-transform duration-300 group-hover:scale-105"
+              onError={(e) => {
+                const target = e.currentTarget as HTMLImageElement;
+                const fallback = getGoogleDriveFallback(CONFIG.gallery[4]);
+                if (target.src !== fallback) {
+                  target.src = fallback;
+                }
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+          </div>
+
+          {/* c = gallery[5] (1×1) */}
+          <div
+            onClick={() => setLightboxIndex(5)}
+            className="group col-span-1 row-span-1 bento-area-c rounded-[20px] overflow-hidden bg-[#0B1430] border border-white/[0.08] hover:border-white/20 transition-all cursor-pointer relative shadow-sm"
+          >
+            <img
+              src={CONFIG.gallery[5]}
+              alt="Tuan Asyraf bersama alumni dan pemain industri crypto"
+              loading="lazy"
+              className="w-full h-full object-cover object-[center_30%] transition-transform duration-300 group-hover:scale-105"
+              onError={(e) => {
+                const target = e.currentTarget as HTMLImageElement;
+                const fallback = getGoogleDriveFallback(CONFIG.gallery[5]);
+                if (target.src !== fallback) {
+                  target.src = fallback;
+                }
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+          </div>
+
+          {/* d = gallery[6] (1×1) */}
+          <div
+            onClick={() => setLightboxIndex(6)}
+            className="group col-span-1 row-span-1 bento-area-d rounded-[20px] overflow-hidden bg-[#0B1430] border border-white/[0.08] hover:border-white/20 transition-all cursor-pointer relative shadow-sm"
+          >
+            <img
+              src={CONFIG.gallery[6]}
+              alt="Tuan Asyraf bersama alumni dan pemain industri crypto"
+              loading="lazy"
+              className="w-full h-full object-cover object-[center_30%] transition-transform duration-300 group-hover:scale-105"
+              onError={(e) => {
+                const target = e.currentTarget as HTMLImageElement;
+                const fallback = getGoogleDriveFallback(CONFIG.gallery[6]);
+                if (target.src !== fallback) {
+                  target.src = fallback;
+                }
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+          </div>
+
+          {/* s2 = stat tile "2018" / "kekal mengajar sejak" (1×1) */}
+          <div className="col-span-1 row-span-1 bento-area-s2 rounded-[20px] bg-[#0B1430] border border-white/[0.08] p-5 sm:p-6 flex flex-col justify-center relative overflow-hidden shadow-sm">
+            <div className="pointer-events-none absolute -bottom-12 -left-12 w-32 h-32 bg-[#5CF2C0]/10 rounded-full blur-2xl" />
+            <div className="relative z-10 space-y-1">
+              <div className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#5CF2C0] tracking-tight">
+                2018
+              </div>
+              <div className="text-xs sm:text-sm text-white/60 font-medium leading-snug">
+                kekal mengajar sejak
+              </div>
+            </div>
+          </div>
+
+          {/* x = gallery[7] (wide, 2×1) */}
+          <div
+            onClick={() => setLightboxIndex(7)}
+            className="group col-span-2 md:col-span-2 row-span-1 bento-area-x rounded-[20px] overflow-hidden bg-[#0B1430] border border-white/[0.08] hover:border-white/20 transition-all cursor-pointer relative shadow-sm"
+          >
+            <img
+              src={CONFIG.gallery[7]}
+              alt="Tuan Asyraf bersama alumni dan pemain industri crypto"
+              loading="lazy"
+              className="w-full h-full object-cover object-[center_30%] transition-transform duration-300 group-hover:scale-105"
+              onError={(e) => {
+                const target = e.currentTarget as HTMLImageElement;
+                const fallback = getGoogleDriveFallback(CONFIG.gallery[7]);
+                if (target.src !== fallback) {
+                  target.src = fallback;
+                }
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+          </div>
+
+          {/* g = gallery[8] (1×1) */}
+          <div
+            onClick={() => setLightboxIndex(8)}
+            className="group col-span-1 row-span-1 bento-area-g rounded-[20px] overflow-hidden bg-[#0B1430] border border-white/[0.08] hover:border-white/20 transition-all cursor-pointer relative shadow-sm"
+          >
+            <img
+              src={CONFIG.gallery[8]}
+              alt="Tuan Asyraf bersama alumni dan pemain industri crypto"
+              loading="lazy"
+              className="w-full h-full object-cover object-[center_30%] transition-transform duration-300 group-hover:scale-105"
+              onError={(e) => {
+                const target = e.currentTarget as HTMLImageElement;
+                const fallback = getGoogleDriveFallback(CONFIG.gallery[8]);
+                if (target.src !== fallback) {
+                  target.src = fallback;
+                }
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+          </div>
+
+          {/* h = gallery[9] (1×1) */}
+          <div
+            onClick={() => setLightboxIndex(9)}
+            className="group col-span-1 row-span-1 bento-area-h rounded-[20px] overflow-hidden bg-[#0B1430] border border-white/[0.08] hover:border-white/20 transition-all cursor-pointer relative shadow-sm"
+          >
+            <img
+              src={CONFIG.gallery[9]}
+              alt="Tuan Asyraf bersama alumni dan pemain industri crypto"
+              loading="lazy"
+              className="w-full h-full object-cover object-[center_30%] transition-transform duration-300 group-hover:scale-105"
+              onError={(e) => {
+                const target = e.currentTarget as HTMLImageElement;
+                const fallback = getGoogleDriveFallback(CONFIG.gallery[9]);
+                if (target.src !== fallback) {
+                  target.src = fallback;
+                }
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+          </div>
+
+          {/* i = gallery[10] (wide on mobile/desktop, 1x1 on tablet) */}
+          <div
+            onClick={() => setLightboxIndex(10)}
+            className="group col-span-2 md:col-span-1 lg:col-span-2 row-span-1 bento-area-i rounded-[20px] overflow-hidden bg-[#0B1430] border border-white/[0.08] hover:border-white/20 transition-all cursor-pointer relative shadow-sm"
+          >
+            <img
+              src={CONFIG.gallery[10]}
+              alt="Tuan Asyraf bersama alumni dan pemain industri crypto"
+              loading="lazy"
+              className="w-full h-full object-cover object-[center_30%] transition-transform duration-300 group-hover:scale-105"
+              onError={(e) => {
+                const target = e.currentTarget as HTMLImageElement;
+                const fallback = getGoogleDriveFallback(CONFIG.gallery[10]);
+                if (target.src !== fallback) {
+                  target.src = fallback;
+                }
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+          </div>
         </div>
       </section>
 
@@ -1161,6 +1529,83 @@ export const HomePage: React.FC = () => {
           product={waitlistProduct}
           onClose={() => setWaitlistProduct(null)}
         />
+      )}
+
+      {/* Gallery Lightbox Modal */}
+      {lightboxIndex !== null && (
+        <div
+          className="fixed inset-0 z-50 bg-[#060B1E]/95 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 select-none animate-fadeIn"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Galeri Gambar"
+          onClick={() => setLightboxIndex(null)}
+        >
+          {/* Close button */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setLightboxIndex(null);
+            }}
+            className="absolute top-4 right-4 sm:top-6 sm:right-6 w-11 h-11 rounded-full bg-[#0B1430] border border-white/20 text-white hover:text-[#5CF2C0] hover:border-[#5CF2C0] flex items-center justify-center transition-all cursor-pointer z-50 shadow-lg"
+            aria-label="Tutup Galeri"
+          >
+            <X className="w-5 h-5" />
+          </button>
+
+          {/* Counter */}
+          <div className="absolute top-5 left-4 sm:top-7 sm:left-6 px-3.5 py-1.5 rounded-full bg-[#0B1430]/90 border border-white/10 text-xs font-mono text-white/70 z-50 shadow-md">
+            {lightboxIndex + 1} / {CONFIG.gallery.length}
+          </div>
+
+          {/* Navigation: Prev */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              handlePrevPhoto();
+            }}
+            className="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#0B1430]/80 hover:bg-[#0B1430] border border-white/20 hover:border-[#5CF2C0] text-white hover:text-[#5CF2C0] flex items-center justify-center transition-all cursor-pointer z-50 shadow-xl"
+            aria-label="Gambar Sebelumnya"
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+
+          {/* Navigation: Next */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleNextPhoto();
+            }}
+            className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#0B1430]/80 hover:bg-[#0B1430] border border-white/20 hover:border-[#5CF2C0] text-white hover:text-[#5CF2C0] flex items-center justify-center transition-all cursor-pointer z-50 shadow-xl"
+            aria-label="Gambar Seterusnya"
+          >
+            <ChevronRight className="w-6 h-6" />
+          </button>
+
+          {/* Main Image Container with Touch Swipe */}
+          <div
+            className="relative max-w-5xl max-h-[85vh] w-full flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            <img
+              src={CONFIG.gallery[lightboxIndex]}
+              alt="Tuan Asyraf bersama alumni dan pemain industri crypto"
+              className="max-h-[80vh] max-w-full rounded-2xl object-contain border border-white/10 shadow-2xl"
+              onError={(e) => {
+                const target = e.currentTarget as HTMLImageElement;
+                const fallback = getGoogleDriveFallback(CONFIG.gallery[lightboxIndex]);
+                if (target.src !== fallback) {
+                  target.src = fallback;
+                }
+              }}
+            />
+          </div>
+        </div>
       )}
     </div>
   );

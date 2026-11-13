@@ -596,6 +596,20 @@ export const CONFIG = {
 
   youtubeVideo: "https://www.youtube.com/@BICARAKRYPTO",
 
+  gallery: [
+    "https://googleusercontent.com/d/1X3DaKycev8cfqLpTY5Pu6fkEmkEFQNI2/",
+    "https://googleusercontent.com/d/1D6sfLuWPVA_SwaNAf_rB05AhhtpzU5r9/",
+    "https://googleusercontent.com/d/1WLG4-tUsmmtU1SI0u961arQoZk0TIqom/",
+    "https://googleusercontent.com/d/1YdYCfeJ1G3mrGFb6YRHxhg8GS2qfdRMa/",
+    "https://googleusercontent.com/d/1mAA0EwRd1vBshPtDnrY6_jEjxcANHyHb/",
+    "https://googleusercontent.com/d/1LfluExOluzwdSNedCffsRjRLthFqFE3q/",
+    "https://googleusercontent.com/d/12-aCtajkfpJqwlPxVbX9I0i2nGt8hTJL/",
+    "https://googleusercontent.com/d/1XQ1vXVnC0nMrXcK5tprVx5FLOwwkH7Y8/",
+    "https://googleusercontent.com/d/1Okq1QXqS_tMXbroL6ojcPVsflUAIOrGh/",
+    "https://googleusercontent.com/d/1ZjOLltnsua3AiM2YrrrMCWePGyKn590E/",
+    "https://googleusercontent.com/d/1knObL4wR2y_Tk-mRY5jVhMIFXgjr5FZV/"
+  ],
+
   card: {
     name: "RedotPay Crypto Card",
     link: "https://bicarakrypto.com/card-signup",
