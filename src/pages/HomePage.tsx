@@ -996,13 +996,14 @@ export const HomePage: React.FC = () => {
             <p className="text-sm text-white/60">
               Faham dulu, kemudian trade. Laluan 2 minggu dari pemula ke trader.
             </p>
-            <button
-              type="button"
-              disabled
-              className="px-6 py-3 rounded-lg bg-[#5CF2C0]/60 text-[#060B1E]/80 font-semibold text-sm text-center shrink-0 cursor-not-allowed select-none shadow-sm"
+            <a
+              href={CONFIG.combo.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-3 rounded-lg bg-[#5CF2C0] text-[#060B1E] font-semibold text-sm text-center shrink-0 hover:opacity-95 transition-opacity shadow-sm"
             >
               Daftar Combo RM{CONFIG.combo.price}
-            </button>
+            </a>
           </div>
         </div>
       </section>
@@ -1455,13 +1456,14 @@ export const HomePage: React.FC = () => {
                   </p>
                 </div>
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 shrink-0 pt-2 sm:pt-0">
-                  <button
-                    type="button"
-                    disabled
-                    className="min-h-[44px] px-5 py-2.5 rounded-lg bg-[#5CF2C0]/60 text-[#060B1E]/80 font-semibold text-xs flex items-center justify-center text-center cursor-not-allowed select-none shadow-sm"
+                  <a
+                    href={recommendation.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="min-h-[44px] px-5 py-2.5 rounded-lg bg-[#5CF2C0] text-[#060B1E] font-semibold text-xs flex items-center justify-center text-center hover:opacity-95 transition-opacity shadow-sm"
                   >
                     Daftar (RM{recommendation.product.price})
-                  </button>
+                  </a>
                   <Link
                     to={recommendation.product.route}
                     className="min-h-[44px] px-3 text-xs text-white/70 hover:text-[#5CF2C0] flex items-center justify-center text-center font-medium"

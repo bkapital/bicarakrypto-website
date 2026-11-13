@@ -174,7 +174,7 @@ export const PRODUCTS: ProductItem[] = [
     description: "Ramai beli crypto masa pasaran naik, kemudian panik bila harga jatuh. CAB ajar cara bina portfolio sendiri yang kekal kukuh dalam bull dan bear market, tanpa perlu ikut orang.",
     focus: ["Bina Portfolio", "Cari & Nilai Projek", "DCA & Ambil Untung", "Data On-chain", "Keselamatan Wallet"],
     poster: {
-      topLine: "Jom! 14 - 15 Nov ni belajar",
+      topLine: "Jom! 21 - 22 Nov ni belajar",
       headline: "PILIH COIN MACAM VC!",
       sticker1: "Fundamental",
       sticker2: "On-chain",
@@ -559,8 +559,8 @@ export const CONFIG = {
 
   cab: {
     price: 299,
-    dates: "14 - 15 November 2026",
-    link: "#",
+    dates: "21 - 22 November 2026",
+    link: "https://pay.chip-in.asia/cryptoalpha",
     poster: CAB_POSTER_URL,
     label: "LEVEL 1 · PEMULA · LIVE ZOOM 2 HARI",
     subtitle: "Bina portfolio yang tahan bull & bear",
@@ -571,7 +571,7 @@ export const CONFIG = {
   kita: {
     price: 499,
     dates: "28 - 29 November 2026",
-    link: "#",
+    link: "https://pay.chip-in.asia/kita",
     poster: KITA_POSTER_URL,
     label: "LEVEL 2 · TRADER · LIVE ZOOM 2 HARI",
     subtitle: "Trade ikut pelan, bukan ikut perasaan",
@@ -582,7 +582,7 @@ export const CONFIG = {
   combo: {
     price: 699,
     saving: 99,
-    link: "#",
+    link: "https://pay.chip-in.asia/comboalphakita",
   },
 
   socials: {

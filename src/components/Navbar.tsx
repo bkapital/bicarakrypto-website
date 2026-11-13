@@ -83,15 +83,14 @@ export const Navbar: React.FC = () => {
             })}
           </nav>
 
-          {/* Right Action: Button "Daftar Kelas" (Non-clickable) */}
+          {/* Right Action: Button "Daftar Kelas" */}
           <div className="hidden lg:flex items-center gap-4">
-            <button
-              type="button"
-              disabled
-              className="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-[#5CF2C0]/60 text-[#060B1E]/80 font-semibold text-xs sm:text-sm tracking-tight cursor-not-allowed select-none shadow-sm min-h-[40px]"
+            <Link
+              to="/#kelas"
+              className="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-[#5CF2C0] text-[#060B1E] font-semibold text-xs sm:text-sm tracking-tight hover:opacity-95 transition-opacity shadow-sm min-h-[40px]"
             >
               <span>Daftar Kelas</span>
-            </button>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
@@ -153,13 +152,13 @@ export const Navbar: React.FC = () => {
             })}
 
             <div className="pt-3 border-t border-white/[0.08] mt-2">
-              <button
-                type="button"
-                disabled
-                className="w-full min-h-[46px] flex items-center justify-center py-3 rounded-lg bg-[#5CF2C0]/60 text-[#060B1E]/80 font-semibold text-sm shadow-sm cursor-not-allowed select-none"
+              <Link
+                to="/#kelas"
+                onClick={() => setMobileMenuOpen(false)}
+                className="w-full min-h-[46px] flex items-center justify-center py-3 rounded-lg bg-[#5CF2C0] text-[#060B1E] font-semibold text-sm shadow-sm hover:opacity-95 transition-opacity"
               >
                 <span>Daftar Kelas</span>
-              </button>
+              </Link>
             </div>
           </div>
         </div>

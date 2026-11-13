@@ -270,13 +270,14 @@ export const ClassDetailPage: React.FC<ClassDetailPageProps> = ({ slug }) => {
 
             {/* CTAs: Big Mint Button & WhatsApp Outline Button (No arrow) */}
             <div className="space-y-2.5">
-              <button
-                type="button"
-                disabled
-                className="w-full min-h-[48px] py-3.5 px-6 rounded-lg bg-[#5CF2C0]/60 text-[#060B1E]/80 font-semibold text-sm flex items-center justify-center text-center cursor-not-allowed select-none shadow-md"
+              <a
+                href={currentLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full min-h-[48px] py-3.5 px-6 rounded-lg bg-[#5CF2C0] text-[#060B1E] font-semibold text-sm flex items-center justify-center text-center hover:opacity-95 transition-opacity shadow-md"
               >
                 <span>Daftar sekarang (RM{currentPrice})</span>
-              </button>
+              </a>
 
               <div className="flex items-center gap-2.5">
                 <a
@@ -1248,13 +1249,14 @@ export const ClassDetailPage: React.FC<ClassDetailPageProps> = ({ slug }) => {
               <MessageCircle className="w-4 h-4" />
             </a>
 
-            <button
-              type="button"
-              disabled
-              className="min-h-[44px] px-5 py-2.5 rounded-lg bg-[#5CF2C0]/60 text-[#060B1E]/80 font-semibold text-xs sm:text-sm shadow-md flex items-center justify-center text-center cursor-not-allowed select-none"
+            <a
+              href={currentLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="min-h-[44px] px-5 py-2.5 rounded-lg bg-[#5CF2C0] text-[#060B1E] font-semibold text-xs sm:text-sm shadow-md flex items-center justify-center text-center hover:opacity-95 transition-opacity"
             >
               <span>Daftar sekarang</span>
-            </button>
+            </a>
           </div>
         </div>
       </aside>
