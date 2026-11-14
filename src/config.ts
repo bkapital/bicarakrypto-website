@@ -505,6 +505,12 @@ export const CONFIG = {
     settingsCsvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vT4uEQVuORdiSZe-h7cpsGIY85kCJyOAIKyU8UeHyrFr5Mux8P8N_W2g82W1a02qLo5fFlJiH8rsEYG/pub?gid=595473538&single=true&output=csv",
   },
 
+  portal: {
+    supabaseUrl: "https://mkggaqvvyascimolhmdp.supabase.co",
+    supabaseKey: "sb_publishable_z-G0sGISHXnupVgrYOW9Yw_fABN8MN7",
+    whatsappHelp: "https://wa.me/60103394725",
+  },
+
   exchanges: {
     luno: "https://www.luno.com/wallet/rewards/enter_code?code=SDQ5G",
     hata: "https://hata.io/signup?ref=HAA6052",

@@ -19,6 +19,7 @@ import { ClassDetailPage } from './pages/ClassDetailPage';
 import { ExchangePage } from './pages/ExchangePage';
 import { ContactPage } from './pages/ContactPage';
 import { PolicyPage } from './pages/PolicyPage';
+import { PortalPage } from './pages/PortalPage';
 
 const AppContent: React.FC = () => {
   const { currentPath } = useRouter();
@@ -52,6 +53,8 @@ const AppContent: React.FC = () => {
         return <HomePage />;
       case '/hubungi':
         return <ContactPage />;
+      case '/portal':
+        return <PortalPage />;
       case '/polisi-privasi':
       case '/privacy-policy':
         return <PolicyPage type="privasi" />;
