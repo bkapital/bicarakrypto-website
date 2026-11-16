@@ -36,7 +36,9 @@ full chain** against certifi's trusted roots. Verification is never turned off.
 | 5. Social checklist | `stage5_social_checklist.py` | `data/mps.csv` (accounts from parlimen.gov.my profiles) | `data/social_checklist.csv` |
 | 6. Summary | `stage6_summary.py` | all of the above | `data/summary_report.txt`, `data/summary_per_mp.csv`, `data/survey.csv`, `data/corrections.csv` |
 
-**Full rerun, in order:** Stage 1 → 2 → 3 (`--all`) → 4 (`merge`) → 5 → 6. Reruns only fetch what is
+| 7. Website export | `stage7_export_site.py` | `data/mps.csv`, `data/evidence.csv`, `data/stance_suggestions.csv` | `public/datasets/mp-crypto-index/` (read by the page at `/data/mp-crypto-index`) |
+
+**Full rerun, in order:** Stage 1 → 2 → 3 (`--all`) → 4 (`merge`) → 5 → 6 → 7, then rebuild and deploy the site. Reruns only fetch what is
 new or changed (new sittings, drafts that became final). Hand-entered fields are kept:
 `stance`, `mentions_rakyat_benefit`, the survey answers, the checklist columns, and corrections.
 
