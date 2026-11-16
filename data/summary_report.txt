@@ -1,0 +1,101 @@
+MP CRYPTO STANCE TRACKER - SUMMARY REPORT
+Generated 2026-11-16
+========================================================================
+
+1. MPs
+   Seats: 222 | sitting MPs: 218 | vacant: 4
+     - P.100 Pandan: former MP (Mohd Rafizi bin Ramli), resigned; seat vacant until GE16
+     - P.104 Subang: former MP (Wong Chen), resigned; seat vacant until GE16
+     - P.105 Petaling Jaya: former MP (Lee Chean Chung), resigned; seat vacant until GE16
+     - P.118 Setiawangsa: former MP (Nik Nazmi bin Nik Ahmad), resigned; seat vacant until GE16
+   minister         28
+   deputy minister  28
+   backbencher      162
+   Sitting MPs with no email on record: 4 (P.045, P.051, P.141, P.213)
+
+2. EVIDENCE ROWS (evidence.csv: 542 rows)
+   speech                    167
+   parliamentary_question    107
+   written_answer              0
+   vote                      222
+   press                      46
+   social                      0
+   event                       0
+   No rows yet for: written_answer, social, event (see README: written answers unavailable; social checked by hand)
+
+3. EVIDENCE PER MP (excluding the Budget 2026 vote, which every MP has)
+   Sitting MPs with at least one row: 72 of 218
+   Sitting MPs with ZERO evidence:    146
+   Former MPs (vacant seats) with evidence from their time as MP: 3
+   Top 20:
+   seat   name                               party    role            total  spch    PQ press
+   P.106  Gobind Singh Deo                   DAP      minister           31    10    13     8
+   P.049  Lim Hui Ying                       DAP      deputy minister    25     4    19     2
+   P.195  Kelvin Yii Lee Wuen                DAP      backbencher        19    18     0     1
+   P.048  Syerleena binti Abdul Rashid       DAP      backbencher        16    11     4     1
+   P.055  Shamsul Anuar bin Haji Nasarah     UMNO     deputy minister    16     0    11     5
+   P.063  Anwar bin Ibrahim                  PKR      minister           14     5     3     6
+   P.077  Chang Lih Kang                     PKR      minister           14     9     3     2
+   P.188  Mohammad Yusof bin Apdal           WARISAN  deputy minister    14     6     8     0
+   P.160  Akmal Nasrullah bin Mohd Nasir     PKR      minister           10     4     0     6
+   P.068  Ngeh Koo Ham                       DAP      backbencher        10     5     3     2
+   P.194  Fadillah bin Haji Yusof            PBB      minister            8     0     4     4
+   P.138  Khoo Poay Tiong                    DAP      backbencher         7     7     0     0
+   P.114  Lim Lip Eng                        DAP      backbencher         6     2     1     3
+   P.084  Mohd Shahar bin Abdullah           UMNO     deputy minister     5     5     0     0
+   P.096  Dzulkefly bin Ahmad                AMANAH   minister            4     3     1     0
+   P.007  Nurul Amin bin Hamid               PAS      backbencher         4     4     0     0
+   P.134  Mas Ermieyati binti Samsudin       BERSATU  backbencher         4     3     1     0
+   P.091  Abdul Khalib bin Abdullah          BERSATU  backbencher         4     1     3     0
+   P.099  Rodziah binti Ismail               PKR      backbencher         4     0     4     0
+   P.166  Suhaili bin Abdul Rahman           -        backbencher         3     2     0     1
+   MPs with evidence, by party: PAS 15/43, DAP 18/40, PKR 9/27, UMNO 7/26, BERSATU 9/19, PBB 4/14, AMANAH 2/8, WAWASAN 0/6, (blank) 1/6, BEBAS 2/6, PRS 2/5, BERSAMA 3/4, WARISAN 1/3, MCA 0/2, UPKO 1/2, SUPP 0/2, PDP 0/2, MIC 0/1, MUDA 0/1, KDM 0/1, STAR 0/1, PBRS 1/1, PBS 0/1, PBM 0/1
+   Full per-MP counts: data/summary_per_mp.csv
+
+4. ROWS NOT MATCHED TO AN MP
+   Senators speaking as ministers (not MPs): 4
+     - Datuk Seri Saifuddin Nasution bin Ismail (3)
+     - Dato’ Seri Diraja Dr. Zambry bin Abd Kadir (1)
+   Unmatched speakers: 8
+     - 2023-10-12 Menteri di Jabatan Perdana Menteri (Hal Ehwal Agama) [D | UNMATCHED speaker: could not attribute to an MP (may be a former minis
+     - 2025-03-05 Dato’ Setia Dr. Haji Mohd Na’im bin Mokhtar | UNMATCHED speaker: could not attribute to an MP (may be a former minis
+     - 2025-03-05 Dato’ Setia Dr. Haji Mohd Na’im bin Mokhtar | UNMATCHED speaker: could not attribute to an MP (may be a former minis
+     - 2025-08-18 bawah portfolio saya selaku Timbalan Perdana Menteri me | UNMATCHED speaker: CHECK: speaker label corrupted in source data
+     - 2025-08-18 bawah portfolio saya selaku Timbalan Perdana Menteri me | UNMATCHED speaker: CHECK: speaker label corrupted in source data
+     - 2025-08-18 bawah portfolio saya selaku Timbalan Perdana Menteri me | UNMATCHED speaker: CHECK: speaker label corrupted in source data
+     - 2025-08-18 bawah portfolio saya selaku Timbalan Perdana Menteri me | UNMATCHED speaker: CHECK: speaker label corrupted in source data
+     - 2025-08-18 bawah portfolio saya selaku Timbalan Perdana Menteri me | UNMATCHED speaker: CHECK: speaker label corrupted in source data
+
+5. CHECKS AGAINST THE BRIEF'S RULES
+   stance / mentions_rakyat_benefit filled by hand so far: 0 rows (scripts never fill these)
+   [OK] every row has a source link
+   [OK] excerpts <= ~80 words
+   [OK] excerpts only from Hansard (no press/social text)
+   [OK] seat codes exist in mps.csv
+   [OK] evidence_id unique
+   [!!] every row has a date (YYYY-MM-DD): 10 rows, e.g. PRS-189f9f8575, PRS-58829b0e8c, PRS-69a34a44fb, PRS-70cde63559, PRS-a3d89c109f
+
+6. ROWS FLAGGED FOR MANUAL REVIEW
+      5  CHECK: publish date not in page metadata
+      5  paywalled outlet: not fetched
+      5  CHECK: speaker label corrupted in source data
+      4  before the 15th Parliament first sat
+      3  could not attribute to an MP
+      2  CHECK: excerpt not found in PDF text
+      2  CHECK: PDF not published on parlimen.gov.my
+      1  CHECK: page shows a generic title
+      1  CHECK: page 27 differs from portal's pages 30-30
+      1  CHECK: page 102 differs from portal's pages 133-133
+   Hansard rows from DRAFT transcripts: 223 (refresh by rerunning Stage 3 later)
+
+7. ERRORS AND KNOWN GAPS
+   Hansard PDFs downloaded: 285 (3 sittings have no PDF on parlimen.gov.my: portal page used)
+   Written answers (Jawapan Bukan Lisan): not available (search returns error / no results)
+   Kamar Khas (special chamber) Hansard: not included
+   News: searched only the 74 MPs found in Hansard; other 148 MPs not searched
+   Social media: checklist prepared (data/social_checklist.csv); 0 MPs checked so far
+   Party: current party is from election results + manual corrections; switches since may be missing
+
+8. FILES
+   survey.csv: 218 existing rows kept, 0 sitting MPs added, 0 empty rows for vacant seats removed
+   corrections.csv: kept (0 rows)

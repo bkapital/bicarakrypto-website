@@ -1,0 +1,37 @@
+constituency_code,field,value,note,source,date
+P.007,name,Nurul Amin bin Hamid,Confirmed: profile name is correct (election record says bin Ahmad),founder,2026-11-16
+P.007,clear_flags,name_variant_matched,Name confirmed by founder,founder,2026-11-16
+P.024,name,Tuan Ibrahim Tuan Man,Correct name; parlimen.gov.my profile misspells it as Ibharim,founder,2026-11-16
+P.024,clear_flags,name_variant_matched,Name confirmed by founder,founder,2026-11-16
+P.100,party,BERSAMA,Left PKR; now with BERSAMA,founder,2026-11-16
+P.100,coalition,,Left PKR (PH); BERSAMA coalition not stated,founder,2026-11-16
+P.104,party,BERSAMA,Left PKR; now with BERSAMA,founder,2026-11-16
+P.104,coalition,,Left PKR (PH); BERSAMA coalition not stated,founder,2026-11-16
+P.105,party,BERSAMA,Left PKR; now with BERSAMA,founder,2026-11-16
+P.105,coalition,,Left PKR (PH); BERSAMA coalition not stated,founder,2026-11-16
+P.118,party,BERSAMA,Left PKR; now with BERSAMA,founder,2026-11-16
+P.118,coalition,,Left PKR (PH); BERSAMA coalition not stated,founder,2026-11-16
+P.030,party,,Elected as BERSATU; left Perikatan Nasional; current party not confirmed,founder,2026-11-16
+P.032,party,,Elected as BERSATU; left Perikatan Nasional; current party not confirmed,founder,2026-11-16
+P.059,party,,Elected as BERSATU; left Perikatan Nasional; current party not confirmed,founder,2026-11-16
+P.067,party,,Elected as BERSATU; left Perikatan Nasional; current party not confirmed,founder,2026-11-16
+P.095,party,,Elected as BERSATU; left Perikatan Nasional; current party not confirmed,founder,2026-11-16
+P.166,party,,Elected as BERSATU; left Perikatan Nasional; current party not confirmed,founder,2026-11-16
+P.170,clear_flags,coalition_changed_since_election,Confirmed: UPKO left PH and joined GRS,founder,2026-11-16
+P.174,clear_flags,coalition_changed_since_election,Confirmed: UPKO left PH and joined GRS,founder,2026-11-16
+P.100,status,resigned; seat vacant until GE16,Resigned as MP; seat vacant until the next general election (date not recorded),founder,2026-11-16
+P.104,status,resigned; seat vacant until GE16,Resigned as MP; seat vacant until the next general election (date not recorded),founder,2026-11-16
+P.105,status,resigned; seat vacant until GE16,Resigned as MP; seat vacant until the next general election (date not recorded),founder,2026-11-16
+P.118,status,resigned; seat vacant until GE16,Resigned as MP; seat vacant until the next general election (date not recorded),founder,2026-11-16
+P.056,party,WAWASAN,Sacked by BERSATU; now in the new party Wawasan,founder,2026-11-16
+P.056,coalition,,Left BERSATU for Wawasan; coalition not confirmed,founder,2026-11-16
+P.042,party,WAWASAN,Sacked by BERSATU; now in the new party Wawasan,founder,2026-11-16
+P.042,coalition,,Left BERSATU for Wawasan; coalition not confirmed,founder,2026-11-16
+P.029,party,WAWASAN,Sacked by BERSATU; now in the new party Wawasan,founder,2026-11-16
+P.029,coalition,,Left BERSATU for Wawasan; coalition not confirmed,founder,2026-11-16
+P.082,party,WAWASAN,Sacked by BERSATU; now in the new party Wawasan,founder,2026-11-16
+P.082,coalition,,Left BERSATU for Wawasan; coalition not confirmed,founder,2026-11-16
+P.054,party,WAWASAN,Sacked by BERSATU; now in the new party Wawasan,founder,2026-11-16
+P.054,coalition,,Left BERSATU for Wawasan; coalition not confirmed,founder,2026-11-16
+P.061,party,WAWASAN,Sacked by BERSATU; now in the new party Wawasan,founder,2026-11-16
+P.061,coalition,,Left BERSATU for Wawasan; coalition not confirmed,founder,2026-11-16

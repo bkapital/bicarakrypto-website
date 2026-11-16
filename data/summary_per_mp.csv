@@ -1,0 +1,223 @@
+constituency_code,name,party,coalition,status,role,total,speech,parliamentary_question,written_answer,press,social,event
+P.001,Rushdan bin Rusmi,PAS,PN,sitting,backbencher,1,0,1,0,0,0,0
+P.002,Zakri bin Hassan,BERSATU,PN,sitting,backbencher,1,1,0,0,0,0,0
+P.003,Shahidan bin Kassim,PAS,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.004,Mohd Suhaimi bin Abdullah,BERSATU,PN,sitting,backbencher,3,3,0,0,0,0,0
+P.005,Abd Ghani bin Ahmad,PAS,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.006,Ku Abd Rahman bin Ku Ismail,BERSATU,PN,sitting,backbencher,1,0,1,0,0,0,0
+P.007,Nurul Amin bin Hamid,PAS,PN,sitting,backbencher,4,4,0,0,0,0,0
+P.008,Ahmad bin Saad @ Yahaya,PAS,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.009,Afnan Hamimi bin Dato' Haji Taib Azamudden,PAS,PN,sitting,backbencher,1,0,1,0,0,0,0
+P.010,Ahmad Fakhruddin bin Fakhrurazi,PAS,PN,sitting,backbencher,2,2,0,0,0,0,0
+P.011,Awang bin Hashim,PAS,PN,sitting,backbencher,3,0,3,0,0,0,0
+P.012,Sabri bin Azit,PAS,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.013,Ahmad Tarmizi bin Sulaiman,PAS,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.014,Mohd Nazri bin Abu Hassan,BERSATU,PN,sitting,backbencher,1,1,0,0,0,0,0
+P.015,Mohammed Taufiq bin Johari,PKR,PH,sitting,minister,0,0,0,0,0,0,0
+P.016,Hassan bin Saad,PAS,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.017,Azman bin Nasrudin,BERSATU,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.018,Roslan bin Hashim,BERSATU,PN,sitting,backbencher,3,3,0,0,0,0,0
+P.019,Mumtaz binti Md Nawi,PAS,PN,sitting,backbencher,2,1,1,0,0,0,0
+P.020,Ahmad Marzuk bin Shaary,PAS,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.021,Takiyuddin bin Hassan,PAS,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.022,Ahmad Fadhli bin Shaari,PAS,PN,sitting,backbencher,1,1,0,0,0,0,0
+P.023,Siti Zailah binti Mohd Yusoff,PAS,PN,sitting,backbencher,1,1,0,0,0,0,0
+P.024,Tuan Ibrahim Tuan Man,PAS,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.025,Mohd Syahir bin Che Sulaiman,PAS,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.026,Khlir bin Mohd Nor,BERSATU,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.027,Ikmal Hisham bin Abdul Aziz,BERSATU,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.028,Nik Muhammad Zawawi bin Salleh,PAS,PN,sitting,backbencher,1,1,0,0,0,0,0
+P.029,Wan Ahmad Fayhsal bin Wan Ahmad Kamal,WAWASAN,,sitting,backbencher,0,0,0,0,0,0,0
+P.030,Zahari bin Kechik,,,sitting,backbencher,0,0,0,0,0,0,0
+P.031,Abdul Latiff bin Abdul Rahman,PAS,PN,sitting,backbencher,1,1,0,0,0,0,0
+P.032,Mohd Azizi bin Abu Naim,,,sitting,backbencher,0,0,0,0,0,0,0
+P.033,Che Mohamad Zulkifly bin Jusoh,PAS,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.034,Shaharizukirnain bin Abd Kadir,PAS,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.035,Alias bin Razak,PAS,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.036,Ahmad Amzad bin Mohamed @ Hashim,PAS,PN,sitting,backbencher,2,2,0,0,0,0,0
+P.037,Abdul Hadi bin Awang,PAS,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.038,Rosol bin Wahid,BERSATU,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.039,Wan Hassan bin Mohd Ramli,PAS,PN,sitting,backbencher,2,2,0,0,0,0,0
+P.040,Ahmad Samsuri bin Mokhtar,PAS,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.041,Siti Mastura binti Muhammad,PAS,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.042,Wan Saifulruddin bin Wan Jan,WAWASAN,,sitting,backbencher,0,0,0,0,0,0,0
+P.043,Lim Guan Eng,DAP,PH,sitting,backbencher,3,0,0,0,3,0,0
+P.044,Muhammad Fawwaz bin Mohamad Jan,PAS,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.045,Sim Chee Keong,DAP,PH,sitting,minister,3,0,3,0,0,0,0
+P.046,Chow Kon Yeow,DAP,PH,sitting,backbencher,1,1,0,0,0,0,0
+P.047,Fadhlina binti Sidek,PKR,PH,sitting,minister,0,0,0,0,0,0,0
+P.048,Syerleena binti Abdul Rashid,DAP,PH,sitting,backbencher,16,11,4,0,1,0,0
+P.049,Lim Hui Ying,DAP,PH,sitting,deputy minister,25,4,19,0,2,0,0
+P.050,Sanisvara Nethaji Rayer a/l Rajaji,DAP,PH,sitting,backbencher,3,3,0,0,0,0,0
+P.051,Ramkarpal Singh a/l Karpal Singh,DAP,PH,sitting,backbencher,0,0,0,0,0,0,0
+P.052,Sim Tze Tzin,PKR,PH,sitting,deputy minister,0,0,0,0,0,0,0
+P.053,Muhammad Bakhtiar bin Wan Chik,PKR,PH,sitting,backbencher,1,1,0,0,0,0,0
+P.054,Fathul Huzir bin Ayob,WAWASAN,,sitting,backbencher,0,0,0,0,0,0,0
+P.055,Shamsul Anuar bin Haji Nasarah,UMNO,BN,sitting,deputy minister,16,0,11,0,5,0,0
+P.056,Hamzah bin Zainudin,WAWASAN,,sitting,backbencher,0,0,0,0,0,0,0
+P.057,Mohd Misbahul Munir bin Masduki,PAS,PN,sitting,backbencher,2,2,0,0,0,0,0
+P.058,Idris bin Haji Ahmad,PAS,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.059,Syed Abu Hussin bin Hafiz Syed Abdul Fasal,,,sitting,backbencher,0,0,0,0,0,0,0
+P.060,Wong Kah Woh,DAP,PH,sitting,deputy minister,0,0,0,0,0,0,0
+P.061,Azahari bin Hasan,WAWASAN,,sitting,backbencher,0,0,0,0,0,0,0
+P.062,Kesavan a/l Subramaniam,PKR,PH,sitting,backbencher,0,0,0,0,0,0,0
+P.063,Anwar bin Ibrahim,PKR,PH,sitting,minister,14,5,3,0,6,0,0
+P.064,Lee Chuan How,DAP,PH,sitting,backbencher,1,1,0,0,0,0,0
+P.065,M.Kulasegaran a/l V.Murugeson,DAP,PH,sitting,deputy minister,0,0,0,0,0,0,0
+P.066,Sivakumar a/l Varatharaju Naidu,DAP,PH,sitting,backbencher,1,1,0,0,0,0,0
+P.067,Iskandar Dzulkarnain bin Abdul Khalid,,,sitting,backbencher,0,0,0,0,0,0,0
+P.068,Ngeh Koo Ham,DAP,PH,sitting,backbencher,10,5,3,0,2,0,0
+P.069,Muhammad Ismi bin Mat Taib,PAS,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.070,Chong Zhemin,DAP,PH,sitting,backbencher,0,0,0,0,0,0,0
+P.071,Tan Kar Hing,PKR,PH,sitting,backbencher,0,0,0,0,0,0,0
+P.072,Saravanan a/l Murugan,MIC,BN,sitting,backbencher,0,0,0,0,0,0,0
+P.073,Jamaludin bin Yahya,PAS,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.074,Komander Nordin bin Ahmad Ismail TLDM(Bersara),BERSATU,PN,sitting,backbencher,1,1,0,0,0,0,0
+P.075,Ahmad Zahid bin Hamidi,UMNO,BN,sitting,minister,0,0,0,0,0,0,0
+P.076,Nga Kor Ming,DAP,PH,sitting,minister,0,0,0,0,0,0,0
+P.077,Chang Lih Kang,PKR,PH,sitting,minister,14,9,3,0,2,0,0
+P.078,Ramli bin Dato' Mohd Nor,UMNO,BN,sitting,backbencher,0,0,0,0,0,0,0
+P.079,Abdul Rahman bin Haji Mohamad,UMNO,BN,sitting,deputy minister,0,0,0,0,0,0,0
+P.080,Chow Yu Hui,DAP,PH,sitting,backbencher,0,0,0,0,0,0,0
+P.081,Khairil Nizam bin Khirudin,PAS,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.082,Saifuddin bin Abdullah,WAWASAN,,sitting,backbencher,0,0,0,0,0,0,0
+P.083,Wan Razali bin Wan Nor,PAS,PN,sitting,backbencher,1,1,0,0,0,0,0
+P.084,Mohd Shahar bin Abdullah,UMNO,BN,sitting,deputy minister,5,5,0,0,0,0,0
+P.085,Sh Mohmed Puzi bin Sh Ali,UMNO,BN,sitting,backbencher,1,0,1,0,0,0,0
+P.086,Ismail bin Abd. Muttalib,PAS,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.087,Kamal bin Ashaari,PAS,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.088,Salamiah binti Mohd Nor,PAS,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.089,Young Syefura binti Othman,DAP,PH,sitting,backbencher,0,0,0,0,0,0,0
+P.090,Ismail Sabri bin Yaakob,UMNO,BN,sitting,backbencher,0,0,0,0,0,0,0
+P.091,Abdul Khalib bin Abdullah,BERSATU,PN,sitting,backbencher,4,1,3,0,0,0,0
+P.092,Kalam bin Salan,BERSATU,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.093,Muslimin bin Yahaya,BERSATU,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.094,Mohd Hasnizan bin Harun,PAS,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.095,Zulkafperi bin Hanapi,,,sitting,backbencher,0,0,0,0,0,0,0
+P.096,Dzulkefly bin Ahmad,AMANAH,PH,sitting,minister,4,3,1,0,0,0,0
+P.097,William Leong Jee Keen,PKR,PH,sitting,backbencher,0,0,0,0,0,0,0
+P.098,Amirudin bin Shari,PKR,PH,sitting,backbencher,0,0,0,0,0,0,0
+P.099,Rodziah binti Ismail,PKR,PH,sitting,backbencher,4,0,4,0,0,0,0
+P.100,Mohd Rafizi bin Ramli,BERSAMA,,resigned; seat vacant until GE16,former MP,2,1,0,0,1,0,0
+P.101,Mohd Sany bin Hamzan,AMANAH,PH,sitting,backbencher,0,0,0,0,0,0,0
+P.102,Syahredzan bin Johan,DAP,PH,sitting,backbencher,0,0,0,0,0,0,0
+P.103,Yeo Bee Yin,DAP,PH,sitting,backbencher,0,0,0,0,0,0,0
+P.104,Wong Chen,BERSAMA,,resigned; seat vacant until GE16,former MP,0,0,0,0,0,0,0
+P.105,Lee Chean Chung,BERSAMA,,resigned; seat vacant until GE16,former MP,3,2,1,0,0,0,0
+P.106,Gobind Singh Deo,DAP,PH,sitting,minister,31,10,13,0,8,0,0
+P.107,Ramanan Ramakrishnan,PKR,PH,sitting,minister,0,0,0,0,0,0,0
+P.108,Azli bin Yusof,AMANAH,PH,sitting,backbencher,2,2,0,0,0,0,0
+P.109,Halimah Ali,PAS,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.110,Ganabatirau a/l Veraman,DAP,PH,sitting,backbencher,0,0,0,0,0,0,0
+P.111,Mohamad bin Sabu,AMANAH,PH,sitting,minister,0,0,0,0,0,0,0
+P.112,Ahmad Yunus bin Hairi,PAS,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.113,Aiman Athirah Binti Sabu,AMANAH,PH,sitting,deputy minister,0,0,0,0,0,0,0
+P.114,Lim Lip Eng,DAP,PH,sitting,backbencher,6,2,1,0,3,0,0
+P.115,Prabakaran a/l M Parameswaran,PKR,PH,sitting,backbencher,0,0,0,0,0,0,0
+P.116,Zahir bin Hassan,PKR,PH,sitting,backbencher,0,0,0,0,0,0,0
+P.117,Hannah Yeoh Tseow Suan,DAP,PH,sitting,minister,2,0,2,0,0,0,0
+P.118,Nik Nazmi bin Nik Ahmad,BERSAMA,,resigned; seat vacant until GE16,former MP,2,2,0,0,0,0,0
+P.119,Johari bin Abdul Ghani,UMNO,BN,sitting,minister,0,0,0,0,0,0,0
+P.120,Fong Kui Lun,DAP,PH,sitting,backbencher,0,0,0,0,0,0,0
+P.121,Ahmad Fahmi bin Mohamed Fadzil,PKR,PH,sitting,minister,1,0,1,0,0,0,0
+P.122,Teresa Kok Suh Sim,DAP,PH,sitting,backbencher,1,1,0,0,0,0,0
+P.123,Tan Kok Wai,DAP,PH,sitting,backbencher,0,0,0,0,0,0,0
+P.124,Wan Azizah binti Dr. Wan Ismail,PKR,PH,sitting,backbencher,0,0,0,0,0,0,0
+P.125,Radzi Jidin,BERSATU,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.126,Jalaluddin bin Alias,UMNO,BN,sitting,backbencher,1,1,0,0,0,0,0
+P.127,Shamshulkahar bin Mohd Deli,UMNO,BN,sitting,backbencher,0,0,0,0,0,0,0
+P.128,Loke Siew Fook,DAP,PH,sitting,minister,0,0,0,0,0,0,0
+P.129,Adnan bin Abu Hassan,UMNO,BN,sitting,backbencher,0,0,0,0,0,0,0
+P.130,Cha Kee Chin,DAP,PH,sitting,backbencher,3,3,0,0,0,0,0
+P.131,Mohamad bin Haji Hasan,UMNO,BN,sitting,minister,0,0,0,0,0,0,0
+P.132,Aminuddin bin Harun,PKR,PH,sitting,backbencher,0,0,0,0,0,0,0
+P.133,Mohd Isam bin Mohd Isa,UMNO,BN,sitting,backbencher,0,0,0,0,0,0,0
+P.134,Mas Ermieyati binti Samsudin,BERSATU,PN,sitting,backbencher,4,3,1,0,0,0,0
+P.135,Adly bin Zahari,AMANAH,PH,sitting,deputy minister,0,0,0,0,0,0,0
+P.136,Bakri bin Jamaluddin,PAS,PN,sitting,backbencher,1,1,0,0,0,0,0
+P.137,Adam Adli bin Abd Halim,PKR,PH,sitting,deputy minister,0,0,0,0,0,0,0
+P.138,Khoo Poay Tiong,DAP,PH,sitting,backbencher,7,7,0,0,0,0,0
+P.139,Zulkifli bin Ismail,PAS,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.140,Yuneswaran a/l Ramaraj,PKR,PH,sitting,deputy minister,2,0,2,0,0,0,0
+P.141,Zaliha binti Mustafa,PKR,PH,sitting,backbencher,2,0,1,0,1,0,0
+P.142,Pang Hok Liong,DAP,PH,sitting,backbencher,0,0,0,0,0,0,0
+P.143,Mahiaddin bin Md Yasin,BERSATU,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.144,Syed Ibrahim bin Syed Noh,PKR,PH,sitting,deputy minister,0,0,0,0,0,0,0
+P.145,Tan Hong Pin,DAP,PH,sitting,backbencher,1,1,0,0,0,0,0
+P.146,Syed Saddiq bin Syed Abdul Rahman,MUDA,,sitting,backbencher,0,0,0,0,0,0,0
+P.147,Noraini binti Ahmad,UMNO,BN,sitting,minister,0,0,0,0,0,0,0
+P.148,Wee Ka Siong,MCA,BN,sitting,backbencher,0,0,0,0,0,0,0
+P.149,Aminolhuda bin Hassan,AMANAH,PH,sitting,backbencher,0,0,0,0,0,0,0
+P.150,Onn bin Abu Bakar,PKR,PH,sitting,backbencher,0,0,0,0,0,0,0
+P.151,Hasni bin Mohammad,UMNO,BN,sitting,backbencher,0,0,0,0,0,0,0
+P.152,Wong Shu Qi,DAP,PH,sitting,backbencher,0,0,0,0,0,0,0
+P.153,Hishammuddin bin Datuk Hussein,UMNO,BN,sitting,backbencher,0,0,0,0,0,0,0
+P.154,Muhammad Islahuddin bin Abas,BERSATU,PN,sitting,backbencher,3,3,0,0,0,0,0
+P.155,Manndzri bin Haji Nasib,UMNO,BN,sitting,backbencher,0,0,0,0,0,0,0
+P.156,Mohamed Khaled bin Nordin,UMNO,BN,sitting,minister,0,0,0,0,0,0,0
+P.157,Azalina binti Othman Said,UMNO,BN,sitting,minister,0,0,0,0,0,0,0
+P.158,Jimmy Puah Wee Tse,PKR,PH,sitting,backbencher,0,0,0,0,0,0,0
+P.159,Hassan bin Abdul Karim,PKR,PH,sitting,backbencher,0,0,0,0,0,0,0
+P.160,Akmal Nasrullah bin Mohd Nasir,PKR,PH,sitting,minister,10,4,0,0,6,0,0
+P.161,Suhaizan bin Kaiat,AMANAH,PH,sitting,backbencher,0,0,0,0,0,0,0
+P.162,Liew Chin Tong,DAP,PH,sitting,deputy minister,2,0,2,0,0,0,0
+P.163,Teo Nie Ching,DAP,PH,sitting,deputy minister,0,0,0,0,0,0,0
+P.164,Ahmad bin Haji Maslan,UMNO,BN,sitting,deputy minister,1,1,0,0,0,0,0
+P.165,Wee Jeck Seng,MCA,BN,sitting,backbencher,0,0,0,0,0,0,0
+P.166,Suhaili bin Abdul Rahman,,,sitting,backbencher,3,2,0,0,1,0,0
+P.167,Verdon bin Bahanda,BEBAS,,sitting,backbencher,0,0,0,0,0,0,0
+P.168,Wetrom bin Bahanda,KDM,,sitting,backbencher,0,0,0,0,0,0,0
+P.169,Isnaraissah Munirah bt Majilis@Fakharudy,WARISAN,,sitting,backbencher,0,0,0,0,0,0,0
+P.170,Madius bin Tangau,UPKO,GRS,sitting,backbencher,1,1,0,0,0,0,0
+P.171,Mustapha Sakmud,PKR,PH,sitting,minister,1,0,1,0,0,0,0
+P.172,Chan Foong Hin,DAP,PH,sitting,deputy minister,0,0,0,0,0,0,0
+P.173,Shahelmey bin Yahya,UMNO,BN,sitting,backbencher,1,1,0,0,0,0,0
+P.174,Ewon Benedick,UPKO,GRS,sitting,backbencher,0,0,0,0,0,0,0
+P.175,Armizan bin Mohd Ali,BEBAS,GRS,sitting,minister,0,0,0,0,0,0,0
+P.176,Mohamad Alamin,UMNO,BN,sitting,deputy minister,0,0,0,0,0,0,0
+P.177,Siti Aminah binti Aching,UMNO,BN,sitting,backbencher,0,0,0,0,0,0,0
+P.178,Matbali bin Musah,BEBAS,GRS,sitting,backbencher,0,0,0,0,0,0,0
+P.179,Jonathan bin Yasin,BEBAS,GRS,sitting,backbencher,0,0,0,0,0,0,0
+P.180,Jeffrey G. Kitingan,STAR,GRS,sitting,backbencher,0,0,0,0,0,0,0
+P.181,Riduan bin Rubin,BEBAS,,sitting,backbencher,1,1,0,0,0,0,0
+P.182,Arthur Joseph Kurup,PBRS,BN,sitting,minister,2,2,0,0,0,0,0
+P.183,Ronald Kiandee,BERSATU,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.184,Suhaimi bin Nasir,UMNO,BN,sitting,backbencher,0,0,0,0,0,0,0
+P.185,Khairul Firdaus bin Akbar Khan,BEBAS,GRS,sitting,deputy minister,1,0,1,0,0,0,0
+P.186,Vivian Wong Shir Yee,DAP,PH,sitting,backbencher,0,0,0,0,0,0,0
+P.187,Mohd Kurniawan Naim bin Moktar,UMNO,BN,sitting,backbencher,1,1,0,0,0,0,0
+P.188,Mohammad Yusof bin Apdal,WARISAN,,sitting,deputy minister,14,6,8,0,0,0,0
+P.189,Mohd Shafie bin Apdal,WARISAN,,sitting,backbencher,0,0,0,0,0,0,0
+P.190,Lo Su Fui,PBS,GRS,sitting,deputy minister,0,0,0,0,0,0,0
+P.191,Andi Muhammad Suryady bin Bandy,UMNO,BN,sitting,backbencher,0,0,0,0,0,0,0
+P.192,Mordi anak Bimol,DAP,PH,sitting,deputy minister,0,0,0,0,0,0,0
+P.193,Nancy binti Shukri,PBB,GPS,sitting,minister,0,0,0,0,0,0,0
+P.194,Fadillah bin Haji Yusof,PBB,GPS,sitting,minister,8,0,4,0,4,0,0
+P.195,Kelvin Yii Lee Wuen,DAP,PH,sitting,backbencher,19,18,0,0,1,0,0
+P.196,Chong Chieng Jen,DAP,PH,sitting,backbencher,0,0,0,0,0,0,0
+P.197,Rubiah binti Wang,PBB,GPS,sitting,deputy minister,0,0,0,0,0,0,0
+P.198,Willie anak Mongin,PBB,GPS,sitting,backbencher,1,1,0,0,0,0,0
+P.199,Richard Riot anak Jaem,SUPP,GPS,sitting,backbencher,0,0,0,0,0,0,0
+P.200,Rodiyah binti Sapiee,PBB,GPS,sitting,backbencher,0,0,0,0,0,0,0
+P.201,Mohamad Shafizan Haji Kepli,PBB,GPS,sitting,backbencher,0,0,0,0,0,0,0
+P.202,Doris Sophia anak Brodi,PRS,GPS,sitting,backbencher,0,0,0,0,0,0,0
+P.203,Roy Angau anak Gingkoi,PRS,GPS,sitting,backbencher,0,0,0,0,0,0,0
+P.204,Richard Rapu @ Aman anak Begri,PBB,GPS,sitting,backbencher,3,3,0,0,0,0,0
+P.205,Ali anak Biju,BERSATU,PN,sitting,backbencher,0,0,0,0,0,0,0
+P.206,Yusuf bin Haji Abd Wahab,PBB,GPS,sitting,backbencher,0,0,0,0,0,0,0
+P.207,Ahmad Johnie bin Zawawi,PBB,GPS,sitting,backbencher,0,0,0,0,0,0,0
+P.208,Huang Tiong Sii,SUPP,GPS,sitting,deputy minister,0,0,0,0,0,0,0
+P.209,Larry Soon @ Larry Sng Wei Shien,PBM,,sitting,backbencher,0,0,0,0,0,0,0
+P.210,Aaron Ago anak Dagang,PRS,GPS,sitting,minister,0,0,0,0,0,0,0
+P.211,Alice Lau Kiong Yieng,DAP,PH,sitting,backbencher,0,0,0,0,0,0,0
+P.212,Oscar Ling Chai Yew,DAP,PH,sitting,backbencher,0,0,0,0,0,0,0
+P.213,Hanifah Hajar Taib,PBB,GPS,sitting,deputy minister,0,0,0,0,0,0,0
+P.214,Edwin anak Banta,PRS,GPS,sitting,backbencher,1,1,0,0,0,0,0
+P.215,Alexander Nanta Linggi,PBB,GPS,sitting,minister,0,0,0,0,0,0,0
+P.216,Wilson Ugak anak Kumbong,PRS,GPS,sitting,deputy minister,3,0,3,0,0,0,0
+P.217,Tiong King Sing,PDP,GPS,sitting,minister,0,0,0,0,0,0,0
+P.218,Lukanisman bin Awang Sauni,PBB,GPS,sitting,deputy minister,1,1,0,0,0,0,0
+P.219,Chiew Choon Man,PKR,PH,sitting,deputy minister,0,0,0,0,0,0,0
+P.220,Anyi Ngau,PDP,GPS,sitting,backbencher,0,0,0,0,0,0,0
+P.221,Hasbi bin Haji Habibollah,PBB,GPS,sitting,deputy minister,0,0,0,0,0,0,0
+P.222,Henry Sum Agong,PBB,GPS,sitting,backbencher,0,0,0,0,0,0,0
