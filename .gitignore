@@ -6,3 +6,8 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# MP tracker pipeline
+.venv/
+data/cache/
+data/hansard_pdfs/

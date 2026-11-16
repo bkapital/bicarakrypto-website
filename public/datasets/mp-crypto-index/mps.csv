@@ -1,0 +1,223 @@
+constituency_code,constituency,name,party,coalition,state,status,role
+P.001,Padang Besar,Rushdan bin Rusmi,PAS,PN,Perlis,sitting,backbencher
+P.002,Kangar,Zakri bin Hassan,BERSATU,PN,Perlis,sitting,backbencher
+P.003,Arau,Shahidan bin Kassim,PAS,PN,Perlis,sitting,backbencher
+P.004,Langkawi,Mohd Suhaimi bin Abdullah,BERSATU,PN,Kedah,sitting,backbencher
+P.005,Jerlun,Abd Ghani bin Ahmad,PAS,PN,Kedah,sitting,backbencher
+P.006,Kubang Pasu,Ku Abd Rahman bin Ku Ismail,BERSATU,PN,Kedah,sitting,backbencher
+P.007,Padang Terap,Nurul Amin bin Hamid,PAS,PN,Kedah,sitting,backbencher
+P.008,Pokok Sena,Ahmad bin Saad @ Yahaya,PAS,PN,Kedah,sitting,backbencher
+P.009,Alor Setar,Afnan Hamimi bin Dato' Haji Taib Azamudden,PAS,PN,Kedah,sitting,backbencher
+P.010,Kuala Kedah,Ahmad Fakhruddin bin Fakhrurazi,PAS,PN,Kedah,sitting,backbencher
+P.011,Pendang,Awang bin Hashim,PAS,PN,Kedah,sitting,backbencher
+P.012,Jerai,Sabri bin Azit,PAS,PN,Kedah,sitting,backbencher
+P.013,Sik,Ahmad Tarmizi bin Sulaiman,PAS,PN,Kedah,sitting,backbencher
+P.014,Merbok,Mohd Nazri bin Abu Hassan,BERSATU,PN,Kedah,sitting,backbencher
+P.015,Sungai Petani,Mohammed Taufiq bin Johari,PKR,PH,Kedah,sitting,minister
+P.016,Baling,Hassan bin Saad,PAS,PN,Kedah,sitting,backbencher
+P.017,Padang Serai,Azman bin Nasrudin,BERSATU,PN,Kedah,sitting,backbencher
+P.018,Kulim Bandar Baharu,Roslan bin Hashim,BERSATU,PN,Kedah,sitting,backbencher
+P.019,Tumpat,Mumtaz binti Md Nawi,PAS,PN,Kelantan,sitting,backbencher
+P.020,Pengkalan Chepa,Ahmad Marzuk bin Shaary,PAS,PN,Kelantan,sitting,backbencher
+P.021,Kota Bharu,Takiyuddin bin Hassan,PAS,PN,Kelantan,sitting,backbencher
+P.022,Pasir Mas,Ahmad Fadhli bin Shaari,PAS,PN,Kelantan,sitting,backbencher
+P.023,Rantau Panjang,Siti Zailah binti Mohd Yusoff,PAS,PN,Kelantan,sitting,backbencher
+P.024,Kubang Kerian,Tuan Ibrahim Tuan Man,PAS,PN,Kelantan,sitting,backbencher
+P.025,Bachok,Mohd Syahir bin Che Sulaiman,PAS,PN,Kelantan,sitting,backbencher
+P.026,Ketereh,Khlir bin Mohd Nor,BERSATU,PN,Kelantan,sitting,backbencher
+P.027,Tanah Merah,Ikmal Hisham bin Abdul Aziz,BERSATU,PN,Kelantan,sitting,backbencher
+P.028,Pasir Puteh,Nik Muhammad Zawawi bin Salleh,PAS,PN,Kelantan,sitting,backbencher
+P.029,Machang,Wan Ahmad Fayhsal bin Wan Ahmad Kamal,WAWASAN,,Kelantan,sitting,backbencher
+P.030,Jeli,Zahari bin Kechik,,,Kelantan,sitting,backbencher
+P.031,Kuala Krai,Abdul Latiff bin Abdul Rahman,PAS,PN,Kelantan,sitting,backbencher
+P.032,Gua Musang,Mohd Azizi bin Abu Naim,,,Kelantan,sitting,backbencher
+P.033,Besut,Che Mohamad Zulkifly bin Jusoh,PAS,PN,Terengganu,sitting,backbencher
+P.034,Setiu,Shaharizukirnain bin Abd Kadir,PAS,PN,Terengganu,sitting,backbencher
+P.035,Kuala Nerus,Alias bin Razak,PAS,PN,Terengganu,sitting,backbencher
+P.036,Kuala Terengganu,Ahmad Amzad bin Mohamed @ Hashim,PAS,PN,Terengganu,sitting,backbencher
+P.037,Marang,Abdul Hadi bin Awang,PAS,PN,Terengganu,sitting,backbencher
+P.038,Hulu Terengganu,Rosol bin Wahid,BERSATU,PN,Terengganu,sitting,backbencher
+P.039,Dungun,Wan Hassan bin Mohd Ramli,PAS,PN,Terengganu,sitting,backbencher
+P.040,Kemaman,Ahmad Samsuri bin Mokhtar,PAS,PN,Terengganu,sitting,backbencher
+P.041,Kepala Batas,Siti Mastura binti Muhammad,PAS,PN,Pulau Pinang,sitting,backbencher
+P.042,Tasek Gelugor,Wan Saifulruddin bin Wan Jan,WAWASAN,,Pulau Pinang,sitting,backbencher
+P.043,Bagan,Lim Guan Eng,DAP,PH,Pulau Pinang,sitting,backbencher
+P.044,Permatang Pauh,Muhammad Fawwaz bin Mohamad Jan,PAS,PN,Pulau Pinang,sitting,backbencher
+P.045,Bukit Mertajam,Sim Chee Keong,DAP,PH,Pulau Pinang,sitting,minister
+P.046,Batu Kawan,Chow Kon Yeow,DAP,PH,Pulau Pinang,sitting,backbencher
+P.047,Nibong Tebal,Fadhlina binti Sidek,PKR,PH,Pulau Pinang,sitting,minister
+P.048,Bukit Bendera,Syerleena binti Abdul Rashid,DAP,PH,Pulau Pinang,sitting,backbencher
+P.049,Tanjong,Lim Hui Ying,DAP,PH,Pulau Pinang,sitting,deputy minister
+P.050,Jelutong,Sanisvara Nethaji Rayer a/l Rajaji,DAP,PH,Pulau Pinang,sitting,backbencher
+P.051,Bukit Gelugor,Ramkarpal Singh a/l Karpal Singh,DAP,PH,Pulau Pinang,sitting,backbencher
+P.052,Bayan Baru,Sim Tze Tzin,PKR,PH,Pulau Pinang,sitting,deputy minister
+P.053,Balik Pulau,Muhammad Bakhtiar bin Wan Chik,PKR,PH,Pulau Pinang,sitting,backbencher
+P.054,Gerik,Fathul Huzir bin Ayob,WAWASAN,,Perak,sitting,backbencher
+P.055,Lenggong,Shamsul Anuar bin Haji Nasarah,UMNO,BN,Perak,sitting,deputy minister
+P.056,Larut,Hamzah bin Zainudin,WAWASAN,,Perak,sitting,backbencher
+P.057,Parit Buntar,Mohd Misbahul Munir bin Masduki,PAS,PN,Perak,sitting,backbencher
+P.058,Bagan Serai,Idris bin Haji Ahmad,PAS,PN,Perak,sitting,backbencher
+P.059,Bukit Gantang,Syed Abu Hussin bin Hafiz Syed Abdul Fasal,,,Perak,sitting,backbencher
+P.060,Taiping,Wong Kah Woh,DAP,PH,Perak,sitting,deputy minister
+P.061,Padang Rengas,Azahari bin Hasan,WAWASAN,,Perak,sitting,backbencher
+P.062,Sungai Siput,Kesavan a/l Subramaniam,PKR,PH,Perak,sitting,backbencher
+P.063,Tambun,Anwar bin Ibrahim,PKR,PH,Perak,sitting,minister
+P.064,Ipoh Timor,Lee Chuan How,DAP,PH,Perak,sitting,backbencher
+P.065,Ipoh Barat,M.Kulasegaran a/l V.Murugeson,DAP,PH,Perak,sitting,deputy minister
+P.066,Batu Gajah,Sivakumar a/l Varatharaju Naidu,DAP,PH,Perak,sitting,backbencher
+P.067,Kuala Kangsar,Iskandar Dzulkarnain bin Abdul Khalid,,,Perak,sitting,backbencher
+P.068,Beruas,Ngeh Koo Ham,DAP,PH,Perak,sitting,backbencher
+P.069,Parit,Muhammad Ismi bin Mat Taib,PAS,PN,Perak,sitting,backbencher
+P.070,Kampar,Chong Zhemin,DAP,PH,Perak,sitting,backbencher
+P.071,Gopeng,Tan Kar Hing,PKR,PH,Perak,sitting,backbencher
+P.072,Tapah,Saravanan a/l Murugan,MIC,BN,Perak,sitting,backbencher
+P.073,Pasir Salak,Jamaludin bin Yahya,PAS,PN,Perak,sitting,backbencher
+P.074,Lumut,Komander Nordin bin Ahmad Ismail TLDM(Bersara),BERSATU,PN,Perak,sitting,backbencher
+P.075,Bagan Datuk,Ahmad Zahid bin Hamidi,UMNO,BN,Perak,sitting,minister
+P.076,Teluk Intan,Nga Kor Ming,DAP,PH,Perak,sitting,minister
+P.077,Tanjong Malim,Chang Lih Kang,PKR,PH,Perak,sitting,minister
+P.078,Cameron Highlands,Ramli bin Dato' Mohd Nor,UMNO,BN,Pahang,sitting,backbencher
+P.079,Lipis,Abdul Rahman bin Haji Mohamad,UMNO,BN,Pahang,sitting,deputy minister
+P.080,Raub,Chow Yu Hui,DAP,PH,Pahang,sitting,backbencher
+P.081,Jerantut,Khairil Nizam bin Khirudin,PAS,PN,Pahang,sitting,backbencher
+P.082,Indera Mahkota,Saifuddin bin Abdullah,WAWASAN,,Pahang,sitting,backbencher
+P.083,Kuantan,Wan Razali bin Wan Nor,PAS,PN,Pahang,sitting,backbencher
+P.084,Paya Besar,Mohd Shahar bin Abdullah,UMNO,BN,Pahang,sitting,deputy minister
+P.085,Pekan,Sh Mohmed Puzi bin Sh Ali,UMNO,BN,Pahang,sitting,backbencher
+P.086,Maran,Ismail bin Abd. Muttalib,PAS,PN,Pahang,sitting,backbencher
+P.087,Kuala Krau,Kamal bin Ashaari,PAS,PN,Pahang,sitting,backbencher
+P.088,Temerloh,Salamiah binti Mohd Nor,PAS,PN,Pahang,sitting,backbencher
+P.089,Bentong,Young Syefura binti Othman,DAP,PH,Pahang,sitting,backbencher
+P.090,Bera,Ismail Sabri bin Yaakob,UMNO,BN,Pahang,sitting,backbencher
+P.091,Rompin,Abdul Khalib bin Abdullah,BERSATU,PN,Pahang,sitting,backbencher
+P.092,Sabak Bernam,Kalam bin Salan,BERSATU,PN,Selangor,sitting,backbencher
+P.093,Sungai Besar,Muslimin bin Yahaya,BERSATU,PN,Selangor,sitting,backbencher
+P.094,Hulu Selangor,Mohd Hasnizan bin Harun,PAS,PN,Selangor,sitting,backbencher
+P.095,Tanjong Karang,Zulkafperi bin Hanapi,,,Selangor,sitting,backbencher
+P.096,Kuala Selangor,Dzulkefly bin Ahmad,AMANAH,PH,Selangor,sitting,minister
+P.097,Selayang,William Leong Jee Keen,PKR,PH,Selangor,sitting,backbencher
+P.098,Gombak,Amirudin bin Shari,PKR,PH,Selangor,sitting,backbencher
+P.099,Ampang,Rodziah binti Ismail,PKR,PH,Selangor,sitting,backbencher
+P.100,Pandan,Mohd Rafizi bin Ramli,BERSAMA,,Selangor,resigned; seat vacant until GE16,former MP
+P.101,Hulu Langat,Mohd Sany bin Hamzan,AMANAH,PH,Selangor,sitting,backbencher
+P.102,Bangi,Syahredzan bin Johan,DAP,PH,Selangor,sitting,backbencher
+P.103,Puchong,Yeo Bee Yin,DAP,PH,Selangor,sitting,backbencher
+P.104,Subang,Wong Chen,BERSAMA,,Selangor,resigned; seat vacant until GE16,former MP
+P.105,Petaling Jaya,Lee Chean Chung,BERSAMA,,Selangor,resigned; seat vacant until GE16,former MP
+P.106,Damansara,Gobind Singh Deo,DAP,PH,Selangor,sitting,minister
+P.107,Sungai Buloh,Ramanan Ramakrishnan,PKR,PH,Selangor,sitting,minister
+P.108,Shah Alam,Azli bin Yusof,AMANAH,PH,Selangor,sitting,backbencher
+P.109,Kapar,Halimah Ali,PAS,PN,Selangor,sitting,backbencher
+P.110,Klang,Ganabatirau a/l Veraman,DAP,PH,Selangor,sitting,backbencher
+P.111,Kota Raja,Mohamad bin Sabu,AMANAH,PH,Selangor,sitting,minister
+P.112,Kuala Langat,Ahmad Yunus bin Hairi,PAS,PN,Selangor,sitting,backbencher
+P.113,Sepang,Aiman Athirah Binti Sabu,AMANAH,PH,Selangor,sitting,deputy minister
+P.114,Kepong,Lim Lip Eng,DAP,PH,Kuala Lumpur,sitting,backbencher
+P.115,Batu,Prabakaran a/l M Parameswaran,PKR,PH,Kuala Lumpur,sitting,backbencher
+P.116,Wangsa Maju,Zahir bin Hassan,PKR,PH,Kuala Lumpur,sitting,backbencher
+P.117,Segambut,Hannah Yeoh Tseow Suan,DAP,PH,Kuala Lumpur,sitting,minister
+P.118,Setiawangsa,Nik Nazmi bin Nik Ahmad,BERSAMA,,W.P. Kuala Lumpur,resigned; seat vacant until GE16,former MP
+P.119,Titiwangsa,Johari bin Abdul Ghani,UMNO,BN,Kuala Lumpur,sitting,minister
+P.120,Bukit Bintang,Fong Kui Lun,DAP,PH,Kuala Lumpur,sitting,backbencher
+P.121,Lembah Pantai,Ahmad Fahmi bin Mohamed Fadzil,PKR,PH,Kuala Lumpur,sitting,minister
+P.122,Seputeh,Teresa Kok Suh Sim,DAP,PH,Kuala Lumpur,sitting,backbencher
+P.123,Cheras,Tan Kok Wai,DAP,PH,Kuala Lumpur,sitting,backbencher
+P.124,Bandar Tun Razak,Wan Azizah binti Dr. Wan Ismail,PKR,PH,Kuala Lumpur,sitting,backbencher
+P.125,Putrajaya,Radzi Jidin,BERSATU,PN,Putrajaya,sitting,backbencher
+P.126,Jelebu,Jalaluddin bin Alias,UMNO,BN,Negeri Sembilan,sitting,backbencher
+P.127,Jempol,Shamshulkahar bin Mohd Deli,UMNO,BN,Negeri Sembilan,sitting,backbencher
+P.128,Seremban,Loke Siew Fook,DAP,PH,Negeri Sembilan,sitting,minister
+P.129,Kuala Pilah,Adnan bin Abu Hassan,UMNO,BN,Negeri Sembilan,sitting,backbencher
+P.130,Rasah,Cha Kee Chin,DAP,PH,Negeri Sembilan,sitting,backbencher
+P.131,Rembau,Mohamad bin Haji Hasan,UMNO,BN,Negeri Sembilan,sitting,minister
+P.132,Port Dickson,Aminuddin bin Harun,PKR,PH,Negeri Sembilan,sitting,backbencher
+P.133,Tampin,Mohd Isam bin Mohd Isa,UMNO,BN,Negeri Sembilan,sitting,backbencher
+P.134,Masjid Tanah,Mas Ermieyati binti Samsudin,BERSATU,PN,Melaka,sitting,backbencher
+P.135,Alor Gajah,Adly bin Zahari,AMANAH,PH,Melaka,sitting,deputy minister
+P.136,Tangga Batu,Bakri bin Jamaluddin,PAS,PN,Melaka,sitting,backbencher
+P.137,Hang Tuah Jaya,Adam Adli bin Abd Halim,PKR,PH,Melaka,sitting,deputy minister
+P.138,Kota Melaka,Khoo Poay Tiong,DAP,PH,Melaka,sitting,backbencher
+P.139,Jasin,Zulkifli bin Ismail,PAS,PN,Melaka,sitting,backbencher
+P.140,Segamat,Yuneswaran a/l Ramaraj,PKR,PH,Johor,sitting,deputy minister
+P.141,Sekijang,Zaliha binti Mustafa,PKR,PH,Johor,sitting,backbencher
+P.142,Labis,Pang Hok Liong,DAP,PH,Johor,sitting,backbencher
+P.143,Pagoh,Mahiaddin bin Md Yasin,BERSATU,PN,Johor,sitting,backbencher
+P.144,Ledang,Syed Ibrahim bin Syed Noh,PKR,PH,Johor,sitting,deputy minister
+P.145,Bakri,Tan Hong Pin,DAP,PH,Johor,sitting,backbencher
+P.146,Muar,Syed Saddiq bin Syed Abdul Rahman,MUDA,,Johor,sitting,backbencher
+P.147,Parit Sulong,Noraini binti Ahmad,UMNO,BN,Johor,sitting,minister
+P.148,Ayer Hitam,Wee Ka Siong,MCA,BN,Johor,sitting,backbencher
+P.149,Sri Gading,Aminolhuda bin Hassan,AMANAH,PH,Johor,sitting,backbencher
+P.150,Batu Pahat,Onn bin Abu Bakar,PKR,PH,Johor,sitting,backbencher
+P.151,Simpang Renggam,Hasni bin Mohammad,UMNO,BN,Johor,sitting,backbencher
+P.152,Kluang,Wong Shu Qi,DAP,PH,Johor,sitting,backbencher
+P.153,Sembrong,Hishammuddin bin Datuk Hussein,UMNO,BN,Johor,sitting,backbencher
+P.154,Mersing,Muhammad Islahuddin bin Abas,BERSATU,PN,Johor,sitting,backbencher
+P.155,Tenggara,Manndzri bin Haji Nasib,UMNO,BN,Johor,sitting,backbencher
+P.156,Kota Tinggi,Mohamed Khaled bin Nordin,UMNO,BN,Johor,sitting,minister
+P.157,Pengerang,Azalina binti Othman Said,UMNO,BN,Johor,sitting,minister
+P.158,Tebrau,Jimmy Puah Wee Tse,PKR,PH,Johor,sitting,backbencher
+P.159,Pasir Gudang,Hassan bin Abdul Karim,PKR,PH,Johor,sitting,backbencher
+P.160,Johor Bahru,Akmal Nasrullah bin Mohd Nasir,PKR,PH,Johor,sitting,minister
+P.161,Pulai,Suhaizan bin Kaiat,AMANAH,PH,Johor,sitting,backbencher
+P.162,Iskandar Puteri,Liew Chin Tong,DAP,PH,Johor,sitting,deputy minister
+P.163,Kulai,Teo Nie Ching,DAP,PH,Johor,sitting,deputy minister
+P.164,Pontian,Ahmad bin Haji Maslan,UMNO,BN,Johor,sitting,deputy minister
+P.165,Tanjung Piai,Wee Jeck Seng,MCA,BN,Johor,sitting,backbencher
+P.166,Labuan,Suhaili bin Abdul Rahman,,,Labuan,sitting,backbencher
+P.167,Kudat,Verdon bin Bahanda,BEBAS,,Sabah,sitting,backbencher
+P.168,Kota Marudu,Wetrom bin Bahanda,KDM,,Sabah,sitting,backbencher
+P.169,Kota Belud,Isnaraissah Munirah bt Majilis@Fakharudy,WARISAN,,Sabah,sitting,backbencher
+P.170,Tuaran,Madius bin Tangau,UPKO,GRS,Sabah,sitting,backbencher
+P.171,Sepanggar,Mustapha Sakmud,PKR,PH,Sabah,sitting,minister
+P.172,Kota Kinabalu,Chan Foong Hin,DAP,PH,Sabah,sitting,deputy minister
+P.173,Putatan,Shahelmey bin Yahya,UMNO,BN,Sabah,sitting,backbencher
+P.174,Penampang,Ewon Benedick,UPKO,GRS,Sabah,sitting,backbencher
+P.175,Papar,Armizan bin Mohd Ali,BEBAS,GRS,Sabah,sitting,minister
+P.176,Kimanis,Mohamad Alamin,UMNO,BN,Sabah,sitting,deputy minister
+P.177,Beaufort,Siti Aminah binti Aching,UMNO,BN,Sabah,sitting,backbencher
+P.178,Sipitang,Matbali bin Musah,BEBAS,GRS,Sabah,sitting,backbencher
+P.179,Ranau,Jonathan bin Yasin,BEBAS,GRS,Sabah,sitting,backbencher
+P.180,Keningau,Jeffrey G. Kitingan,STAR,GRS,Sabah,sitting,backbencher
+P.181,Tenom,Riduan bin Rubin,BEBAS,,Sabah,sitting,backbencher
+P.182,Pensiangan,Arthur Joseph Kurup,PBRS,BN,Sabah,sitting,minister
+P.183,Beluran,Ronald Kiandee,BERSATU,PN,Sabah,sitting,backbencher
+P.184,Libaran,Suhaimi bin Nasir,UMNO,BN,Sabah,sitting,backbencher
+P.185,Batu Sapi,Khairul Firdaus bin Akbar Khan,BEBAS,GRS,Sabah,sitting,deputy minister
+P.186,Sandakan,Vivian Wong Shir Yee,DAP,PH,Sabah,sitting,backbencher
+P.187,Kinabatangan,Mohd Kurniawan Naim bin Moktar,UMNO,BN,Sabah,sitting,backbencher
+P.188,Lahad Datu,Mohammad Yusof bin Apdal,WARISAN,,Sabah,sitting,deputy minister
+P.189,Semporna,Mohd Shafie bin Apdal,WARISAN,,Sabah,sitting,backbencher
+P.190,Tawau,Lo Su Fui,PBS,GRS,Sabah,sitting,deputy minister
+P.191,Kalabakan,Andi Muhammad Suryady bin Bandy,UMNO,BN,Sabah,sitting,backbencher
+P.192,Mas Gading,Mordi anak Bimol,DAP,PH,Sarawak,sitting,deputy minister
+P.193,Santubong,Nancy binti Shukri,PBB,GPS,Sarawak,sitting,minister
+P.194,Petra Jaya,Fadillah bin Haji Yusof,PBB,GPS,Sarawak,sitting,minister
+P.195,Bandar Kuching,Kelvin Yii Lee Wuen,DAP,PH,Sarawak,sitting,backbencher
+P.196,Stampin,Chong Chieng Jen,DAP,PH,Sarawak,sitting,backbencher
+P.197,Kota Samarahan,Rubiah binti Wang,PBB,GPS,Sarawak,sitting,deputy minister
+P.198,Puncak Borneo,Willie anak Mongin,PBB,GPS,Sarawak,sitting,backbencher
+P.199,Serian,Richard Riot anak Jaem,SUPP,GPS,Sarawak,sitting,backbencher
+P.200,Batang Sadong,Rodiyah binti Sapiee,PBB,GPS,Sarawak,sitting,backbencher
+P.201,Batang Lupar,Mohamad Shafizan Haji Kepli,PBB,GPS,Sarawak,sitting,backbencher
+P.202,Sri Aman,Doris Sophia anak Brodi,PRS,GPS,Sarawak,sitting,backbencher
+P.203,Lubok Antu,Roy Angau anak Gingkoi,PRS,GPS,Sarawak,sitting,backbencher
+P.204,Betong,Richard Rapu @ Aman anak Begri,PBB,GPS,Sarawak,sitting,backbencher
+P.205,Saratok,Ali anak Biju,BERSATU,PN,Sarawak,sitting,backbencher
+P.206,Tanjong Manis,Yusuf bin Haji Abd Wahab,PBB,GPS,Sarawak,sitting,backbencher
+P.207,Igan,Ahmad Johnie bin Zawawi,PBB,GPS,Sarawak,sitting,backbencher
+P.208,Sarikei,Huang Tiong Sii,SUPP,GPS,Sarawak,sitting,deputy minister
+P.209,Julau,Larry Soon @ Larry Sng Wei Shien,PBM,,Sarawak,sitting,backbencher
+P.210,Kanowit,Aaron Ago anak Dagang,PRS,GPS,Sarawak,sitting,minister
+P.211,Lanang,Alice Lau Kiong Yieng,DAP,PH,Sarawak,sitting,backbencher
+P.212,Sibu,Oscar Ling Chai Yew,DAP,PH,Sarawak,sitting,backbencher
+P.213,Mukah,Hanifah Hajar Taib,PBB,GPS,Sarawak,sitting,deputy minister
+P.214,Selangau,Edwin anak Banta,PRS,GPS,Sarawak,sitting,backbencher
+P.215,Kapit,Alexander Nanta Linggi,PBB,GPS,Sarawak,sitting,minister
+P.216,Hulu Rajang,Wilson Ugak anak Kumbong,PRS,GPS,Sarawak,sitting,deputy minister
+P.217,Bintulu,Tiong King Sing,PDP,GPS,Sarawak,sitting,minister
+P.218,Sibuti,Lukanisman bin Awang Sauni,PBB,GPS,Sarawak,sitting,deputy minister
+P.219,Miri,Chiew Choon Man,PKR,PH,Sarawak,sitting,deputy minister
+P.220,Baram,Anyi Ngau,PDP,GPS,Sarawak,sitting,backbencher
+P.221,Limbang,Hasbi bin Haji Habibollah,PBB,GPS,Sarawak,sitting,deputy minister
+P.222,Lawas,Henry Sum Agong,PBB,GPS,Sarawak,sitting,backbencher

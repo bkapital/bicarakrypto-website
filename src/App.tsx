@@ -20,6 +20,7 @@ import { ExchangePage } from './pages/ExchangePage';
 import { ContactPage } from './pages/ContactPage';
 import { PolicyPage } from './pages/PolicyPage';
 import { PortalPage } from './pages/PortalPage';
+import { MPCryptoIndexPage } from './pages/MPCryptoIndexPage';
 
 const AppContent: React.FC = () => {
   const { currentPath } = useRouter();
@@ -33,6 +34,11 @@ const AppContent: React.FC = () => {
 
   // Route Resolver
   const renderCurrentPage = () => {
+    // MP Crypto Index: also accept the original spelling "/data/MP-Crypto Index" (any case, %20 or -).
+    const normalised = decodeURIComponent(currentPath).toLowerCase().replace(/[\s_]+/g, '-').replace(/\/+$/, '');
+    if (normalised === '/data/mp-crypto-index') {
+      return <MPCryptoIndexPage />;
+    }
     switch (currentPath) {
       case '/':
       case '/kelas':
