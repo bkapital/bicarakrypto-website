@@ -5,7 +5,7 @@
 Writes trimmed copies (no emails, phone numbers or internal notes) to
 public/datasets/mp-crypto-index/:
 - mps.csv       seat, constituency, name, party, coalition, state, status, role
-- evidence.csv  Hansard and news rows (no Budget vote rows) with stance and reason
+- evidence.csv  Hansard and news rows (no Budget vote rows) with stance and reason (English and Malay)
 - meta.json     when the data was exported, and counts
 
 Stance: your reviewed `stance` in evidence.csv wins; otherwise the AI suggestion from
@@ -25,13 +25,17 @@ from common import DATA, ROOT, read_csv, write_csv  # noqa: E402
 OUT = os.path.join(ROOT, "public", "datasets", "mp-crypto-index")
 MP_FIELDS = ["constituency_code", "constituency", "name", "party", "coalition", "state", "status", "role"]
 EV_FIELDS = ["evidence_id", "constituency_code", "mp_name", "date", "type", "source_name", "link", "page",
-             "text", "stance", "stance_source", "stance_reason", "draft", "flagged"]
+             "text", "text_ms", "stance", "stance_source", "stance_reason", "stance_reason_ms", "draft", "flagged"]
 
 
 def main():
     mps = read_csv(os.path.join(DATA, "mps.csv"))
     sug_path = os.path.join(DATA, "stance_suggestions.csv")
     sug = {r["evidence_id"]: r for r in read_csv(sug_path)} if os.path.exists(sug_path) else {}
+    # Malay versions of the one-line news summaries, matched by article link.
+    hits_path = os.path.join(DATA, "press_hits.csv")
+    summary_ms = {(h["mp_constituency_code"], h["link"]): h.get("summary_ms", "")
+                  for h in (read_csv(hits_path) if os.path.exists(hits_path) else [])}
     rows = []
     for r in read_csv(os.path.join(DATA, "evidence.csv")):
         if r["type"] == "vote":
@@ -39,15 +43,18 @@ def main():
         head = re.search(r"Headline: (.*?)(; Summary:|$)", r["notes"])
         summ = re.search(r"Summary: (.*?)(; searched|$)", r["notes"])
         text = r["excerpt"] or ((head.group(1) if head else "") + (" — " + summ.group(1) if summ else ""))
+        sm = summary_ms.get((r["mp_constituency_code"], r["link"]), "")
+        text_ms = (head.group(1) + (" — " + sm if sm else "")) if (r["type"] == "press" and head) else text
         manual = r["stance"].strip().lower()
         s = sug.get(r["evidence_id"], {})
         rows.append({
             "evidence_id": r["evidence_id"], "constituency_code": r["mp_constituency_code"],
             "mp_name": r["mp_name"] or r["speaker_as_printed"], "date": r["date"], "type": r["type"],
-            "source_name": r["source_name"], "link": r["link"], "page": r["hansard_page_printed"], "text": text,
+            "source_name": r["source_name"], "link": r["link"], "page": r["hansard_page_printed"], "text": text, "text_ms": text_ms,
             "stance": manual or s.get("suggested_stance", ""),
             "stance_source": "reviewed" if manual else ("suggested" if s else ""),
             "stance_reason": "" if manual else s.get("reason", ""),
+            "stance_reason_ms": "" if manual else s.get("reason_ms", ""),
             "draft": "yes" if "(draft)" in r["source_name"] else "no",
             "flagged": "yes" if any(k in r["notes"] for k in ("CHECK", "UNMATCHED", "paywalled")) else "no",
         })
