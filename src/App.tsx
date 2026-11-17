@@ -9,6 +9,7 @@ import { AnnouncementBar } from './components/AnnouncementBar';
 import { Navbar } from './components/Navbar';
 import { FloatingWhatsApp } from './components/FloatingWhatsApp';
 import { Footer } from './components/Footer';
+import { supabase } from './lib/supabase';
 
 // Pages
 import { HomePage } from './pages/HomePage';
@@ -24,8 +25,27 @@ import { MPCryptoIndexPage } from './pages/MPCryptoIndexPage';
 import { ScreenerPage } from './pages/ScreenerPage';
 
 const AppContent: React.FC = () => {
-  const { currentPath } = useRouter();
+  const { currentPath, navigate } = useRouter();
   const isScreener = currentPath === '/screener';
+
+  // Supabase may return OAuth users to the configured Site URL (the homepage)
+  // when a nested redirect URL is not on the Auth redirect allow list.
+  useEffect(() => {
+    if (window.sessionStorage.getItem('bkp-post-auth-route') !== '/screener') return;
+
+    let cancelled = false;
+    void supabase.auth.getSession().then(({ data, error }) => {
+      if (cancelled) return;
+      if (error || !data.session) {
+        window.sessionStorage.removeItem('bkp-post-auth-route');
+        return;
+      }
+      window.sessionStorage.removeItem('bkp-post-auth-route');
+      if (currentPath !== '/screener') navigate('/screener');
+    });
+
+    return () => { cancelled = true; };
+  }, [currentPath, navigate]);
 
   // Scroll to top on route change if not a hash anchor
   useEffect(() => {
