@@ -33,6 +33,12 @@ const AppContent: React.FC = () => {
   // when a nested redirect URL is not on the Auth redirect allow list.
   useEffect(() => {
     if (!hasPendingScreenerAuth()) return;
+    // The OAuth callback now lands directly on /screener. Consume the one-time
+    // return marker there so it cannot pull a user back after they leave.
+    if (currentPath === '/screener') {
+      clearPendingScreenerAuth();
+      return;
+    }
 
     let cancelled = false;
     void supabase.auth.getSession().then(({ data, error }) => {
@@ -42,7 +48,7 @@ const AppContent: React.FC = () => {
       } else {
         clearPendingScreenerAuth();
       }
-      if (currentPath !== '/screener') navigate('/screener');
+      navigate('/screener');
     });
 
     return () => { cancelled = true; };
