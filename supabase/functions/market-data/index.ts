@@ -1,0 +1,41 @@
+import { calculateIndicators, type Candle } from '../_shared/indicators.ts';
+
+const TF=['5m','15m','1h','4h','8h','12h','1d'] as const;
+const MS:Record<string,number>={'5m':300000,'15m':900000,'1h':3600000,'4h':14400000,'8h':28800000,'12h':43200000,'1d':86400000};
+const cors={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'authorization, apikey, content-type, x-refresh-secret','Access-Control-Allow-Methods':'GET, POST, OPTIONS'};
+const json=(value:unknown,status=200)=>new Response(JSON.stringify(value),{status,headers:{...cors,'content-type':'application/json','cache-control':'no-store'}});
+const dbUrl=Deno.env.get('SUPABASE_URL')!;const serviceKey=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+async function db(path:string,init:RequestInit={}){const response=await fetch(`${dbUrl}/rest/v1/${path}`,{...init,headers:{apikey:serviceKey,authorization:`Bearer ${serviceKey}`,'content-type':'application/json',...(init.headers||{})}});if(!response.ok)throw new Error(`Cache database request ${response.status}: ${await response.text()}`);return response.status===204?null:response.json()}
+const parseKline=(r:any[]):Candle=>({openTime:+r[0],open:+r[1],high:+r[2],low:+r[3],close:+r[4],closeTime:+r[6],quoteVolume:+r[7]});
+async function mapConcurrent<T>(items:T[],concurrency:number,fn:(item:T)=>Promise<void>){let next=0;await Promise.all(Array.from({length:Math.min(concurrency,items.length)},async()=>{while(next<items.length){const item=items[next++];await fn(item)}}))}
+let usedWeight=0;let weightWindow=Math.floor(Date.now()/60000)*60000;let cooldownUntil=0;
+async function beforeBinanceRequest(){for(;;){const now=Date.now(),windowStart=Math.floor(now/60000)*60000;if(windowStart!==weightWindow){weightWindow=windowStart;usedWeight=0;cooldownUntil=0}const wait=Math.max(0,cooldownUntil-now,usedWeight>=Number(Deno.env.get('BINANCE_WEIGHT_LIMIT')||2400)*.8?windowStart+60050-now:0);if(!wait)return;await new Promise(r=>setTimeout(r,wait))}}
+async function binance(path:string){for(let attempt=0;;attempt++){await beforeBinanceRequest();const r=await fetch(`https://fapi.binance.com${path}`);const weight=Number(r.headers.get('X-MBX-USED-WEIGHT-1M'));if(Number.isFinite(weight)){usedWeight=Math.max(usedWeight,weight);if(usedWeight>=Number(Deno.env.get('BINANCE_WEIGHT_LIMIT')||2400)*.8)cooldownUntil=Math.max(cooldownUntil,Math.floor(Date.now()/60000)*60000+60050)}if(r.status===429||r.status===418){if(attempt>=4)throw new Error(`Binance rate limit ${r.status}`);await new Promise(r=>setTimeout(r,500*2**attempt));continue}if(!r.ok)throw new Error(`Binance ${r.status}`);return r.json()}}
+async function refresh(){
+ const stateRows=await db('screener_ta_state?select=id,symbols,cursor&id=eq.true');let state=stateRows?.[0];
+ if(!state?.symbols?.length){const info=await binance('/fapi/v1/exchangeInfo');const symbols=info.symbols.filter((s:any)=>s.status==='TRADING'&&s.quoteAsset==='USDT'&&String(s.contractType).includes('PERPETUAL')).map((s:any)=>s.symbol).sort();if(!symbols.length)throw new Error('No Binance USDT perpetual symbols');await db('screener_ta_state?on_conflict=id',{method:'POST',headers:{prefer:'resolution=merge-duplicates,return=representation'},body:JSON.stringify({id:true,symbols,cursor:0})});state={id:true,symbols,cursor:0}}
+ const symbols:string[]=state.symbols;const start=Number(state.cursor)%symbols.length;const batch=Array.from({length:Math.min(80,symbols.length)},(_,i)=>symbols[(start+i)%symbols.length]);
+ await mapConcurrent(batch,20,async symbol=>{
+  const rows=await db(`screener_ta_cache?select=timeframe,candles,result,status&symbol=eq.${encodeURIComponent(symbol)}`);const byTf=new Map((rows||[]).map((r:any)=>[r.timeframe,r]));
+  for(const tf of TF){
+   const current:any=byTf.get(tf);const interval=MS[tf];const expectedClosed=Math.floor(Date.now()/interval)*interval-1;
+   if(current?.status==='ready'&&Number(current.result?.lastClosedCandleTime)>=expectedClosed)continue;
+   const raw=await binance(`/fapi/v1/klines?symbol=${symbol}&interval=${tf}&limit=${current?.candles?.length?3:300}`);let candles:Candle[]=raw.map(parseKline);
+   if(current?.candles?.length){const merged=new Map<number,Candle>((current.candles as Candle[]).map(c=>[c.openTime,c]));for(const c of candles)merged.set(c.openTime,c);candles=[...merged.values()].sort((a,b)=>a.openTime-b.openTime).slice(-300)}
+   const closed=candles.slice(0,-1);const result=calculateIndicators(closed);const body={symbol,timeframe:tf,status:result?'ready':'loading',candles,result,updated_at:new Date().toISOString()};await db('screener_ta_cache?on_conflict=symbol,timeframe',{method:'POST',headers:{prefer:'resolution=merge-duplicates'},body:JSON.stringify(body)});
+  }
+ });
+ const cursor=(start+batch.length)%symbols.length;await db('screener_ta_state?id=eq.true',{method:'PATCH',body:JSON.stringify({cursor,updated_at:new Date().toISOString()})});return{status:'ok',processed:batch.length,total:symbols.length,nextCursor:cursor};
+}
+function allowedBinancePath(market:string,path:string){
+ if(!path.startsWith('/')||path.includes('..')||path.includes('://'))return false;
+ const patterns:Record<string,RegExp[]>={futures:[/^\/fapi\/v1\/(exchangeInfo|ticker\/24hr|premiumIndex|openInterest|klines|fundingRate|time)$/],spot:[/^\/api\/v3\/(exchangeInfo|ticker\/24hr|ticker\/price|klines|trades|aggTrades|time)$/],data:[/^\/(futures\/data\/openInterestHist|futures\/data\/takerlongshortRatio|futures\/data\/globalLongShortAccountRatio|futures\/data\/topLongShortAccountRatio)$/]};return patterns[market]?.some(r=>r.test(path))??false;
+}
+Deno.serve(async(req)=>{
+ if(req.method==='OPTIONS')return new Response('ok',{headers:cors});
+ try{const url=new URL(req.url);const action=url.searchParams.get('action')||'ta';
+  if(action==='proxy'){if(req.method!=='GET')return json({error:'GET only'},405);const market=url.searchParams.get('market')||'';const path=url.searchParams.get('path')||'';if(!allowedBinancePath(market,path))return json({error:'Unsupported Binance public endpoint'},400);const host=market==='spot'?'https://api.binance.com':'https://fapi.binance.com';const query=new URLSearchParams();for(const [key,value] of url.searchParams)if(!['action','market','path'].includes(key))query.set(key,value);const upstream=await fetch(`${host}${path}${query.size?`?${query}`:''}`);return new Response(upstream.body,{status:upstream.status,headers:{...cors,'content-type':upstream.headers.get('content-type')||'application/json','cache-control':'public, max-age=5'}})}
+  if(action==='refresh'){if(req.method!=='POST'||!Deno.env.get('TA_REFRESH_SECRET')||req.headers.get('x-refresh-secret')!==Deno.env.get('TA_REFRESH_SECRET'))return json({error:'Unauthorized'},401);return json(await refresh())}
+  if(req.method!=='GET')return json({error:'GET only'},405);const tf=url.searchParams.get('timeframe')||'';if(!TF.includes(tf as any))return json({error:'Invalid timeframe',validTimeframes:TF},400);const rows=await db(`screener_ta_cache?select=symbol,status,result,updated_at&timeframe=eq.${tf}`);const state=(await db('screener_ta_state?select=symbols&id=eq.true'))?.[0];const symbols:Record<string,unknown>={};for(const symbol of state?.symbols||[])symbols[symbol]={status:'loading'};for(const r of rows||[])symbols[r.symbol]=r.status==='ready'?{...r.result,symbol:r.symbol,status:'ready',updatedAt:r.updated_at}:{status:r.status};const ready=Object.values(symbols).some((s:any)=>s.status==='ready');return json({timeframe:tf,status:state?.symbols?.length&&Object.keys(symbols).length>=state.symbols.length&&Object.values(symbols).every((s:any)=>s.status==='ready')?'ready':'loading',updatedAt:ready?new Date().toISOString():null,symbols});
+ }catch(error){console.error(error);return json({error:error instanceof Error?error.message:'Unexpected error'},500)}
+});
