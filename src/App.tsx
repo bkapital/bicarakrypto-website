@@ -10,6 +10,7 @@ import { Navbar } from './components/Navbar';
 import { FloatingWhatsApp } from './components/FloatingWhatsApp';
 import { Footer } from './components/Footer';
 import { supabase } from './lib/supabase';
+import { clearPendingScreenerAuth, hasPendingScreenerAuth, markScreenerAuthFailed } from './lib/screenerAccess';
 
 // Pages
 import { HomePage } from './pages/HomePage';
@@ -31,16 +32,16 @@ const AppContent: React.FC = () => {
   // Supabase may return OAuth users to the configured Site URL (the homepage)
   // when a nested redirect URL is not on the Auth redirect allow list.
   useEffect(() => {
-    if (window.sessionStorage.getItem('bkp-post-auth-route') !== '/screener') return;
+    if (!hasPendingScreenerAuth()) return;
 
     let cancelled = false;
     void supabase.auth.getSession().then(({ data, error }) => {
       if (cancelled) return;
       if (error || !data.session) {
-        window.sessionStorage.removeItem('bkp-post-auth-route');
-        return;
+        markScreenerAuthFailed();
+      } else {
+        clearPendingScreenerAuth();
       }
-      window.sessionStorage.removeItem('bkp-post-auth-route');
       if (currentPath !== '/screener') navigate('/screener');
     });
 
