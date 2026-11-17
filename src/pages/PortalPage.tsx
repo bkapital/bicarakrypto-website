@@ -175,6 +175,15 @@ export const PortalPage: React.FC = () => {
     return () => window.removeEventListener('hashchange', onHashChange);
   }, [student]);
 
+  // Send KITA students back to the screener after its Google sign-in flow.
+  useEffect(() => {
+    if (window.sessionStorage.getItem('bkp-post-auth-route') !== '/screener') return;
+    if (!studentChecked || studentLoading) return;
+
+    window.sessionStorage.removeItem('bkp-post-auth-route');
+    if (session?.user) navigate('/screener');
+  }, [navigate, session, student, studentChecked, studentLoading]);
+
   const handleSelectTab = (tab: PortalTab) => {
     setActiveTab(tab);
     if (typeof window !== 'undefined') {
