@@ -18,3 +18,13 @@
 .symbol-link{display:block;color:inherit;text-decoration:none}.symbol-link:hover .symbol-cell b{color:#54dfb0}.symbol-link:hover .coin{box-shadow:0 0 0 1px #53d9a8}
 .access-wrap{min-height:calc(100vh - 62px);display:grid;place-items:center;padding:28px}.access-card{width:min(440px,100%);padding:34px;border:1px solid #252c36;border-radius:12px;background:linear-gradient(145deg,#111820,#0d1117);box-shadow:0 24px 70px #0006;text-align:center}.access-badge{color:#3ed8a3;font-size:9px;font-weight:750;letter-spacing:.16em}.access-card h1{margin:12px 0 8px;color:#f1f3f6;font-size:23px;line-height:1.25}.access-card p{margin:0 auto 22px;max-width:350px;color:#8994a1;font-size:12px;line-height:1.7}.access-shield{width:30px;height:30px;color:#f0bd57;margin:0 auto 14px}.access-spinner{width:25px;height:25px;border:2px solid #27313b;border-top-color:#39d7a2;border-radius:50%;margin:0 auto 16px;animation:access-spin .8s linear infinite}@keyframes access-spin{to{transform:rotate(360deg)}}.google-signin{width:100%;height:46px;border:0;border-radius:6px;background:#f5f7fa;color:#19212a;display:flex;align-items:center;justify-content:center;gap:11px;font-size:13px;font-weight:650;cursor:pointer}.google-signin:hover{background:#e7edf2}.google-signin:disabled{opacity:.65;cursor:wait}.google-signin.secondary{width:auto;margin:0 auto;border:1px solid #303a44;background:#141a21;color:#d8e0e7;padding:0 18px}.google-signin.secondary:hover{background:#1c252e}.access-home{display:inline-block;margin-top:20px;color:#8995a3;font-size:11px;text-decoration:none}.access-home:hover{color:#dbe2e8}.access-error{margin:0 0 14px;padding:10px;border:1px solid #693c43;border-radius:5px;background:#29191d;color:#f29ba5;font-size:11px}
 @media(max-width:1100px){.filters-row{height:auto;min-height:47px;flex-wrap:wrap;justify-content:flex-start;gap:8px;padding-top:8px;padding-bottom:8px}.quick-filters{flex-wrap:wrap}.results-count{margin-left:auto}}
+
+/* Keep the star and primary market identifiers visible while the wide table scrolls. */
+.table-scroll th.sticky-column,.table-scroll td.sticky-column{position:sticky;box-sizing:border-box}
+.table-scroll th.sticky-column{z-index:7;background:#0f141a}
+.table-scroll td.sticky-column{z-index:2;background:#0d1117}
+.table-scroll tbody tr:hover td.sticky-column{background:#121921}
+.table-scroll .sticky-star{left:0;width:42px;min-width:42px;max-width:42px;padding-left:14px;padding-right:8px}
+.table-scroll .sticky-trend{width:96px;min-width:96px;max-width:96px}
+.table-scroll .sticky-symbol{width:190px;min-width:190px;max-width:190px}
+.table-scroll .sticky-price{width:126px;min-width:126px;max-width:126px}
