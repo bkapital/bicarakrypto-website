@@ -11,6 +11,7 @@ type Market = { id:string; marketType:'Spot'|'Futures'; assetClass:AssetClass; h
 type TaSymbol = { status:'loading'|'ready'|'error'; rsi14?:number; adx14?:number; rvol?:number; livePrice?:number|null; [key:string]:any };
 type TaResponse = { timeframe:string; status:'loading'|'ready'; updatedAt:string|null; initializationError?:string|null; symbols:Record<string,TaSymbol> };
 const classifyAsset=(underlyingType:string):AssetClass=>{switch(underlyingType){case 'EQUITY':case 'HK_EQUITY':case 'KR_EQUITY':case 'CN_EQUITY':case 'PREMARKET':return 'Stocks';case 'COMMODITY':return 'Commodities';case 'INDEX':return 'Indices';case 'FX':return 'Forex';default:return 'Crypto'}};
+const readOAuthCallbackError=()=>{if(typeof window==='undefined')return '';const query=new URLSearchParams(window.location.search);const hash=new URLSearchParams(window.location.hash.replace(/^#/,'').replace(/^\?/,''));for(const params of [query,hash]){const code=params.get('error_code');const error=params.get('error');const description=params.get('error_description');if(code||error||description)return description||error||code||'Google sign-in failed.'}return ''};
 const periods=['5m','15m','1h','4h','8h','12h','1d'];
 const columnGroups=[
  {id:'core',label:'CORE',columns:[['trend','24h trend'],['symbol','Symbol'],['price','Price'],['oi','OI $'],['funding','Funding/h'],['rvol','RVOL'],['mcap','MCAP']]},
@@ -171,7 +172,7 @@ const ScreenerDashboard:React.FC<{userEmail:string;onSignOut:()=>void}>=({userEm
 };
 
 export const ScreenerPage:React.FC=()=>{
- const [session,setSession]=useState<Session|null>(null);const [authLoading,setAuthLoading]=useState(true);const [accessLoading,setAccessLoading]=useState(false);const [hasAccess,setHasAccess]=useState<boolean|null>(null);const [signInLoading,setSignInLoading]=useState(false);const [authError,setAuthError]=useState('');const [loginFailed,setLoginFailed]=useState(()=>consumeScreenerAuthFailure());
+ const [session,setSession]=useState<Session|null>(null);const [authLoading,setAuthLoading]=useState(true);const [accessLoading,setAccessLoading]=useState(false);const [hasAccess,setHasAccess]=useState<boolean|null>(null);const [signInLoading,setSignInLoading]=useState(false);const [authError,setAuthError]=useState(()=>readOAuthCallbackError());const [loginFailed,setLoginFailed]=useState(()=>consumeScreenerAuthFailure()||Boolean(readOAuthCallbackError()));
  useEffect(()=>{
   let mounted=true;
   const checkKitaAccess=async(userId:string)=>{setAccessLoading(true);const {data,error}=await supabase.from('students').select('id').eq('user_id',userId).eq('has_kita',true).neq('status','suspended').maybeSingle();const {data:{session:latestSession}}=await supabase.auth.getSession();if(!mounted||latestSession?.user.id!==userId)return;setHasAccess(!error&&Boolean(data));setAccessLoading(false)};
