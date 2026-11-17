@@ -21,9 +21,11 @@ import { ContactPage } from './pages/ContactPage';
 import { PolicyPage } from './pages/PolicyPage';
 import { PortalPage } from './pages/PortalPage';
 import { MPCryptoIndexPage } from './pages/MPCryptoIndexPage';
+import { ScreenerPage } from './pages/ScreenerPage';
 
 const AppContent: React.FC = () => {
   const { currentPath } = useRouter();
+  const isScreener = currentPath === '/screener';
 
   // Scroll to top on route change if not a hash anchor
   useEffect(() => {
@@ -77,6 +79,7 @@ const AppContent: React.FC = () => {
   };
 
   return (
+    isScreener ? <ScreenerPage /> :
     <div className="min-h-screen flex flex-col bg-[#060B1E] text-white selection:bg-[#5CF2C0] selection:text-[#060B1E]">
       {/* 1. Announcement Bar (Top) */}
       <AnnouncementBar />
