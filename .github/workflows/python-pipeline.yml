@@ -1,0 +1,72 @@
+name: Python pipeline
+
+on:
+  push:
+    branches: [staging]
+    paths:
+      - 'scripts/**'
+      - 'requirements.txt'
+      - '.github/workflows/python-pipeline.yml'
+  workflow_dispatch:
+    inputs:
+      task:
+        description: Task to run on the GitHub-hosted Python environment
+        type: choice
+        required: true
+        default: validate
+        options:
+          - validate
+          - summary
+          - export
+
+permissions:
+  contents: read
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Validate Python scripts
+        if: ${{ github.event_name == 'push' || inputs.task == 'validate' }}
+        run: python -m compileall -q scripts
+
+      - name: Generate summary
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.task == 'summary' }}
+        run: python scripts/stage6_summary.py
+
+      - name: Export website dataset
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.task == 'export' }}
+        run: python scripts/stage7_export_site.py
+
+      - name: Upload summary output
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.task == 'summary' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: mp-crypto-summary
+          path: |
+            data/summary_report.txt
+            data/summary_per_mp.csv
+            data/survey.csv
+            data/corrections.csv
+          if-no-files-found: error
+
+      - name: Upload website dataset
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.task == 'export' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: mp-crypto-index-dataset
+          path: public/datasets/mp-crypto-index/
+          if-no-files-found: error

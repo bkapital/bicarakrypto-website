@@ -17,6 +17,7 @@ export const Navbar: React.FC = () => {
   const navLinks: NavLinkItem[] = [
     { label: 'Kelas', path: '/#kelas' },
     { label: 'Platform Kripto', path: '/beli-jual-kripto' },
+    { label: 'Screener', path: '/screener' },
     { label: 'Hubungi Kami', path: '/hubungi' },
   ];
 

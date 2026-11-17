@@ -13,6 +13,22 @@ python3 -m venv .venv
 
 Run every script from the project root with `.venv/bin/python scripts/<script>.py`.
 
+## GitHub Actions environment
+
+The `Python pipeline` workflow creates a temporary Python 3.11 environment on a GitHub-hosted
+runner and installs `requirements.txt`; it does not require a local `.venv`. It runs Python
+syntax validation when pipeline files change on `staging`. To run a task manually, open
+**Actions → Python pipeline → Run workflow** and choose:
+
+- `validate` to check Python syntax
+- `summary` to generate and download the summary files
+- `export` to generate and download the website dataset
+
+Generated files are uploaded as workflow artifacts. They are not committed back to the
+repository. Data collection stages remain manual because they fetch external sources and
+include review steps; run those from a trusted environment and commit the reviewed outputs
+before using `summary` or `export` in Actions.
+
 ## A note on TLS
 
 parlimen.gov.my does not send its intermediate certificate, so ordinary clients reject it.
