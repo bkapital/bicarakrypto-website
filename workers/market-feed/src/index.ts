@@ -29,8 +29,9 @@ const respond = (value: unknown, status = 200, headers: HeadersInit = {}) => new
 async function json(url: string) {
   const response = await fetch(url, { headers: { accept: 'application/json' } });
   if (!response.ok) {
+    const endpoint = new URL(url);
     const detail = (await response.text()).slice(0, 240).replace(/\s+/g, ' ');
-    throw new Error(`${new URL(url).host} returned HTTP ${response.status}${detail ? `: ${detail}` : ''}`);
+    throw new Error(`${endpoint.host}${endpoint.pathname} returned HTTP ${response.status}${detail ? `: ${detail}` : ''}`);
   }
   return response.json();
 }
