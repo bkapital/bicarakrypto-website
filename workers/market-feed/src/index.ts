@@ -28,7 +28,10 @@ const respond = (value: unknown, status = 200, headers: HeadersInit = {}) => new
 });
 async function json(url: string) {
   const response = await fetch(url, { headers: { accept: 'application/json' } });
-  if (!response.ok) throw new Error(`${new URL(url).host} returned HTTP ${response.status}`);
+  if (!response.ok) {
+    const detail = (await response.text()).slice(0, 240).replace(/\s+/g, ' ');
+    throw new Error(`${new URL(url).host} returned HTTP ${response.status}${detail ? `: ${detail}` : ''}`);
+  }
   return response.json();
 }
 const quoteUsd = (quote: string) => stableQuotes.has(quote) ? 1 : Number.NaN;
@@ -50,8 +53,8 @@ const classifyBinance = (type: string): AssetClass => {
 
 async function binanceSnapshot(): Promise<Market[]> {
   const [spotInfo, spotTickers, futuresInfo, futuresTickers, premiums] = await Promise.all([
-    json('https://api.binance.com/api/v3/exchangeInfo'),
-    json('https://api.binance.com/api/v3/ticker/24hr'),
+    json('https://data-api.binance.vision/api/v3/exchangeInfo'),
+    json('https://data-api.binance.vision/api/v3/ticker/24hr'),
     json('https://fapi.binance.com/fapi/v1/exchangeInfo'),
     json('https://fapi.binance.com/fapi/v1/ticker/24hr'),
     json('https://fapi.binance.com/fapi/v1/premiumIndex'),
@@ -220,7 +223,7 @@ export class MarketFeed {
             }
           }
         } catch (error) {
-          console.error(`Market snapshot refresh failed for ${exchange}`, error);
+          console.error(`Market snapshot refresh failed for ${exchange}: ${error instanceof Error ? error.message : String(error)}`);
         }
       }));
     })().finally(() => { this.refreshing = null; });
