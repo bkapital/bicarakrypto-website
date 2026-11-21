@@ -200,6 +200,7 @@ export class MarketFeed {
   constructor(ctx: DurableObjectState) {
     this.ctx = ctx;
     this.ctx.storage.sql.exec(`CREATE TABLE IF NOT EXISTS snapshots (exchange TEXT PRIMARY KEY, payload TEXT NOT NULL, updated_at TEXT NOT NULL)`);
+    this.ctx.storage.sql.exec(`CREATE TABLE IF NOT EXISTS snapshot_errors (exchange TEXT PRIMARY KEY, message TEXT NOT NULL, updated_at TEXT NOT NULL)`);
     this.ctx.setWebSocketAutoResponse(new WebSocketRequestResponsePair('ping', 'pong'));
   }
 
@@ -210,6 +211,11 @@ export class MarketFeed {
     try { return JSON.parse(row.payload) as Snapshot; } catch { return null; }
   }
 
+  private readError(exchange: Exchange): string | null {
+    const rows = this.ctx.storage.sql.exec<{ message: string }>('SELECT message FROM snapshot_errors WHERE exchange = ?', exchange);
+    return rows.toArray()[0]?.message ?? null;
+  }
+
   private async refresh() {
     if (this.refreshing) return this.refreshing;
     this.refreshing = (async () => {
@@ -218,6 +224,7 @@ export class MarketFeed {
           const markets = await snapshotLoaders[exchange]();
           const snapshot: Snapshot = { exchange, updatedAt: new Date().toISOString(), markets };
           this.ctx.storage.sql.exec('INSERT INTO snapshots (exchange, payload, updated_at) VALUES (?, ?, ?) ON CONFLICT(exchange) DO UPDATE SET payload = excluded.payload, updated_at = excluded.updated_at', exchange, JSON.stringify(snapshot), snapshot.updatedAt);
+          this.ctx.storage.sql.exec('DELETE FROM snapshot_errors WHERE exchange = ?', exchange);
           const serialized = JSON.stringify({ type: 'snapshot', ...snapshot });
           for (const socket of this.ctx.getWebSockets()) {
             const attachment = socket.deserializeAttachment() as { exchange?: Exchange } | null;
@@ -226,7 +233,9 @@ export class MarketFeed {
             }
           }
         } catch (error) {
-          console.error(`Market snapshot refresh failed for ${exchange}: ${error instanceof Error ? error.message : String(error)}`);
+          const message = error instanceof Error ? error.message : String(error);
+          this.ctx.storage.sql.exec('INSERT INTO snapshot_errors (exchange, message, updated_at) VALUES (?, ?, ?) ON CONFLICT(exchange) DO UPDATE SET message = excluded.message, updated_at = excluded.updated_at', exchange, message, new Date().toISOString());
+          console.error(`Market snapshot refresh failed for ${exchange}: ${message}`);
         }
       }));
     })().finally(() => { this.refreshing = null; });
@@ -251,7 +260,7 @@ export class MarketFeed {
         await this.refresh();
         snapshot = this.readSnapshot(exchange);
       }
-      if (!snapshot) return respond({ exchange, status: 'loading', updatedAt: null, markets: [] }, 503);
+      if (!snapshot) return respond({ exchange, status: 'loading', updatedAt: null, markets: [], error: this.readError(exchange) }, 503);
       return respond(snapshot, 200, { 'cache-control': 'public, max-age=0, s-maxage=5, stale-while-revalidate=30' });
     }
     if (url.pathname === '/stream') {
