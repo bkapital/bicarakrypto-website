@@ -36,6 +36,18 @@ async function json(url: string) {
   return response.json();
 }
 const quoteUsd = (quote: string) => stableQuotes.has(quote) ? 1 : Number.NaN;
+const applyQuoteRates = (markets: Market[]) => {
+  const spotPrices = new Map(markets.filter(market => market.marketType === 'Spot').map(market => [market.symbol, market.price]));
+  for (const market of markets) {
+    if (stableQuotes.has(market.quote)) { market.quoteUsd = 1; continue; }
+    const direct = spotPrices.get(`${market.quote}USDT`);
+    const inverse = spotPrices.get(`USDT${market.quote}`);
+    market.quoteUsd = typeof direct === 'number' && Number.isFinite(direct)
+      ? direct
+      : typeof inverse === 'number' && Number.isFinite(inverse) && inverse > 0 ? 1 / inverse : Number.NaN;
+  }
+  return markets;
+};
 const baseMarket = (exchange: Exchange, marketType: MarketType, exchangeSymbol: string, symbol: string, quote: string): Market => ({
   id: `${exchange}:${marketType}:${exchangeSymbol}`, marketType, assetClass: 'Crypto',
   hasPerpetualData: marketType === 'Futures', symbol, exchangeSymbol, quote, quoteUsd: quoteUsd(quote),
@@ -91,7 +103,7 @@ async function binanceSnapshot(): Promise<Market[]> {
     market.oi = finite((premiumBySymbol.get(ticker.symbol) as any)?.openInterest);
     markets.push(market);
   }
-  return markets;
+  return applyQuoteRates(markets);
 }
 
 async function bybitSnapshot(): Promise<Market[]> {
@@ -114,7 +126,11 @@ async function bybitSnapshot(): Promise<Market[]> {
   }));
   const markets: Market[] = [];
   for (const group of data) {
-    const metadata = new Map(group.instruments.filter((row: any) => row.status === 'Trading').map((row: any) => [row.symbol, row]));
+    const metadata = new Map(group.instruments.filter((row: any) => {
+      const type = String(row.symbolType || '').toLowerCase();
+      const isCrypto = !['xstocks', 'mstocks', 'stock', 'etf', 'forex', 'commodity'].includes(type);
+      return row.status === 'Trading' && isCrypto;
+    }).map((row: any) => [row.symbol, row]));
     for (const ticker of group.tickers) {
       const meta: any = metadata.get(ticker.symbol);
       if (!meta) continue;
@@ -126,13 +142,15 @@ async function bybitSnapshot(): Promise<Market[]> {
       market.h1 = Number.isFinite(finite(ticker.prevPrice1h)) && finite(ticker.prevPrice1h) !== 0
         ? (market.price / finite(ticker.prevPrice1h) - 1) * 100 : Number.NaN;
       market.v24 = finite(ticker.turnover24h);
-      market.trades = finite(ticker.totalVolume);
+      // Bybit totalVolume is traded quantity, not the number of executions.
+      // Exact trade counts are populated only when an exchange supplies them.
+      market.trades = Number.NaN;
       market.funding = finite(ticker.fundingRate);
       market.oi = finite(ticker.openInterestValue);
       markets.push(market);
     }
   }
-  return markets;
+  return applyQuoteRates(markets);
 }
 
 async function gateSnapshot(): Promise<Market[]> {
@@ -163,10 +181,15 @@ async function gateSnapshot(): Promise<Market[]> {
     market.d1 = finite(ticker.change_percentage);
     market.v24 = finite(ticker.volume_24h_quote ?? ticker.volume_24h_usd ?? ticker.volume_24h);
     market.funding = finite(ticker.funding_rate);
-    market.oi = finite(ticker.total_size);
+    // Gate total_size is a contract count. Convert contracts to quote notional
+    // using the contract multiplier and last price so it matches OI $ columns.
+    const contractSize = finite(meta.quanto_multiplier);
+    const contractCount = finite(ticker.total_size);
+    market.oi = Number.isFinite(contractSize) && Number.isFinite(contractCount)
+      ? contractCount * contractSize * market.price : Number.NaN;
     markets.push(market);
   }
-  return markets;
+  return applyQuoteRates(markets);
 }
 
 const snapshotLoaders: Record<Exchange, () => Promise<Market[]>> = {
@@ -181,9 +204,8 @@ export default {
     const url = new URL(request.url);
     const exchange = url.searchParams.get('exchange') as Exchange | null;
     if (url.pathname === '/health') return respond({ ok: true, exchanges });
-    if (!['/snapshot', '/stream'].includes(url.pathname)) return respond({ error: 'Not found' }, 404);
-    if (url.pathname === '/snapshot' && request.method !== 'GET') return respond({ error: 'GET only' }, 405);
-    if (url.pathname === '/stream' && request.method !== 'GET') return respond({ error: 'GET only' }, 405);
+    if (!['/snapshot', '/stream', '/details'].includes(url.pathname)) return respond({ error: 'Not found' }, 404);
+    if (['/snapshot', '/stream', '/details'].includes(url.pathname) && request.method !== 'GET') return respond({ error: 'GET only' }, 405);
     if (exchange && !exchanges.includes(exchange)) return respond({ error: 'Unsupported exchange' }, 400);
     const id = env.MARKET_FEED.idFromName('global-market-feed');
     return env.MARKET_FEED.get(id).fetch(new Request(`https://market-feed.internal${url.pathname}${url.search}`, request));
@@ -202,6 +224,7 @@ export class MarketFeed {
     this.ctx = ctx;
     this.ctx.storage.sql.exec(`CREATE TABLE IF NOT EXISTS snapshots (exchange TEXT PRIMARY KEY, payload TEXT NOT NULL, updated_at TEXT NOT NULL)`);
     this.ctx.storage.sql.exec(`CREATE TABLE IF NOT EXISTS snapshot_errors (exchange TEXT PRIMARY KEY, message TEXT NOT NULL, updated_at TEXT NOT NULL)`);
+    this.ctx.storage.sql.exec(`CREATE TABLE IF NOT EXISTS market_details (cache_key TEXT PRIMARY KEY, payload TEXT NOT NULL, updated_at INTEGER NOT NULL)`);
     this.ctx.setWebSocketAutoResponse(new WebSocketRequestResponsePair('ping', 'pong'));
   }
 
@@ -255,6 +278,39 @@ export class MarketFeed {
       return respond({ ok: true, refreshedAt: new Date().toISOString() });
     }
     if (!exchange || !exchanges.includes(exchange)) return respond({ error: 'A supported exchange is required' }, 400);
+    if (url.pathname === '/details') {
+      const marketType = url.searchParams.get('marketType');
+      const symbol = url.searchParams.get('symbol') || '';
+      const exchangeSymbol = url.searchParams.get('exchangeSymbol') || symbol;
+      const quote = url.searchParams.get('quote') || 'USDT';
+      if (!['Spot', 'Futures'].includes(marketType || '') || !/^[A-Z0-9_-]{1,40}$/.test(symbol)
+        || !/^[A-Z0-9_-]{1,40}$/.test(exchangeSymbol) || !/^[A-Z0-9]{2,12}$/.test(quote)) {
+        return respond({ error: 'marketType, symbol and quote are required' }, 400);
+      }
+      const snapshot = this.readSnapshot(exchange);
+      if (!snapshot?.markets.some(market => market.marketType === marketType && market.exchangeSymbol === exchangeSymbol)) {
+        return respond({ error: 'Market is not in the current exchange snapshot' }, 404);
+      }
+      const cacheKey = `${exchange}:${marketType}:${exchangeSymbol}`;
+      const cached = this.ctx.storage.sql.exec<{ payload: string; updated_at: number }>(
+        'SELECT payload, updated_at FROM market_details WHERE cache_key = ?', cacheKey,
+      ).toArray()[0];
+      if (cached && Date.now() - cached.updated_at < 45_000) {
+        return respond(JSON.parse(cached.payload), 200, { 'cache-control': 'public, max-age=0, s-maxage=15' });
+      }
+      try {
+        const payload = await this.loadDetails(exchange, marketType as MarketType, symbol, exchangeSymbol, quote);
+        this.ctx.storage.sql.exec(
+          'INSERT INTO market_details (cache_key, payload, updated_at) VALUES (?, ?, ?) ON CONFLICT(cache_key) DO UPDATE SET payload = excluded.payload, updated_at = excluded.updated_at',
+          cacheKey, JSON.stringify(payload), Date.now(),
+        );
+        return respond(payload, 200, { 'cache-control': 'public, max-age=0, s-maxage=15' });
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        if (cached) return respond({ ...JSON.parse(cached.payload), stale: true, error: message });
+        return respond({ error: message }, 502);
+      }
+    }
     if (url.pathname === '/snapshot') {
       let snapshot = this.readSnapshot(exchange);
       if (!snapshot) {
@@ -276,6 +332,71 @@ export class MarketFeed {
       return new Response(null, { status: 101, webSocket: client, headers: cors });
     }
     return respond({ error: 'Not found' }, 404);
+  }
+
+  private async loadDetails(exchange: Exchange, marketType: MarketType, symbol: string, exchangeSymbol: string, quote: string) {
+    const interval = '1m';
+    const minuteLimit = '30';
+    const hourLimit = '96';
+    const getBars = async (timeframe: '1m' | '1h', limit: string) => {
+      if (exchange === 'Binance') {
+        const host = marketType === 'Spot' ? 'https://data-api.binance.vision/api/v3/klines' : 'https://fapi.binance.com/fapi/v1/klines';
+        const rows: any[] = await json(`${host}?symbol=${encodeURIComponent(symbol)}&interval=${timeframe}&limit=${limit}`);
+        return rows.map(row => row.map((value: unknown) => finite(value)));
+      }
+      if (exchange === 'Bybit') {
+        const category = marketType === 'Spot' ? 'spot' : 'linear';
+        const result: any = await json(`https://api.bybit.com/v5/market/kline?category=${category}&symbol=${encodeURIComponent(symbol)}&interval=${timeframe === '1m' ? '1' : '60'}&limit=${limit}`);
+        if (result.retCode !== 0) throw new Error(`Bybit kline API returned ${result.retCode}`);
+        return (result.result?.list || []).map((row: any[]) => {
+          const openTime = finite(row[0]);
+          return [openTime, finite(row[1]), finite(row[2]), finite(row[3]), finite(row[4]), finite(row[5]), openTime + (timeframe === '1m' ? 60_000 : 3_600_000) - 1, finite(row[6]), Number.NaN];
+        }).sort((a: number[], b: number[]) => a[0] - b[0]);
+      }
+      const path = marketType === 'Spot'
+        ? `https://api.gateio.ws/api/v4/spot/candlesticks?currency_pair=${encodeURIComponent(exchangeSymbol)}&interval=${timeframe}&limit=${limit}`
+        : `https://api.gateio.ws/api/v4/futures/${quote.toLowerCase()}/candlesticks?contract=${encodeURIComponent(exchangeSymbol)}&interval=${timeframe}&limit=${limit}`;
+      const rows: any[] = await json(path);
+      return rows.map((row: any) => {
+        if (marketType === 'Spot') {
+          const openTime = finite(row[0]) * 1000;
+          return [openTime, finite(row[5]), finite(row[3]), finite(row[4]), finite(row[2]), finite(row[6]), openTime + (timeframe === '1m' ? 60_000 : 3_600_000) - 1, finite(row[1]), Number.NaN];
+        }
+        const openTime = finite(row.t) * 1000;
+        return [openTime, finite(row.o), finite(row.h), finite(row.l), finite(row.c), finite(row.v), openTime + (timeframe === '1m' ? 60_000 : 3_600_000) - 1, finite(row.sum), Number.NaN];
+      }).sort((a: number[], b: number[]) => a[0] - b[0]);
+    };
+    const [minutes, hours, oiHistory] = await Promise.all([
+      getBars(interval, minuteLimit),
+      getBars('1h', hourLimit),
+      marketType === 'Futures' ? this.loadOiHistory(exchange, symbol, exchangeSymbol, quote).catch(() => ({ fiveMinute: [], hourly: [] })) : Promise.resolve({ fiveMinute: [], hourly: [] }),
+    ]);
+    return { exchange, marketType, symbol, minutes, hours, fiveMinute: oiHistory.fiveMinute, hourly: oiHistory.hourly, updatedAt: new Date().toISOString() };
+  }
+
+  private async loadOiHistory(exchange: Exchange, symbol: string, exchangeSymbol: string, quote: string) {
+    if (exchange === 'Binance') {
+      const [fiveMinute, hourly]: any[][] = await Promise.all([
+        json(`https://fapi.binance.com/futures/data/openInterestHist?symbol=${encodeURIComponent(symbol)}&period=5m&limit=200`),
+        json(`https://fapi.binance.com/futures/data/openInterestHist?symbol=${encodeURIComponent(symbol)}&period=1h&limit=30`),
+      ]);
+      return { fiveMinute: fiveMinute.map(row => ({ time: finite(row.timestamp), value: finite(row.sumOpenInterestValue) })), hourly: hourly.map(row => ({ time: finite(row.timestamp), value: finite(row.sumOpenInterestValue) })) };
+    }
+    if (exchange === 'Bybit') {
+      const [fiveMinute, hourly]: any[] = await Promise.all([
+        json(`https://api.bybit.com/v5/market/open-interest?category=linear&symbol=${encodeURIComponent(symbol)}&intervalTime=5min&limit=200`),
+        json(`https://api.bybit.com/v5/market/open-interest?category=linear&symbol=${encodeURIComponent(symbol)}&intervalTime=1h&limit=30`),
+      ]);
+      if (fiveMinute.retCode !== 0 || hourly.retCode !== 0) throw new Error('Bybit open-interest API returned an error');
+      const map = (result: any) => (result.result?.list || []).map((row: any) => ({ time: finite(row.timestamp), value: finite(row.openInterest) })).sort((a: any, b: any) => a.time - b.time);
+      return { fiveMinute: map(fiveMinute), hourly: map(hourly) };
+    }
+    const [fiveMinute, hourly]: any[][] = await Promise.all([
+      json(`https://api.gateio.ws/api/v4/futures/${quote.toLowerCase()}/contract_stats?contract=${encodeURIComponent(exchangeSymbol)}&interval=5m&limit=200`),
+      json(`https://api.gateio.ws/api/v4/futures/${quote.toLowerCase()}/contract_stats?contract=${encodeURIComponent(exchangeSymbol)}&interval=1h&limit=30`),
+    ]);
+    const map = (rows: any[]) => rows.map(row => ({ time: finite(row.time) * 1000, value: finite(row.open_interest_usd) })).sort((a, b) => a.time - b.time);
+    return { fiveMinute: map(fiveMinute), hourly: map(hourly) };
   }
 
   webSocketMessage(socket: WebSocket, message: string | ArrayBuffer) {

@@ -15,12 +15,13 @@ Endpoints:
 
 - `GET /health`
 - `GET /snapshot?exchange=Binance` (also `Bybit` and `Gate`)
+- `GET /details?exchange=Bybit&marketType=Futures&symbol=BTCUSDT&exchangeSymbol=BTCUSDT&quote=USDT` (also Binance and Gate)
 - `GET /stream?exchange=Binance` with a WebSocket upgrade
 
-The one-minute schedule is the upstream polling cadence. WebSocket clients receive the cached shared snapshot after each successful poll; this is not an exchange-native WebSocket connection. `/_scheduled_refresh` is internal to the Worker and is intentionally not exposed publicly.
+The one-minute schedule is the upstream snapshot polling cadence. WebSocket clients receive the cached shared snapshot after each successful poll; this is not an exchange-native WebSocket connection. `/details` retrieves 1m and 1h candles and (for futures) open-interest history on demand, then caches each market's result in the Durable Object for 45 seconds. Bybit and Gate details are served through this shared Worker so browsers do not make per-market calls to Supabase. `/_scheduled_refresh` is internal to the Worker and is intentionally not exposed publicly.
 
 ## Current scope
 
-The staging Worker does not yet replace the screener's candle, open-interest, or technical-analysis requests. Those still use the existing data path. The indicator combination-filter interface in the website currently reads the existing Binance Futures TA cache. Migrate those paths and compare Cloudflare Free usage before turning down the Supabase job or treating this as a full Supabase replacement.
+The screener's Binance candle, open-interest, and technical-analysis requests still use the existing Supabase-backed data path. The indicator combination-filter interface currently reads only the Binance Futures TA cache. Bybit and Gate provide candle-derived price change, dollar change, volume, volatility, RVOL, and BTC-correlation fields; their futures also provide open-interest history and funding. Exact historical execution counts are not available from the candle endpoints, so trade-count cells remain unavailable for those exchanges. Indicator calculations have not yet been ported to this Worker.
 
 The website can use the Worker snapshot after setting `VITE_MARKET_FEED_URL` in the staging Pages build environment. Until then it keeps its existing market-data path. Do not set that variable to the staging Worker URL in production.
