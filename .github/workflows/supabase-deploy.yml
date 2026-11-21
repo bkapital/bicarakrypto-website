@@ -2,11 +2,9 @@ name: Deploy Supabase screener backend
 
 on:
   push:
-    branches: [staging]
+    branches: [main]
     paths:
       - 'supabase/**'
-      - 'src/pages/ScreenerPage.tsx'
-      - '.github/workflows/supabase-deploy.yml'
   workflow_dispatch:
 
 permissions:
@@ -14,6 +12,7 @@ permissions:
 
 jobs:
   deploy:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository

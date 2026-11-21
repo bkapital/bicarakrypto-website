@@ -1,0 +1,29 @@
+name = "bkp-market-feed"
+main = "src/index.ts"
+compatibility_date = "2026-11-21"
+workers_dev = true
+
+[triggers]
+crons = ["* * * * *"]
+
+[[durable_objects.bindings]]
+name = "MARKET_FEED"
+class_name = "MarketFeed"
+
+[exports.MarketFeed]
+type = "durable-object"
+storage = "sqlite"
+
+[env.staging]
+name = "bkp-market-feed-staging"
+
+[[env.staging.durable_objects.bindings]]
+name = "MARKET_FEED"
+class_name = "MarketFeed"
+
+[env.staging.exports.MarketFeed]
+type = "durable-object"
+storage = "sqlite"
+
+[env.staging.triggers]
+crons = ["* * * * *"]
