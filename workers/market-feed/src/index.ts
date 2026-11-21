@@ -57,7 +57,10 @@ async function binanceSnapshot(): Promise<Market[]> {
     json('https://data-api.binance.vision/api/v3/ticker/24hr'),
     json('https://fapi.binance.com/fapi/v1/exchangeInfo'),
     json('https://fapi.binance.com/fapi/v1/ticker/24hr'),
-    json('https://fapi.binance.com/fapi/v1/premiumIndex'),
+    json('https://fapi.binance.com/fapi/v1/premiumIndex').catch(error => {
+      console.warn(`Binance funding data unavailable: ${error instanceof Error ? error.message : String(error)}`);
+      return [];
+    }),
   ]);
   const spotMeta = new Map((spotInfo.symbols || []).filter((s: any) => s.status === 'TRADING').map((s: any) => [s.symbol, s]));
   const futuresMeta = new Map((futuresInfo.symbols || []).filter((s: any) => s.status === 'TRADING').map((s: any) => [s.symbol, s]));
