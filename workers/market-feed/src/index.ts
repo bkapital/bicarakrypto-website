@@ -124,20 +124,28 @@ async function binanceSnapshot(): Promise<Market[]> {
 async function bybitSnapshot(): Promise<Market[]> {
   const categories = ['spot', 'linear'] as const;
   const data = await Promise.all(categories.map(async category => {
-    const [instruments, tickers] = await Promise.all([
-      json(`https://api.bybit.com/v5/market/instruments-info?category=${category}&limit=1000`),
+    const symbolTypes = category === 'spot' ? ['xstocks', 'mstocks'] : ['commodity', 'stock', 'forex', 'ETF'];
+    const fetchInstruments = async (symbolType?: string) => {
+      const rows: any[] = [];
+      let cursor = '';
+      do {
+        const params = new URLSearchParams({ category, limit: '1000' });
+        if (symbolType) params.set('symbolType', symbolType);
+        if (cursor) params.set('cursor', cursor);
+        const page = await json(`https://api.bybit.com/v5/market/instruments-info?${params}`);
+        if (page.retCode !== 0) throw new Error(`Bybit ${category}${symbolType ? ` ${symbolType}` : ''} instrument request failed`);
+        rows.push(...(page.result?.list || []));
+        cursor = page.result?.nextPageCursor || '';
+      } while (cursor);
+      return rows;
+    };
+    const [instrumentGroups, tickers] = await Promise.all([
+      Promise.all([fetchInstruments(), ...symbolTypes.map(type => fetchInstruments(type))]),
       json(`https://api.bybit.com/v5/market/tickers?category=${category}`),
     ]);
-    if (instruments.retCode !== 0 || tickers.retCode !== 0) throw new Error(`Bybit ${category} API returned an error`);
-    let instrumentRows = instruments.result?.list || [];
-    let cursor = instruments.result?.nextPageCursor;
-    while (cursor) {
-      const page = await json(`https://api.bybit.com/v5/market/instruments-info?category=${category}&limit=1000&cursor=${encodeURIComponent(cursor)}`);
-      if (page.retCode !== 0) throw new Error(`Bybit ${category} instrument paging failed`);
-      instrumentRows = instrumentRows.concat(page.result?.list || []);
-      cursor = page.result?.nextPageCursor;
-    }
-    return { category, instruments: instrumentRows, tickers: tickers.result?.list || [] };
+    if (tickers.retCode !== 0) throw new Error(`Bybit ${category} ticker API returned an error`);
+    const instrumentRows = new Map(instrumentGroups.flat().map((row: any) => [row.symbol, row]));
+    return { category, instruments: [...instrumentRows.values()], tickers: tickers.result?.list || [] };
   }));
   const markets: Market[] = [];
   for (const group of data) {
