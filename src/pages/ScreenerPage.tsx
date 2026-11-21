@@ -177,7 +177,6 @@ const ScreenerDashboard:React.FC<{userEmail:string;onSignOut:()=>void}>=({userEm
       h1:hours.length>=2?(Number(hours.at(-1)[4])/Number(hours.at(-2)[4])-1)*100:row.h1,
       v1:hours.length?Number(hours.at(-1)[7]):NaN,v15:last15.length===15?last15.reduce((sum:number,c:any)=>sum+Number(c[7]),0):NaN,
      }));
-     });
      };
      const oiTask=hasPerpetualData?(exchange==='Binance'?futuresData(`/futures/data/openInterestHist?symbol=${symbol}&period=5m&limit=200`).then((hist:any[])=>({fiveMinute:hist.map(x=>({time:Number(x.timestamp),value:Number(x.sumOpenInterestValue)})),hourly:[]})):candleTask.then(()=>sharedDetail||{})).then((history:any)=>{
       if(disposed)return;const five=(history.fiveMinute||[]).filter((x:any)=>x.value!==null&&Number.isFinite(Number(x.value)));const hours=(history.hourly||[]).filter((x:any)=>x.value!==null&&Number.isFinite(Number(x.value)));if(exchange==='Binance'&&five.length===0)return;const metrics:Record<string,number>={};for(const period of periods){const useHourly=period==='1d'&&hours.length>1;const series=useHourly?hours:five;const step=useHourly?24:period==='5m'?1:period==='15m'?3:period==='1h'?12:period==='4h'?48:period==='8h'?96:144;const newest=Number(series.at(-1)?.value);const earlier=Number(series.at(-1-step)?.value);metrics[`oiPct:${period}`]=Number.isFinite(earlier)&&earlier>0?(newest/earlier-1)*100:NaN;metrics[`oiUsd:${period}`]=Number.isFinite(newest)&&Number.isFinite(earlier)?(newest-earlier)*(exchange==='Bybit'?market.price:1):NaN}
