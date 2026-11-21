@@ -4,12 +4,12 @@ This Worker is the staging shared-feed foundation. It polls public exchange REST
 
 ## Staging deploy
 
-The Worker deploy workflow is manual and only deploys while the selected GitHub branch is `staging`. Add these repository Actions secrets:
+The Worker deploy workflow automatically deploys changes under `workers/market-feed/` when they are pushed to `staging`. It also has a manual trigger, but GitHub only exposes the manual Run workflow button after a workflow file exists on the repository's default branch. The staging push trigger lets us deploy without merging this workflow into production. Add these repository Actions secrets:
 
 - `CLOUDFLARE_API_TOKEN`: a scoped token with permission to edit Workers and Durable Objects for this account.
 - `CLOUDFLARE_ACCOUNT_ID`: the Cloudflare account ID.
 
-Then choose **Actions → Deploy staging market feed → Run workflow**, with branch `staging` selected. The staging Worker is named `bkp-market-feed-staging`. Its URL is `https://bkp-market-feed-staging.<your-workers-subdomain>.workers.dev`.
+After both secrets are saved, push a change under `workers/market-feed/` to `staging` to deploy. The staging Worker is named `bkp-market-feed-staging`. Its URL is `https://bkp-market-feed-staging.<your-workers-subdomain>.workers.dev` and is printed in the successful deployment log.
 
 Endpoints:
 

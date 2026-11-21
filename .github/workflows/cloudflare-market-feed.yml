@@ -1,6 +1,11 @@
 name: Deploy staging market feed
 
 on:
+  push:
+    branches: [staging]
+    paths:
+      - 'workers/market-feed/**'
+      - '.github/workflows/cloudflare-market-feed.yml'
   workflow_dispatch:
 
 permissions:
