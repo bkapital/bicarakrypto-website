@@ -1,3 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#F0B90B" role="img" aria-label="Binance">
-  <path d="m12 1.2 3.05 3.05L12 7.3 8.95 4.25 12 1.2Zm-6.35 6.35L8.7 10.6l-3.05 3.05L2.6 10.6l3.05-3.05Zm12.7 0 3.05 3.05-3.05 3.05-3.05-3.05 3.05-3.05ZM12 10.05l3.05 3.05L12 16.15l-3.05-3.05L12 10.05Zm0 6.65 3.05 3.05L12 22.8l-3.05-3.05L12 16.7Z"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" role="img" aria-label="Binance">
+  <g fill="#F3BA2F">
+    <path d="M50 4 67 21 50 38 33 21 50 4Z"/>
+    <path d="M21 33 38 50 21 67 4 50 21 33Z"/>
+    <path d="M79 33 96 50 79 67 62 50 79 33Z"/>
+    <path d="M50 62 67 79 50 96 33 79 50 62Z"/>
+    <path d="M50 39 61 50 50 61 39 50 50 39Z"/>
+  </g>
 </svg>

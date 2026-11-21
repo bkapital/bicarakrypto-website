@@ -1,4 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
-  <rect x="20" y="22" width="16" height="56" rx="4" fill="#F7A600"/>
-  <path d="M42 22H62C72 22 78 28 78 37C78 44 74 48 67 50C76 52 80 58 80 65C80 74 72 78 62 78H42V22ZM58 44C62 44 65 42 65 38C65 34 62 32 58 32H54V44H58ZM58 68C64 68 67 66 67 62C67 58 64 56 58 56H54V68H58Z" fill="#F7A600"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Bybit">
+  <circle cx="50" cy="50" r="50" fill="#222431"/>
+  <g font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">
+    <text x="8" y="63" fill="#F7F7FA">BYB</text>
+    <rect x="68" y="35" width="4.5" height="29" rx="1" fill="#F7A600"/>
+    <text x="75" y="63" fill="#F7F7FA">T</text>
+  </g>
 </svg>
