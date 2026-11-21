@@ -63,6 +63,21 @@ const classifyBinance = (type: string): AssetClass => {
   if (type === 'FX') return 'Forex';
   return 'Crypto';
 };
+const classifyBybit = (type: string): AssetClass => {
+  switch (type.toLowerCase()) {
+    case 'xstocks':
+    case 'mstocks':
+    case 'stock':
+    case 'etf':
+      return 'Stocks';
+    case 'commodity':
+      return 'Commodities';
+    case 'forex':
+      return 'Forex';
+    default:
+      return 'Crypto';
+  }
+};
 
 async function binanceSnapshot(): Promise<Market[]> {
   const [spotInfo, spotTickers, futuresInfo, futuresTickers, premiums] = await Promise.all([
@@ -116,9 +131,9 @@ async function bybitSnapshot(): Promise<Market[]> {
     if (instruments.retCode !== 0 || tickers.retCode !== 0) throw new Error(`Bybit ${category} API returned an error`);
     let instrumentRows = instruments.result?.list || [];
     let cursor = instruments.result?.nextPageCursor;
-    while (category === 'linear' && cursor) {
-      const page = await json(`https://api.bybit.com/v5/market/instruments-info?category=linear&limit=1000&cursor=${encodeURIComponent(cursor)}`);
-      if (page.retCode !== 0) throw new Error('Bybit linear instrument paging failed');
+    while (cursor) {
+      const page = await json(`https://api.bybit.com/v5/market/instruments-info?category=${category}&limit=1000&cursor=${encodeURIComponent(cursor)}`);
+      if (page.retCode !== 0) throw new Error(`Bybit ${category} instrument paging failed`);
       instrumentRows = instrumentRows.concat(page.result?.list || []);
       cursor = page.result?.nextPageCursor;
     }
@@ -126,16 +141,15 @@ async function bybitSnapshot(): Promise<Market[]> {
   }));
   const markets: Market[] = [];
   for (const group of data) {
-    const metadata = new Map(group.instruments.filter((row: any) => {
-      const type = String(row.symbolType || '').toLowerCase();
-      const isCrypto = !['xstocks', 'mstocks', 'stock', 'etf', 'forex', 'commodity'].includes(type);
-      return row.status === 'Trading' && isCrypto;
-    }).map((row: any) => [row.symbol, row]));
+    const metadata = new Map(group.instruments
+      .filter((row: any) => row.status === 'Trading')
+      .map((row: any) => [row.symbol, row]));
     for (const ticker of group.tickers) {
       const meta: any = metadata.get(ticker.symbol);
       if (!meta) continue;
       const marketType = group.category === 'spot' ? 'Spot' : 'Futures';
       const market = baseMarket('Bybit', marketType, ticker.symbol, ticker.symbol, meta.quoteCoin || '');
+      market.assetClass = classifyBybit(String(meta.symbolType || ''));
       market.hasPerpetualData = marketType === 'Futures' && String(meta.contractType || '').toLowerCase().includes('perpetual');
       market.price = finite(ticker.lastPrice);
       market.d1 = finite(ticker.price24hPcnt) * 100;
