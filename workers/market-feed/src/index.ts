@@ -1,4 +1,4 @@
-type MarketType = 'Spot' | 'Futures';
+type MarketType = 'Spot' | 'Futures' | 'Options' | 'CFD';
 type AssetClass = 'Crypto' | 'Stocks' | 'Commodities' | 'Indices' | 'Forex';
 type Market = {
   id: string; marketType: MarketType; assetClass: AssetClass; hasPerpetualData: boolean;
@@ -78,6 +78,15 @@ const classifyBybit = (type: string): AssetClass => {
       return 'Crypto';
   }
 };
+const classifyBybitUnderlying = (type: unknown): AssetClass => {
+  switch (String(type)) {
+    case '1':
+    case '4': return 'Commodities'; // Commodity and oil options
+    case '2': return 'Stocks';
+    case '3': return 'Forex';
+    default: return 'Crypto';
+  }
+};
 
 async function binanceSnapshot(): Promise<Market[]> {
   const [spotInfo, spotTickers, futuresInfo, futuresTickers, premiums] = await Promise.all([
@@ -122,9 +131,9 @@ async function binanceSnapshot(): Promise<Market[]> {
 }
 
 async function bybitSnapshot(): Promise<Market[]> {
-  const categories = ['spot', 'linear'] as const;
+  const categories = ['spot', 'linear', 'inverse'] as const;
   const data = await Promise.all(categories.map(async category => {
-    const symbolTypes = category === 'spot' ? ['xstocks', 'mstocks'] : ['commodity', 'stock', 'forex', 'ETF'];
+    const symbolTypes = category === 'spot' ? ['xstocks', 'mstocks'] : category === 'linear' ? ['commodity', 'stock', 'forex', 'ETF'] : [];
     const fetchInstruments = async (symbolType?: string) => {
       const rows: any[] = [];
       let cursor = '';
@@ -155,8 +164,8 @@ async function bybitSnapshot(): Promise<Market[]> {
     for (const ticker of group.tickers) {
       const meta: any = metadata.get(ticker.symbol);
       if (!meta) continue;
-      const marketType = group.category === 'spot' ? 'Spot' : 'Futures';
-      const market = baseMarket('Bybit', marketType, ticker.symbol, ticker.symbol, meta.quoteCoin || '');
+      const marketType: MarketType = group.category === 'spot' ? 'Spot' : 'Futures';
+      const market = baseMarket('Bybit', marketType, ticker.symbol, ticker.symbol, meta.quoteCoin || meta.settleCoin || 'USD');
       market.assetClass = classifyBybit(String(meta.symbolType || ''));
       market.hasPerpetualData = marketType === 'Futures' && String(meta.contractType || '').toLowerCase().includes('perpetual');
       market.price = finite(ticker.lastPrice);
@@ -170,6 +179,49 @@ async function bybitSnapshot(): Promise<Market[]> {
       market.funding = finite(ticker.fundingRate);
       market.oi = finite(ticker.openInterestValue);
       markets.push(market);
+    }
+  }
+  const optionBases: any = await json('https://api.bybit.com/v5/market/option/base-coins');
+  if (optionBases.retCode !== 0) throw new Error('Bybit option base coin API returned an error');
+  const activeBases = (optionBases.result?.list || []).filter((base: any) => Number(base.hasSymbol) === 1);
+  for (let offset = 0; offset < activeBases.length; offset += 5) {
+    const batch = activeBases.slice(offset, offset + 5);
+    const optionGroups = await Promise.all(batch.map(async (base: any) => {
+      const params = new URLSearchParams({ category: 'option', baseCoin: base.baseCoin, limit: '1000' });
+      const instrumentRows: any[] = [];
+      let cursor = '';
+      do {
+        if (cursor) params.set('cursor', cursor);
+        const instruments: any = await json(`https://api.bybit.com/v5/market/instruments-info?${params}`);
+        if (instruments.retCode !== 0) throw new Error(`Bybit option instruments failed for ${base.baseCoin}`);
+        instrumentRows.push(...(instruments.result?.list || []));
+        cursor = instruments.result?.nextPageCursor || '';
+      } while (cursor);
+      const tickers: any = await json(`https://api.bybit.com/v5/market/tickers?category=option&baseCoin=${encodeURIComponent(base.baseCoin)}`);
+      if (tickers.retCode !== 0) throw new Error(`Bybit option tickers failed for ${base.baseCoin}`);
+      return { base, instruments: instrumentRows, tickers: tickers.result?.list || [] };
+    }));
+    for (const group of optionGroups) {
+      const metadata = new Map(group.instruments.filter((row: any) => row.status === 'Trading').map((row: any) => [row.symbol, row]));
+      for (const ticker of group.tickers) {
+        const meta: any = metadata.get(ticker.symbol);
+        if (!meta) continue;
+        const quote = String(meta.quoteCoin || meta.settleCoin || group.base.quoteCoin || 'USDT');
+        const market = baseMarket('Bybit', 'Options', ticker.symbol, ticker.symbol, quote);
+        market.assetClass = classifyBybitUnderlying(group.base.underlyingType);
+        market.hasPerpetualData = false;
+        market.price = finite(ticker.lastPrice);
+        const change24h = finite(ticker.change24h);
+        const previousPrice = market.price - change24h;
+        market.d1 = Number.isFinite(previousPrice) && previousPrice !== 0 ? change24h / previousPrice * 100 : Number.NaN;
+        market.v24 = finite(ticker.turnover24h);
+        market.metrics = {
+          bid: finite(ticker.bid1Price), ask: finite(ticker.ask1Price), markPrice: finite(ticker.markPrice),
+          impliedVolatility: finite(ticker.markIv), delta: finite(ticker.delta), gamma: finite(ticker.gamma),
+          vega: finite(ticker.vega), theta: finite(ticker.theta), underlyingPrice: finite(ticker.underlyingPrice),
+        };
+        markets.push(market);
+      }
     }
   }
   return applyQuoteRates(markets);
@@ -305,7 +357,7 @@ export class MarketFeed {
       const symbol = url.searchParams.get('symbol') || '';
       const exchangeSymbol = url.searchParams.get('exchangeSymbol') || symbol;
       const quote = url.searchParams.get('quote') || 'USDT';
-      if (!['Spot', 'Futures'].includes(marketType || '') || !/^[A-Z0-9_-]{1,40}$/.test(symbol)
+      if (!['Spot', 'Futures', 'Options'].includes(marketType || '') || !/^[A-Z0-9_-]{1,40}$/.test(symbol)
         || !/^[A-Z0-9_-]{1,40}$/.test(exchangeSymbol) || !/^[A-Z0-9]{2,12}$/.test(quote)) {
         return respond({ error: 'marketType, symbol and quote are required' }, 400);
       }
@@ -363,13 +415,14 @@ export class MarketFeed {
     const minuteLimit = '30';
     const hourLimit = '96';
     const getBars = async (timeframe: '1m' | '1h', limit: string) => {
+      if (marketType === 'Options') return [];
       if (exchange === 'Binance') {
         const host = marketType === 'Spot' ? 'https://data-api.binance.vision/api/v3/klines' : 'https://fapi.binance.com/fapi/v1/klines';
         const rows: any[] = await json(`${host}?symbol=${encodeURIComponent(symbol)}&interval=${timeframe}&limit=${limit}`);
         return rows.map(row => row.map((value: unknown) => finite(value)));
       }
       if (exchange === 'Bybit') {
-        const category = marketType === 'Spot' ? 'spot' : 'linear';
+        const category = marketType === 'Spot' ? 'spot' : quote === 'USD' ? 'inverse' : 'linear';
         const result: any = await json(`https://api.bybit.com/v5/market/kline?category=${category}&symbol=${encodeURIComponent(symbol)}&interval=${timeframe === '1m' ? '1' : '60'}&limit=${limit}`);
         if (result.retCode !== 0) throw new Error(`Bybit kline API returned ${result.retCode}`);
         return (result.result?.list || []).map((row: any[]) => {
@@ -407,9 +460,10 @@ export class MarketFeed {
       return { fiveMinute: fiveMinute.map(row => ({ time: finite(row.timestamp), value: finite(row.sumOpenInterestValue) })), hourly: hourly.map(row => ({ time: finite(row.timestamp), value: finite(row.sumOpenInterestValue) })) };
     }
     if (exchange === 'Bybit') {
+      const category = quote === 'USD' ? 'inverse' : 'linear';
       const [fiveMinute, hourly]: any[] = await Promise.all([
-        json(`https://api.bybit.com/v5/market/open-interest?category=linear&symbol=${encodeURIComponent(symbol)}&intervalTime=5min&limit=200`),
-        json(`https://api.bybit.com/v5/market/open-interest?category=linear&symbol=${encodeURIComponent(symbol)}&intervalTime=1h&limit=30`),
+        json(`https://api.bybit.com/v5/market/open-interest?category=${category}&symbol=${encodeURIComponent(symbol)}&intervalTime=5min&limit=200`),
+        json(`https://api.bybit.com/v5/market/open-interest?category=${category}&symbol=${encodeURIComponent(symbol)}&intervalTime=1h&limit=30`),
       ]);
       if (fiveMinute.retCode !== 0 || hourly.retCode !== 0) throw new Error('Bybit open-interest API returned an error');
       const map = (result: any) => (result.result?.list || []).map((row: any) => ({ time: finite(row.timestamp), value: finite(row.openInterest) })).sort((a: any, b: any) => a.time - b.time);
