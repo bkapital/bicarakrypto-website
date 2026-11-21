@@ -240,10 +240,10 @@ export class MarketFeed {
     return rows.toArray()[0]?.message ?? null;
   }
 
-  private async refresh() {
+  private async refresh(targetExchanges: Exchange[] = exchanges) {
     if (this.refreshing) return this.refreshing;
     this.refreshing = (async () => {
-      await Promise.all(exchanges.map(async exchange => {
+      await Promise.all(targetExchanges.map(async exchange => {
         try {
           const markets = await snapshotLoaders[exchange]();
           const snapshot: Snapshot = { exchange, updatedAt: new Date().toISOString(), markets };
@@ -274,7 +274,7 @@ export class MarketFeed {
     // repeated upstream exchange requests.
     if (url.pathname === '/_scheduled_refresh') {
       if (request.method !== 'POST') return respond({ error: 'POST only' }, 405);
-      await this.refresh();
+      await this.refresh(['Bybit', 'Gate']);
       return respond({ ok: true, refreshedAt: new Date().toISOString() });
     }
     if (!exchange || !exchanges.includes(exchange)) return respond({ error: 'A supported exchange is required' }, 400);
@@ -314,13 +314,15 @@ export class MarketFeed {
     if (url.pathname === '/snapshot') {
       let snapshot = this.readSnapshot(exchange);
       if (!snapshot) {
-        await this.refresh();
+        if (exchange === 'Binance') return respond({ exchange, status: 'disabled', updatedAt: null, markets: [], error: 'Binance data is loaded directly by the screener browser; connect to a VPN that can access Binance.' }, 503);
+        await this.refresh([exchange]);
         snapshot = this.readSnapshot(exchange);
       }
       if (!snapshot) return respond({ exchange, status: 'loading', updatedAt: null, markets: [], error: this.readError(exchange) }, 503);
       return respond(snapshot, 200, { 'cache-control': 'public, max-age=0, s-maxage=5, stale-while-revalidate=30' });
     }
     if (url.pathname === '/stream') {
+      if (exchange === 'Binance') return respond({ error: 'Binance uses the browser network because the Worker network is blocked by Binance.' }, 503);
       if (request.headers.get('upgrade')?.toLowerCase() !== 'websocket') return respond({ error: 'WebSocket upgrade required' }, 426);
       const pair = new WebSocketPair();
       const [client, server] = Object.values(pair);

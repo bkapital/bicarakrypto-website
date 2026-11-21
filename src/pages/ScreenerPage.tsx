@@ -79,7 +79,7 @@ const ScreenerDashboard:React.FC<{userEmail:string;onSignOut:()=>void}>=({userEm
   const stagingFeedFallback=window.location.hostname==='staging.bicarakrypto-website.pages.dev'?'https://bkp-market-feed-staging.bicarakapital2026.workers.dev':'';
   const sharedFeedUrl=(import.meta.env.VITE_MARKET_FEED_URL||stagingFeedFallback).replace(/\/$/,'');
   let hasSharedSnapshot=false;
-  const requestJson=async(url:string,label:string)=>{let lastError:unknown;for(let attempt=0;attempt<3;attempt++){try{const {data}=await supabase.auth.getSession();if(!data.session)throw new Error('Sign in required');const parsed=new URL(url,window.location.origin);let market='futures',path=parsed.pathname;if(path.startsWith('/binance-spot-api')){market='spot';path=path.replace('/binance-spot-api','/api')}else if(path.startsWith('/binance-data')){market='data';path=path.replace('/binance-data','')}else if(path.startsWith('/binance-api'))path=path.replace('/binance-api','/fapi');const target=new URL(`${CONFIG.portal.supabaseUrl}/functions/v1/market-data`);target.searchParams.set('action','proxy');target.searchParams.set('market',market);target.searchParams.set('path',path);parsed.searchParams.forEach((value,key)=>target.searchParams.set(key,value));const response=await fetch(target,{headers:{apikey:CONFIG.portal.supabaseKey,authorization:`Bearer ${data.session.access_token}`}});if(!response.ok){const error:any=new Error(`${label} ${response.status}`);error.retryable=response.status===429||response.status>=500;throw error}return await response.json()}catch(error:any){lastError=error;if(error?.retryable===false||attempt===2)throw error;await new Promise(resolve=>window.setTimeout(resolve,350*(attempt+1)))}}throw lastError};
+  const requestJson=async(url:string,label:string)=>{let lastError:unknown;for(let attempt=0;attempt<3;attempt++){try{const parsed=new URL(url,window.location.origin);let market='futures',path=parsed.pathname;if(path.startsWith('/binance-spot-api')){market='spot';path=path.replace('/binance-spot-api','/api')}else if(path.startsWith('/binance-data')){market='data';path=path.replace('/binance-data','')}else if(path.startsWith('/binance-api'))path=path.replace('/binance-api','/fapi');let target:string;if(market==='spot')target=`https://data-api.binance.vision${path}`;else if(market==='futures'||market==='data')target=`https://fapi.binance.com${path}`;else target=`${CONFIG.portal.supabaseUrl}/functions/v1/market-data?action=proxy&market=${market}&path=${encodeURIComponent(path)}`;parsed.searchParams.forEach((value,key)=>{const separator=target.includes('?')?'&':'?';target+=`${separator}${encodeURIComponent(key)}=${encodeURIComponent(value)}`});const response=await fetch(target);if(!response.ok){const error:any=new Error(`${label} ${response.status}`);error.retryable=response.status===429||response.status>=500;throw error}return await response.json()}catch(error:any){lastError=error;if(error?.retryable===false||attempt===2)throw error;await new Promise(resolve=>window.setTimeout(resolve,350*(attempt+1)))}}throw lastError};
   const rest=(path:string)=>requestJson(`${base}${path}`,'Binance API');
   const spotRest=(path:string)=>requestJson(`/binance-spot-api/v3${path}`,'Binance Spot API');
   const futuresData=(path:string)=>requestJson(`/binance-data${path}`,'Binance API');
@@ -102,11 +102,13 @@ const ScreenerDashboard:React.FC<{userEmail:string;onSignOut:()=>void}>=({userEm
   };
   const loadSnapshot=async()=>{
    try{
-    if(sharedFeedUrl){
-     const response=await fetch(`${sharedFeedUrl}/snapshot?exchange=${exchange}`);
-     if(!response.ok)throw new Error(`Shared market feed ${response.status}`);
-     applySharedSnapshot(await response.json());
-     return;
+    if(sharedFeedUrl&&exchange!=='Binance'){
+     try{
+      const response=await fetch(`${sharedFeedUrl}/snapshot?exchange=${exchange}`);
+      if(!response.ok)throw new Error(`Shared market feed ${response.status}`);
+      applySharedSnapshot(await response.json());
+      return;
+     }catch(error){if(exchange!=='Binance')throw error;console.warn('Binance shared snapshot is blocked from the Worker network; trying the browser network',error)}
     }
     if(exchange==='Bybit')throw new Error('Bybit requires the shared market feed URL');
     if(exchange==='Gate'){
@@ -191,19 +193,19 @@ const ScreenerDashboard:React.FC<{userEmail:string;onSignOut:()=>void}>=({userEm
   loadAuxRef.current=()=>void loadAux();
   void loadSnapshot();
   let socket:WebSocket|null=null;let reconnectTimer:number|null=null;let reconnectAttempt=0;
-  if(sharedFeedUrl){
+  if(sharedFeedUrl&&exchange!=='Binance'){
    const connectStream=()=>{
     if(disposed)return;
     const streamUrl=`${sharedFeedUrl.replace(/^http/,'ws')}/stream?exchange=${exchange}`;
     socket=new WebSocket(streamUrl);
     socket.onmessage=event=>{try{const message=JSON.parse(String(event.data));if(message.type==='snapshot')applySharedSnapshot(message)}catch(error){console.warn('Invalid shared market feed message',error)}};
-    socket.onopen=()=>{reconnectAttempt=0;if(!disposed)setFeed('live')};
+    socket.onopen=()=>{reconnectAttempt=0;if(!disposed&&(snapshotLoaded||exchange!=='Binance'))setFeed('live')};
     socket.onclose=()=>{if(disposed)return;setFeed('reconnecting');const delay=Math.min(30000,1000*2**Math.min(reconnectAttempt++,5));reconnectTimer=window.setTimeout(connectStream,delay)};
     socket.onerror=()=>socket?.close();
    };
    connectStream();
   }
-  const refresh=sharedFeedUrl?null:window.setInterval(()=>void loadSnapshot(),30000);
+  const refresh=(!sharedFeedUrl||exchange==='Binance')?window.setInterval(()=>void loadSnapshot(),30000):null;
   const refreshAux=window.setInterval(()=>void loadAux(),30000);
   return ()=>{disposed=true;socket?.close();if(reconnectTimer!==null)window.clearTimeout(reconnectTimer);if(refresh!==null)window.clearInterval(refresh);window.clearInterval(refreshAux);if(scrollThrottleRef.current)window.clearTimeout(scrollThrottleRef.current)};
  },[exchange]);
@@ -226,7 +228,7 @@ const ScreenerDashboard:React.FC<{userEmail:string;onSignOut:()=>void}>=({userEm
  const exchangeLogo=exchange==='Binance'?'/binance-mark.svg':exchange==='Bybit'?'/bybit.svg':'';
  return <div className="screen-page"><header className="screen-header"><a className="screen-brand" href="/"><img className="brand-logo" src="/bicara-krypto.svg" alt="Bicara Krypto"/><span className="brand-pulse">Bicara Krypto Pulse</span></a><div className="screen-head-right"><span className="market-status"><i/>{exchange.toUpperCase()} SPOT + FUTURES</span><label className="exchange-select header-exchange">{exchangeLogo?<img className="exchange-logo" src={exchangeLogo} alt=""/>:<span className="exchange-symbol">G</span>}<select value={exchange} aria-label="Exchange" onChange={event=>{setExchange(event.target.value as 'Binance'|'Bybit'|'Gate');setQuoteFilter('all');setMarketFilter('all');setAssetFilter('all');setFilter('')}}><option value="Binance">Binance</option><option value="Bybit">Bybit</option><option value="Gate">Gate</option></select><ChevronDown size={13}/></label><button className="avatar logout-button" type="button" onClick={onSignOut} title={`Sign out ${userEmail}`} aria-label="Sign out"><LogOut size={13}/></button></div></header>
  <main className="screen-main"><div className="screen-title-row"><div><div className="eyebrow"><span>MARKET TOOLS</span><span className="slash">/</span><span>SCREENER</span></div><h1>Market Screener</h1><p>Real-time spot and futures data. Find your next setup.</p></div></div>
- {feed==='unavailable'&&!snapshotLoaded&&<div className="feed-notice"><b>Live {exchange} data is unavailable on this network.</b><span>Showing sample values. Check that this network can reach {exchange}’s public spot and futures APIs.</span></div>}
+ {feed==='unavailable'&&!snapshotLoaded&&<div className="feed-notice"><b>{exchange==='Binance'?'Connect to a VPN to load Binance data.':`Live ${exchange} data is unavailable on this network.`}</b><span>{exchange==='Binance'?'Binance blocks requests from some networks. Turn on a VPN that can access Binance, then refresh this page.':'Showing sample values. Check that this network can reach the exchange’s public spot and futures APIs.'}</span></div>}
  <section className="market-overview"><div className="overview-label"><span className="overview-icon"><Activity size={15}/></span>MARKET PULSE <span className={`pulse-live feed-${feed}`}>{feed==='live'?'LIVE':'SYNC'}</span></div><div className="overview-stat"><small>BTC 24H CHANGE</small><b>{btc?pct(btc.d1):'—'}</b><span className="muted">{exchange.toUpperCase()} MARKETS</span></div><div className="overview-stat"><small>24H VOLUME · TRACKED</small><b>{fmt(trackedVolume)}<span className="stat-change">{pct(trackedVolumeChange)}</span></b><span className="muted">vs prior 24h · {volumeHistory.length} markets with history</span></div><div className="overview-stat"><small>OPEN INTEREST · TRACKED</small><b>{fmt(trackedOi)}<span className="stat-change">{pct(trackedOiChange)}</span></b><span className="muted">24h change · {oiHistory.length} futures with history</span></div></section>
  <section className="screener-panel"><div className="panel-top"><div className="panel-heading"><span className="panel-icon"><Zap size={16}/></span><div><h2>{exchange} markets</h2><p>Spot and futures markets</p></div>{feed!=='live'&&<span className="data-state">{feed==='unavailable'?'REST RETRYING':snapshotLoaded?'REST SNAPSHOT':feed==='connecting'?'SAMPLE SNAPSHOT':'REFRESHING'}</span>}</div><div className="panel-controls"><button className="icon-button column-visibility-button" title="Column visibility" onClick={()=>setColumnsOpen(true)}><SlidersHorizontal size={15}/> Columns</button><label className="search-box"><Search size={15}/><input placeholder="Search markets..." value={query} onChange={e=>setQuery(e.target.value)}/><kbd>⌘ K</kbd></label></div></div>
  <div className="filters-row"><div className="quick-filters">{['High Volume','OI Spike','Big Movers','High Funding'].map((f,i)=><button key={f} className={`quick-filter ${filter===f?'selected':''}`} onClick={()=>setFilter(filter===f?'':f)}><i className={`qdot q${i}`}/>{f}</button>)}<TechnicalFilters open={indicatorFiltersOpen} onToggle={()=>setIndicatorFiltersOpen(value=>!value)} conditions={indicatorConditions} onConditionsChange={setIndicatorConditions} join={indicatorJoin} onJoinChange={setIndicatorJoin} ready={indicatorConditions.length===0||indicatorConditions.every(condition=>taData[condition.timeframe]?.status==='ready')}/></div><label className="quote-filter"><span>MARKET</span><select value={marketFilter} onChange={e=>setMarketFilter(e.target.value as 'all'|'Spot'|'Futures')}><option value="all">All markets</option><option value="Spot">Spot</option><option value="Futures">Futures</option></select><ChevronDown size={12}/></label><label className="quote-filter"><span>ASSET CLASS</span><select value={assetFilter} onChange={e=>setAssetFilter(e.target.value as 'all'|AssetClass)}><option value="all">All assets</option>{assetClassOptions.map(asset=><option key={asset} value={asset}>{asset}</option>)}</select><ChevronDown size={12}/></label><label className="quote-filter"><span>QUOTE</span><select value={quoteFilter} onChange={e=>setQuoteFilter(e.target.value)}><option value="all">All pairs</option>{quoteOptions.map(q=><option key={q} value={q}>{q}</option>)}</select><ChevronDown size={12}/></label><div className="results-count"><span className="live-dot"/>{rows.length} <span>markets</span><button title="Watchlist" onClick={()=>setFilter(filter==='Watchlist'?'':'Watchlist')}><Star size={14}/></button></div></div>
