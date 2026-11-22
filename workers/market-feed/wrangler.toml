@@ -26,4 +26,4 @@ type = "durable-object"
 storage = "sqlite"
 
 [env.staging.triggers]
-crons = ["* * * * *"]
+crons = []

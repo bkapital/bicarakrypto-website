@@ -1,6 +1,6 @@
 # Bicara Krypto Pulse shared market feed
 
-This Worker is the staging shared-feed foundation. It polls public exchange REST endpoints once per minute, stores the latest per-exchange snapshot in a SQLite-backed Durable Object, and serves snapshots or one shared browser WebSocket stream. It currently includes Binance, Bybit and Gate public market snapshots; no exchange API keys are needed.
+This Worker serves Binance shared market data and remains available for production. Bybit and Gate market snapshots, candles, and open-interest details are requested directly by the browser, so their staging page views do not invoke this Durable Object. No exchange API keys are needed.
 
 ## Staging deploy
 
@@ -18,10 +18,10 @@ Endpoints:
 - `GET /details?exchange=Bybit&marketType=Futures&symbol=BTCUSDT&exchangeSymbol=BTCUSDT&quote=USDT` (also Binance and Gate)
 - `GET /stream?exchange=Binance` with a WebSocket upgrade
 
-The one-minute schedule is the upstream snapshot polling cadence. WebSocket clients receive the cached shared snapshot after each successful poll; this is not an exchange-native WebSocket connection. `/details` retrieves 1m and 1h candles and (for futures) open-interest history on demand, then caches each market's result in the Durable Object for 45 seconds. Bybit and Gate details are served through this shared Worker so browsers do not make per-market calls to Supabase. `/_scheduled_refresh` is internal to the Worker and is intentionally not exposed publicly.
+The production Worker retains its one-minute scheduled refresh. The staging Worker disables that schedule because the Bybit and Gate staging clients now call public exchange APIs from the browser. Its `/snapshot`, `/details`, and `/stream` routes remain available for Binance's shared market data.
 
 ## Current scope
 
-The screener's Binance candle, open-interest, and technical-analysis requests still use the existing Supabase-backed data path. The indicator combination-filter interface currently reads only the Binance Futures TA cache. Bybit and Gate provide candle-derived price change, dollar change, volume, volatility, RVOL, and BTC-correlation fields; their futures also provide open-interest history and funding. Exact historical execution counts are not available from the candle endpoints, so trade-count cells remain unavailable for those exchanges. Indicator calculations have not yet been ported to this Worker.
+The screener's Binance candle, open-interest, and technical-analysis requests still use the existing Binance data path. The indicator combination-filter interface loads Bybit and Gate candles directly on demand. Their APIs provide candle-derived price change, dollar change, volume, volatility, RVOL, and BTC-correlation fields; futures also provide open-interest history and funding. Exact historical execution counts are not available from the candle endpoints, so trade-count cells remain unavailable for those exchanges.
 
-The website can use the Worker snapshot after setting `VITE_MARKET_FEED_URL` in the staging Pages build environment. Until then it keeps its existing market-data path. Do not set that variable to the staging Worker URL in production.
+The website uses the configured Worker URL for Binance shared feed features. Do not set the staging Worker URL in the production Pages environment.
