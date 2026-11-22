@@ -117,7 +117,7 @@ const ScreenerDashboard:React.FC<{userEmail:string;onSignOut:()=>void}>=({userEm
    if(busy||stopped)return;busy=true;
    await Promise.all(timeframes.map(async timeframe=>{
     try{
-     const data=await loadStrategyIndicators({exchange,markets,timeframe,feedUrl:resolveMarketFeedUrl(),signal:controller.signal});
+     const data=await loadStrategyIndicators({exchange,markets,timeframe,feedUrl:resolveMarketFeedUrl(),signal:controller.signal,onResult:(marketId,record)=>{if(!stopped)setTaData(current=>({...current,[timeframe]:{...current[timeframe],[marketId]:record}}))}});
      if(!stopped)setTaData(current=>({...current,[timeframe]:{...current[timeframe],...data}}));
     }catch(error){if(!controller.signal.aborted)console.warn(`Unable to initialize ${timeframe} strategy indicators`,error)}
     finally{if(!stopped)setTaLoading(current=>({...current,[timeframe]:false}))}

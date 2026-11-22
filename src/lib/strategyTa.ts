@@ -91,8 +91,8 @@ function computeRecord(exchange:'Binance'|'Bybit'|'Gate', market:Market, candles
   return {...base,id:market.id,ema50_200State,priceVsEma20:Number.isFinite(base.ema20)?base.close>=base.ema20?'above':'below':null,priceVsEma50:Number.isFinite(base.ema50)?base.close>=base.ema50?'above':'below':null,priceVsEma100:Number.isFinite(base.ema100)?base.close>=base.ema100?'above':'below':null,priceVsEma200:Number.isFinite(base.ema200)?base.close>=base.ema200?'above':'below':null,priceVsVwap,distanceFrom24hHighPct,fundingPerHour,oiChangePct1h};
 }
 
-export async function loadStrategyIndicators(args:{exchange:'Binance'|'Bybit'|'Gate';markets:Market[];timeframe:string;feedUrl:string;signal?:AbortSignal;onProgress?:(done:number,total:number)=>void}):Promise<Record<string,StrategyIndicatorRecord>> {
-  const {exchange,markets,timeframe,feedUrl,signal,onProgress}=args;
+export async function loadStrategyIndicators(args:{exchange:'Binance'|'Bybit'|'Gate';markets:Market[];timeframe:string;feedUrl:string;signal?:AbortSignal;onProgress?:(done:number,total:number)=>void;onResult?:(marketId:string,record:StrategyIndicatorRecord)=>void}):Promise<Record<string,StrategyIndicatorRecord>> {
+  const {exchange,markets,timeframe,feedUrl,signal,onProgress,onResult}=args;
   const eligible=markets.filter(m=>['Spot','Futures'].includes(m.marketType)&&m.assetClass==='Crypto'&&(m.marketType!=='Futures'||m.hasPerpetualData));
   const results:Record<string,StrategyIndicatorRecord>={};let next=0,done=0;
   const worker=async()=>{while(next<eligible.length){if(signal?.aborted)return;const market=eligible[next++];const key=keyFor(exchange,market,timeframe);let entry=cache.get(key);const duration=intervalMs[timeframe]||3_600_000;const expectedOpen=Math.floor(Date.now()/duration)*duration-duration;
@@ -106,7 +106,7 @@ export async function loadStrategyIndicators(args:{exchange:'Binance'|'Bybit'|'G
           const record=computeRecord(exchange,market,candles);
           if(record){entry={candles,result:record,lastClosedTime:candles.filter(c=>c.closeTime<Date.now()).at(-1)?.openTime||0};cache.set(key,entry)}
         }
-        if(entry)results[market.id]=entry.result;
+        if(entry){results[market.id]=entry.result;onResult?.(market.id,entry.result)}
       } catch(error) { if(signal?.aborted)return; console.warn(`Strategy candle data unavailable for ${market.symbol} ${timeframe}`,error); }
       done++;onProgress?.(done,eligible.length);
     }};
