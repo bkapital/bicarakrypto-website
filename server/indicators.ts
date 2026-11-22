@@ -21,6 +21,8 @@ export interface IndicatorResult {
   ema20_50Cross: 'up' | 'down' | null;
   ema50_200Cross: 'up' | 'down' | null;
   ema20_50CrossAge: number | null;
+  stochRsiCross: 'up' | 'down' | null;
+  rsi50Cross: 'up' | 'down' | null;
   rsi14: number;
   previousRsi14: number;
   macd: {
@@ -182,7 +184,7 @@ function directionalIndex(candles: Candle[], period: number): { plus: number; mi
   return tr === 0 ? { plus: 0, minus: 0 } : { plus: plus / tr * 100, minus: minus / tr * 100 };
 }
 
-function stochRsi(rsi: number[], period = 14): { k: number; d: number } {
+function stochRsi(rsi: number[], period = 14): { k: number; d: number; cross: 'up'|'down'|null } {
   const raw = rsi.map((value, i) => {
     const slice = rsi.slice(Math.max(0, i - period + 1), i + 1).filter(Number.isFinite);
     if (!Number.isFinite(value) || slice.length < period) return NaN;
@@ -194,7 +196,20 @@ function stochRsi(rsi: number[], period = 14): { k: number; d: number } {
     return window.length === length && window.every(Number.isFinite) ? window.reduce((sum, value) => sum + value, 0) / length : NaN;
   };
   const kSeries = raw.map((_, i) => smooth(raw, i, 3));
-  return { k: kSeries.at(-1) ?? NaN, d: smooth(kSeries, kSeries.length - 1, 3) };
+  const dSeries = kSeries.map((_, i) => smooth(kSeries, i, 3));
+  const up = lastCross(kSeries, dSeries, 'up');
+  const down = lastCross(kSeries, dSeries, 'down');
+  return { k: kSeries.at(-1) ?? NaN, d: dSeries.at(-1) ?? NaN, cross: up !== null && (down === null || up <= down) ? 'up' : down !== null ? 'down' : null };
+}
+
+function lastLevelCross(values: number[], level: number, maxCandles = 3): 'up'|'down'|null {
+  for (let age=0; age<maxCandles && values.length-1-age>0; age++) {
+    const i=values.length-1-age;
+    if (!Number.isFinite(values[i]) || !Number.isFinite(values[i-1])) continue;
+    if (values[i-1] <= level && values[i] > level) return 'up';
+    if (values[i-1] >= level && values[i] < level) return 'down';
+  }
+  return null;
 }
 
 function supertrendDirection(candles: Candle[], period = 10, multiplier = 3): 'above' | 'below' {
@@ -235,8 +250,9 @@ function bollingerSeries(closes: number[], period: number, multiplier: number): 
   });
 }
 
-export function calculateIndicators(candles: Candle[]): IndicatorResult | null {
+export function calculateIndicators(candles: Candle[], options: { crossWindow?: number } = {}): IndicatorResult | null {
   if (candles.length < 200) return null;
+  const crossWindow = Math.max(1, Math.floor(options.crossWindow ?? 3));
   const closes = candles.map(c => c.close);
   const ema20Series = ema(closes, 20);
   const ema50Series = ema(closes, 50);
@@ -244,13 +260,13 @@ export function calculateIndicators(candles: Candle[]): IndicatorResult | null {
   const ema200Series = ema(closes, 200);
   const ema9Series = ema(closes, 9);
   const ema21Series = ema(closes, 21);
-  const ema20_50CrossAge = lastCross(ema20Series, ema50Series, 'up') ?? null;
-  const ema9_21Up = lastCross(ema9Series, ema21Series, 'up');
-  const ema9_21Down = lastCross(ema9Series, ema21Series, 'down');
-  const ema50_200Up = lastCross(ema50Series, ema200Series, 'up');
-  const ema50_200Down = lastCross(ema50Series, ema200Series, 'down');
-  const crossUpAge = lastCross(ema20Series, ema50Series, 'up');
-  const crossDownAge = lastCross(ema20Series, ema50Series, 'down');
+  const ema20_50CrossAge = lastCross(ema20Series, ema50Series, 'up', crossWindow) ?? null;
+  const ema9_21Up = lastCross(ema9Series, ema21Series, 'up', crossWindow);
+  const ema9_21Down = lastCross(ema9Series, ema21Series, 'down', crossWindow);
+  const ema50_200Up = lastCross(ema50Series, ema200Series, 'up', crossWindow);
+  const ema50_200Down = lastCross(ema50Series, ema200Series, 'down', crossWindow);
+  const crossUpAge = lastCross(ema20Series, ema50Series, 'up', crossWindow);
+  const crossDownAge = lastCross(ema20Series, ema50Series, 'down', crossWindow);
   const emaCross = crossUpAge !== null && (crossDownAge === null || crossUpAge <= crossDownAge) ? 'up' : crossDownAge !== null ? 'down' : null;
   const emaCrossAge = emaCross === 'up' ? crossUpAge : emaCross === 'down' ? crossDownAge : null;
 
@@ -263,7 +279,7 @@ export function calculateIndicators(candles: Candle[]): IndicatorResult | null {
   const signalLine = Array<number>(candles.length).fill(NaN);
   macdSignalPartial.forEach((v, i) => { signalLine[firstMacdIndex + i] = v; });
   const histogram = macdLine.map((v, i) => Number.isFinite(v) && Number.isFinite(signalLine[i]) ? v - signalLine[i] : NaN);
-  const macdCross = lastZeroCross(histogram);
+  const macdCross = lastZeroCross(histogram, crossWindow);
 
   const rsi = rsiSeries(closes, 14);
   const stochastic = stochRsi(rsi);
@@ -301,6 +317,8 @@ export function calculateIndicators(candles: Candle[]): IndicatorResult | null {
     ema20_50Cross: emaCross,
     ema50_200Cross: ema50_200Up !== null && (ema50_200Down === null || ema50_200Up <= ema50_200Down) ? 'up' : ema50_200Down !== null ? 'down' : null,
     ema20_50CrossAge,
+    stochRsiCross: stochastic.cross,
+    rsi50Cross: lastLevelCross(rsi, 50, crossWindow),
     rsi14: rsi[last],
     previousRsi14: rsi[last - 1],
     macd: {

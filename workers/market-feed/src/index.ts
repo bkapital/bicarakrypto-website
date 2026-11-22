@@ -504,7 +504,7 @@ export class MarketFeed {
         json(`https://fapi.binance.com/futures/data/openInterestHist?symbol=${encodeURIComponent(symbol)}&period=5m&limit=200`),
         json(`https://fapi.binance.com/futures/data/openInterestHist?symbol=${encodeURIComponent(symbol)}&period=1h&limit=30`),
       ]);
-      return { fiveMinute: fiveMinute.map(row => ({ time: finite(row.timestamp), value: finite(row.sumOpenInterestValue) })), hourly: hourly.map(row => ({ time: finite(row.timestamp), value: finite(row.sumOpenInterestValue) })) };
+      return { fiveMinute: fiveMinute.map(row => ({ time: finite(row.timestamp), value: finite(row.sumOpenInterest) })), hourly: hourly.map(row => ({ time: finite(row.timestamp), value: finite(row.sumOpenInterest) })) };
     }
     if (exchange === 'Bybit') {
       const category = quote === 'USD' ? 'inverse' : 'linear';
@@ -520,7 +520,7 @@ export class MarketFeed {
       json(`https://api.gateio.ws/api/v4/futures/${quote.toLowerCase()}/contract_stats?contract=${encodeURIComponent(exchangeSymbol)}&interval=5m&limit=200`),
       json(`https://api.gateio.ws/api/v4/futures/${quote.toLowerCase()}/contract_stats?contract=${encodeURIComponent(exchangeSymbol)}&interval=1h&limit=30`),
     ]);
-    const map = (rows: any[]) => rows.map(row => ({ time: finite(row.time) * 1000, value: finite(row.open_interest_usd) })).sort((a, b) => a.time - b.time);
+    const map = (rows: any[]) => rows.map(row => ({ time: finite(row.time) * 1000, value: finite(row.open_interest ?? row.open_interest_usd) })).sort((a, b) => a.time - b.time);
     return { fiveMinute: map(fiveMinute), hourly: map(hourly) };
   }
 

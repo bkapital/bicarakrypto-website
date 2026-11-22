@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ChevronDown, Plus, Save, X } from 'lucide-react';
 import { TechnicalFilters, type IndicatorCondition, type IndicatorJoin } from './TechnicalFilters';
+import { STRATEGY_THRESHOLDS, STRATEGY_TIMEFRAMES, type StrategyTimeframe } from '../../lib/strategyConfig';
 
 export type StrategyType = 'Buy / Long idea' | 'Sell / Short idea' | 'Watch' | 'Avoid';
 export type StrategyGroup = 'Quick filters' | 'Beginner strategies' | 'Intermediate strategies' | 'My strategies';
@@ -13,29 +14,49 @@ export type Strategy = {
   marketScope: 'All markets' | 'Futures';
   conditions: IndicatorCondition[];
   join: IndicatorJoin;
-  quickSort?: 'volume:1d' | 'oiPct:1h' | 'chgPct:1h' | 'funding';
+  quickSort?: 'volume:1d' | 'oiPct' | 'chgPct' | 'funding';
 };
 
 const cond = (field: IndicatorCondition['field'], timeframe: string, operator: IndicatorCondition['operator'], value: number|string|boolean, secondValue?: number): IndicatorCondition => ({ id: crypto.randomUUID(), field, timeframe, operator, value, secondValue });
+export const resolveStrategy = (strategy: Strategy, timeframe: StrategyTimeframe): Strategy => {
+  const settings = STRATEGY_THRESHOLDS[timeframe];
+  const conditions = strategy.conditions.map(condition => ({ ...condition, timeframe: condition.timeframe === 'selected' ? timeframe : condition.timeframe }));
+  for (const condition of conditions) {
+    if (condition.field === 'priceVsEma200' && condition.timeframe === timeframe && ['beginner-trend','beginner-buy-dip','beginner-downturn','inter-breakout-money'].includes(strategy.id)) {
+      condition.field = settings.trendEmaPeriod === 200 ? 'priceVsEma200' : 'priceVsEma50';
+    }
+    if (strategy.id === 'quick-big-movers' && condition.field === 'changePct') condition.value = settings.bigMovePct;
+    if (strategy.id === 'quick-oi-spike' && condition.field === 'oiChangePct1h') condition.value = settings.oiLargeRisePct;
+    if (strategy.id === 'inter-breakout-money' && condition.field === 'oiChangePct1h') condition.value = settings.oiMediumRisePct;
+    if (strategy.id === 'inter-squeeze' && condition.field === 'oiChangePct1h') condition.value = settings.oiMediumRisePct;
+    if (strategy.id === 'inter-overheated' && condition.field === 'oiChangePct1h') condition.value = settings.oiLargeRisePct;
+    if (strategy.id === 'inter-fake-pump') {
+      if (condition.field === 'changePct') condition.value = settings.priceJumpPct;
+      if (condition.field === 'oiChangePct1h') condition.value = settings.oiDropPct;
+    }
+    if (strategy.id === 'inter-healthy-trend' && condition.field === 'oiChangePct1h') condition.value = settings.oiSmallRisePct;
+  }
+  return { ...strategy, conditions };
+};
 export const quickStrategies: Strategy[] = [
-  { id:'quick-high-volume', name:'High Volume', group:'Quick filters', type:'Watch', explanation:'24h quote volume above $300M.', marketScope:'All markets', conditions:[cond('quoteVolume','1d','>',300_000_000)], join:'AND', quickSort:'volume:1d' },
-  { id:'quick-oi-spike', name:'OI Spike', group:'Quick filters', type:'Watch', explanation:'Open interest increased more than 4% in 1h.', marketScope:'Futures', conditions:[cond('oiChangePct1h','1h','>',4)], join:'AND', quickSort:'oiPct:1h' },
-  { id:'quick-big-movers', name:'Big Movers', group:'Quick filters', type:'Watch', explanation:'Price moved more than 3% in either direction over 1h.', marketScope:'All markets', conditions:[cond('changePct','1h','beyond',3)], join:'AND', quickSort:'chgPct:1h' },
-  { id:'quick-high-funding', name:'High Funding', group:'Quick filters', type:'Avoid', explanation:'Funding is more extreme than ±0.01% per hour.', marketScope:'Futures', conditions:[cond('fundingPerHour','1h','beyond',0.01)], join:'AND', quickSort:'funding' },
+  { id:'quick-high-volume', name:'High Volume', group:'Quick filters', type:'Watch', explanation:'Top 20% of markets by 24h quote volume.', marketScope:'All markets', conditions:[cond('quoteVolume','1d','>',0)], join:'AND', quickSort:'volume:1d' },
+  { id:'quick-oi-spike', name:'OI Spike', group:'Quick filters', type:'Watch', explanation:'Open interest rose sharply on the selected timeframe.', marketScope:'Futures', conditions:[cond('oiChangePct1h','selected','>',4)], join:'AND', quickSort:'oiPct' },
+  { id:'quick-big-movers', name:'Big Movers', group:'Quick filters', type:'Watch', explanation:'Price moved beyond the selected timeframe threshold.', marketScope:'All markets', conditions:[cond('changePct','selected','beyond',3)], join:'AND', quickSort:'chgPct' },
+  { id:'quick-high-funding', name:'High Funding', group:'Quick filters', type:'Avoid', explanation:'Live funding is beyond ±0.005% per hour.', marketScope:'Futures', conditions:[cond('fundingPerHour','selected','beyond',0.005)], join:'AND', quickSort:'funding' },
 ];
 
 export const defaultStrategies: Strategy[] = [
-  { id:'beginner-trend', name:'Ride the trend', group:'Beginner strategies', type:'Buy / Long idea', explanation:'Price is above the 200 EMA and the 50 EMA is above the 200 EMA on 4h.', marketScope:'All markets', conditions:[cond('priceVsEma200','4h','equals','above'),cond('ema50_200State','4h','equals','above')], join:'AND' },
-  { id:'beginner-buy-dip', name:'Buy the dip', group:'Beginner strategies', type:'Buy / Long idea', explanation:'Longer trend remains up while 1h RSI is below 40.', marketScope:'All markets', conditions:[cond('priceVsEma200','4h','equals','above'),cond('rsi14','1h','<',40)], join:'AND' },
-  { id:'beginner-oversold', name:'Oversold bounce', group:'Beginner strategies', type:'Watch', explanation:'RSI is oversold and MACD histogram has crossed upward.', marketScope:'All markets', conditions:[cond('rsi14','1h','<',30),cond('macd.histogramCross','1h','equals','up')], join:'AND' },
-  { id:'beginner-volume-breakout', name:'Volume breakout', group:'Beginner strategies', type:'Buy / Long idea', explanation:'Price breaks the prior 20 candle high with above-average volume.', marketScope:'All markets', conditions:[cond('breakout','15m','equals',true),cond('rvol','15m','>',1.5)], join:'AND' },
-  { id:'beginner-calm', name:'Calm before the move', group:'Beginner strategies', type:'Watch', explanation:'Bollinger Bands are squeezed and ATR is subdued on 1h.', marketScope:'All markets', conditions:[cond('bollinger.squeeze','1h','equals',true),cond('atr14Percent','1h','<',2)], join:'AND' },
-  { id:'beginner-downturn', name:'Trend turning down', group:'Beginner strategies', type:'Sell / Short idea', explanation:'EMA 20/50 crossed down and price is below EMA 20 on 1h.', marketScope:'Futures', conditions:[cond('ema20_50Cross','1h','equals','down'),cond('priceVsEma20','1h','equals','below')], join:'AND' },
-  { id:'inter-breakout-money', name:'Breakout with new money', group:'Intermediate strategies', type:'Buy / Long idea', explanation:'A 1h breakout is supported by rising volume and open interest.', marketScope:'Futures', conditions:[cond('breakout','1h','equals',true),cond('rvol','1h','>',1.5),cond('oiChangePct1h','1h','>',0.5)], join:'AND' },
-  { id:'inter-squeeze', name:'Short squeeze watch', group:'Intermediate strategies', type:'Watch', explanation:'Price is rising while open interest falls on 1h.', marketScope:'Futures', conditions:[cond('changePct','1h','>',2),cond('oiChangePct1h','1h','<',0)], join:'AND' },
-  { id:'inter-overheated', name:'Overheated longs', group:'Intermediate strategies', type:'Avoid', explanation:'High positive funding and elevated RSI can indicate crowded longs.', marketScope:'Futures', conditions:[cond('fundingPerHour','1h','>',0.01),cond('rsi14','1h','>',70)], join:'AND' },
-  { id:'inter-fake-pump', name:'Fake pump warning', group:'Intermediate strategies', type:'Avoid', explanation:'Price rises sharply while open interest contracts.', marketScope:'Futures', conditions:[cond('changePct','1h','>',3),cond('oiChangePct1h','1h','<',-2)], join:'AND' },
-  { id:'inter-healthy-trend', name:'Strong trend, healthy leverage', group:'Intermediate strategies', type:'Buy / Long idea', explanation:'ADX confirms a trend while price and open interest rise.', marketScope:'Futures', conditions:[cond('adx14','4h','>',25),cond('priceVsEma50','4h','equals','above'),cond('oiChangePct1h','1h','>',0)], join:'AND' },
+  { id:'beginner-trend', name:'Ride the trend', group:'Beginner strategies', type:'Buy / Long idea', explanation:'Price is above the trend EMA, ADX is strong, DI is bullish, and RSI is healthy.', marketScope:'All markets', conditions:[cond('priceVsEma200','selected','equals','above'),cond('adx14','selected','>',25),cond('diDirection','selected','equals','above'),cond('rsi14','selected','between',50,70)], join:'AND' },
+  { id:'beginner-buy-dip', name:'Buy the dip', group:'Beginner strategies', type:'Buy / Long idea', explanation:'Price remains above the trend EMA while RSI is below 40.', marketScope:'All markets', conditions:[cond('priceVsEma200','selected','equals','above'),cond('rsi14','selected','<',40)], join:'AND' },
+  { id:'beginner-oversold', name:'Oversold bounce', group:'Beginner strategies', type:'Buy / Long idea', explanation:'RSI is below 30 and Stoch RSI K has crossed above D.', marketScope:'All markets', conditions:[cond('rsi14','selected','<',30),cond('stochRsi.kdCross','selected','equals','up')], join:'AND' },
+  { id:'beginner-volume-breakout', name:'Volume breakout', group:'Beginner strategies', type:'Buy / Long idea', explanation:'A 20-candle breakout has strong relative volume and taker buying.', marketScope:'All markets', conditions:[cond('breakout','selected','equals',true),cond('rvol','selected','>',2),cond('takerBuyRatio','selected','>',0.55)], join:'AND' },
+  { id:'beginner-calm', name:'Calm before the move', group:'Beginner strategies', type:'Watch', explanation:'Bollinger Bands are squeezed while ADX remains subdued.', marketScope:'All markets', conditions:[cond('bollinger.squeeze','selected','equals',true),cond('adx14','selected','<',20)], join:'AND' },
+  { id:'beginner-downturn', name:'Trend turning down', group:'Beginner strategies', type:'Sell / Short idea', explanation:'Price is below the trend EMA and EMA 20 has crossed below EMA 50.', marketScope:'Futures', conditions:[cond('priceVsEma200','selected','equals','below'),cond('ema20_50Cross','selected','equals','down')], join:'AND' },
+  { id:'inter-breakout-money', name:'Breakout with new money', group:'Intermediate strategies', type:'Buy / Long idea', explanation:'Breakout, high volume, rising open interest, and price above the trend EMA.', marketScope:'Futures', conditions:[cond('breakout','selected','equals',true),cond('rvol','selected','>',2),cond('oiChangePct1h','selected','>',3),cond('priceVsEma200','selected','equals','above')], join:'AND' },
+  { id:'inter-squeeze', name:'Short squeeze watch', group:'Intermediate strategies', type:'Buy / Long idea', explanation:'Negative funding, rising open interest, and RSI crossing above 50.', marketScope:'Futures', conditions:[cond('fundingPerHour','selected','<',-0.002),cond('oiChangePct1h','selected','>',3),cond('rsi50Cross','selected','equals','up')], join:'AND' },
+  { id:'inter-overheated', name:'Overheated longs', group:'Intermediate strategies', type:'Sell / Short idea', explanation:'High RSI, positive funding, and rapidly rising open interest.', marketScope:'Futures', conditions:[cond('rsi14','selected','>',75),cond('fundingPerHour','selected','>',0.005),cond('oiChangePct1h','selected','>',4)], join:'AND' },
+  { id:'inter-fake-pump', name:'Fake pump warning', group:'Intermediate strategies', type:'Avoid', explanation:'A sharp price jump has high volume while open interest falls.', marketScope:'Futures', conditions:[cond('changePct','selected','>',5),cond('rvol','selected','>',3),cond('oiChangePct1h','selected','<',-2)], join:'AND' },
+  { id:'inter-healthy-trend', name:'Strong trend, healthy leverage', group:'Intermediate strategies', type:'Buy / Long idea', explanation:'SuperTrend is bullish, open interest is rising, and funding is moderate.', marketScope:'Futures', conditions:[cond('supertrend','selected','equals','above'),cond('oiChangePct1h','selected','>',2),cond('fundingPerHour','selected','between',0,0.003)], join:'AND' },
 ];
 
 type Props = {
@@ -46,11 +67,14 @@ type Props = {
   onCustomStrategiesChange: (strategies: Strategy[]) => void;
   onPreview: (strategy: Strategy) => void;
   ready: boolean;
+  selectedTimeframe: StrategyTimeframe;
+  onTimeframeChange: (timeframe: StrategyTimeframe) => void;
+  updatedAt: string;
 };
 
 const tagClass = (type: StrategyType) => type.startsWith('Buy') ? 'strategy-tag-buy' : type.startsWith('Sell') ? 'strategy-tag-sell' : type === 'Avoid' ? 'strategy-tag-avoid' : 'strategy-tag-watch';
 
-export const StrategyControls: React.FC<Props> = ({ exchange, customStrategies, active, onSelect, onCustomStrategiesChange, onPreview, ready }) => {
+export const StrategyControls: React.FC<Props> = ({ exchange, customStrategies, active, onSelect, onCustomStrategiesChange, onPreview, ready, selectedTimeframe, onTimeframeChange, updatedAt }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState<Strategy|null>(null);
@@ -93,6 +117,8 @@ export const StrategyControls: React.FC<Props> = ({ exchange, customStrategies, 
           {grouped.map(([group,items])=><section key={group}><h3>{group}</h3>{items.length===0&&<p className="strategy-empty-group">No saved strategies yet.</p>}{items.map(strategy=><button type="button" role="option" aria-selected={active?.id===strategy.id} className="strategy-option" key={strategy.id} onClick={()=>{onSelect(strategy);setMenuOpen(false);setEditing(false)}}><span className="strategy-option-top"><b>{strategy.name}</b><i className={tagClass(strategy.type)}>{strategy.type}</i></span><small>{strategy.explanation}</small></button>)}</section>)}
         </div>}
       </div>
+      <label className="strategy-timeframe"><small>TIMEFRAME</small><select aria-label="Strategy timeframe" value={selectedTimeframe} onChange={event=>onTimeframeChange(event.target.value as StrategyTimeframe)}>{STRATEGY_TIMEFRAMES.map(timeframe=><option key={timeframe}>{timeframe}</option>)}</select></label>
+      <span className="strategy-updated-at">Updated at {updatedAt}</span>
       <button type="button" className="strategy-action" onClick={()=>startDraft(active||undefined)}><Plus size={12}/> Customize</button>
       {active?.group==='My strategies'&&<><button type="button" className="strategy-action" onClick={()=>startDraft(active)}>Edit</button><button type="button" className="strategy-action strategy-delete" onClick={deleteActive}>Delete</button></>}
       <button type="button" className="strategy-action" onClick={()=>{onSelect(null);setEditing(false);setDraft(null)}}>Clear</button>
@@ -106,7 +132,7 @@ export const StrategyControls: React.FC<Props> = ({ exchange, customStrategies, 
         <label>Market<select value={draftRequiresFutures?'Futures':draftScope} onChange={event=>setDraftScope(event.target.value as Strategy['marketScope'])}><option disabled={draftRequiresFutures}>All markets</option><option>Futures</option></select></label>
         <label>Match<select value={draftJoin} onChange={event=>setDraftJoin(event.target.value as IndicatorJoin)}><option value="AND">All conditions</option><option value="OR">Any condition</option></select></label>
       </div>
-      <TechnicalFilters inline open onToggle={()=>{}} conditions={draftConditions} onConditionsChange={setDraftConditions} join={draftJoin} onJoinChange={setDraftJoin} ready={ready} exchange={exchange}/>
+      <TechnicalFilters inline open onToggle={()=>{}} conditions={draftConditions} onConditionsChange={setDraftConditions} join={draftJoin} onJoinChange={setDraftJoin} ready={ready} exchange={exchange} selectedTimeframe={selectedTimeframe}/>
       <footer><button type="button" className="strategy-save" disabled={!draftName.trim()||draftConditions.length===0} onClick={save}><Save size={13}/> Save strategy</button><button type="button" className="strategy-cancel" onClick={()=>{setEditing(false);setDraft(null);onSelect(active)}}>Cancel</button></footer>
     </section>}
   </div>;

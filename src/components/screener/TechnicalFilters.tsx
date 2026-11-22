@@ -3,7 +3,7 @@ import { Plus, SlidersHorizontal, X } from 'lucide-react';
 
 export type IndicatorField =
   | 'rsi14' | 'adx14' | 'rvol' | 'ema20' | 'ema50' | 'ema100' | 'ema200'
-  | 'macd.histogram' | 'ema9_21Cross' | 'ema20_50Cross' | 'ema50_200Cross' | 'macd.histogramCross'
+  | 'macd.histogram' | 'ema9_21Cross' | 'ema20_50Cross' | 'ema50_200Cross' | 'macd.histogramCross' | 'stochRsi.kdCross' | 'rsi50Cross'
   | 'diDirection' | 'supertrend' | 'stochRsi.k' | 'stochRsi.d' | 'bollinger.squeeze' | 'atr14Percent'
   | 'breakout' | 'breakdown' | 'changePct' | 'distanceFrom24hHighPct' | 'quoteVolume' | 'takerBuyRatio'
   | 'dailyVwapDistancePct' | 'priceVsVwap' | 'oiChangePct1h' | 'fundingPerHour'
@@ -29,6 +29,8 @@ export const indicatorFields: Array<{ value: IndicatorField; label: string; kind
   { value: 'rsi14', label: 'RSI (14)', kind: 'number' },
   { value: 'stochRsi.k', label: 'Stoch RSI %K', kind: 'number' },
   { value: 'stochRsi.d', label: 'Stoch RSI %D', kind: 'number' },
+  { value: 'stochRsi.kdCross', label: 'Stoch RSI K / D cross', kind: 'signal' },
+  { value: 'rsi50Cross', label: 'RSI crosses 50', kind: 'signal' },
   { value: 'ema9_21Cross', label: 'EMA 9/21 cross', kind: 'signal' },
   { value: 'ema20_50Cross', label: 'EMA 20/50 cross', kind: 'signal' },
   { value: 'ema50_200Cross', label: 'EMA 50/200 cross', kind: 'signal' },
@@ -69,11 +71,12 @@ type Props = {
   ready: boolean;
   inline?: boolean;
   exchange?: 'Binance'|'Bybit'|'Gate';
+  selectedTimeframe?: string;
 };
 
-export const TechnicalFilters: React.FC<Props> = ({ open, onToggle, conditions, onConditionsChange, join, onJoinChange, ready, inline = false, exchange = 'Binance' }) => {
+export const TechnicalFilters: React.FC<Props> = ({ open, onToggle, conditions, onConditionsChange, join, onJoinChange, ready, inline = false, exchange = 'Binance', selectedTimeframe = '1h' }) => {
   const update = (id: string, patch: Partial<IndicatorCondition>) => onConditionsChange(conditions.map(condition => condition.id === id ? { ...condition, ...patch } : condition));
-  const add = () => onConditionsChange([...conditions, { id: crypto.randomUUID(), timeframe: '1h', field: 'rsi14', operator: '<', value: 30 }]);
+  const add = () => onConditionsChange([...conditions, { id: crypto.randomUUID(), timeframe: 'selected', field: 'rsi14', operator: '<', value: 30 }]);
   return <div className={inline ? 'technical-filter-wrap strategy-condition-editor' : 'technical-filter-wrap'}>
     {!inline && <button type="button" className={`quick-filter technical-filter-toggle ${conditions.length ? 'selected' : ''}`} onClick={onToggle} aria-expanded={open}>
       <SlidersHorizontal size={12} /> Indicators {conditions.length > 0 && <span className="technical-filter-count">{conditions.length}</span>}
@@ -93,7 +96,7 @@ export const TechnicalFilters: React.FC<Props> = ({ open, onToggle, conditions, 
             const timeframe=vwapField&&!['5m','15m','1h'].includes(condition.timeframe)?'1h':condition.timeframe;
             update(condition.id, { field, timeframe, operator: nextKind === 'number' ? '<' : 'equals', value: nextKind === 'number' ? 30 : nextKind === 'boolean' ? true : nextKind === 'signal' ? 'up' : 'above', secondValue: undefined });
           }}>{indicatorFields.map(field => <option key={field.value} value={field.value} disabled={field.exchanges && !field.exchanges.includes(exchange)}>{field.label}{field.exchanges && !field.exchanges.includes(exchange) ? ' (unavailable)' : ''}</option>)}</select>
-          <select aria-label={`Condition ${index + 1} timeframe`} value={condition.timeframe} onChange={event => update(condition.id, { timeframe: event.target.value })}>{timeframes.map(timeframe => <option key={timeframe} disabled={['dailyVwapDistancePct','priceVsVwap'].includes(condition.field)&&!['5m','15m','1h'].includes(timeframe)}>{timeframe}</option>)}</select>
+          <select aria-label={`Condition ${index + 1} timeframe`} value={condition.timeframe} onChange={event => update(condition.id, { timeframe: event.target.value })}><option value="selected">Selected timeframe ({selectedTimeframe})</option>{timeframes.map(timeframe => <option key={timeframe} disabled={['dailyVwapDistancePct','priceVsVwap'].includes(condition.field)&&!['5m','15m','1h'].includes(timeframe)}>{timeframe}</option>)}</select>
           {kind === 'number' ? <>
             <select aria-label={`Condition ${index + 1} operator`} value={condition.operator} onChange={event => update(condition.id, { operator: event.target.value as IndicatorCondition['operator'] })}>
               <option value="<">&lt;</option><option value="<=">≤</option><option value=">">&gt;</option><option value=">=">≥</option><option value="between">Between</option><option value="beyond">Beyond ±</option>

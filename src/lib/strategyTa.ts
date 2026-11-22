@@ -1,5 +1,6 @@
 import { calculateIndicators, type Candle, type IndicatorResult } from '../../server/indicators';
 import type { StrategyMarket as Market } from './strategyTypes';
+import { STRATEGY_THRESHOLDS, type StrategyTimeframe } from './strategyConfig';
 
 export type StrategyIndicatorRecord = IndicatorResult & {
   id: string;
@@ -8,6 +9,7 @@ export type StrategyIndicatorRecord = IndicatorResult & {
   priceVsEma50: 'above'|'below'|null;
   priceVsEma100: 'above'|'below'|null;
   priceVsEma200: 'above'|'below'|null;
+  priceVsTrendEma: 'above'|'below'|null;
   priceVsVwap: 'above'|'below'|null;
   distanceFrom24hHighPct: number;
   fundingPerHour: number;
@@ -76,9 +78,10 @@ async function fetchCandles(exchange:'Binance'|'Bybit'|'Gate', market:Market, ti
   return parseRows(rows);
 }
 
-function computeRecord(exchange:'Binance'|'Bybit'|'Gate', market:Market, candles:Candle[]):StrategyIndicatorRecord|null {
+function computeRecord(exchange:'Binance'|'Bybit'|'Gate', market:Market, timeframe:StrategyTimeframe, candles:Candle[]):StrategyIndicatorRecord|null {
   const closed=candles.filter(c=>c.closeTime<Date.now());
-  const base=calculateIndicators(closed); if(!base)return null;
+  const base=calculateIndicators(closed,{crossWindow:STRATEGY_THRESHOLDS[timeframe].crossWindow}); if(!base)return null;
+  const trendEma=STRATEGY_THRESHOLDS[timeframe].trendEmaPeriod===200?base.ema200:base.ema50;
   const ema50_200State=Number.isFinite(base.ema50)&&Number.isFinite(base.ema200)?base.ema50>base.ema200?'above':'below':null;
   const priceVsVwap=Number.isFinite(base.dailyVwap)&&base.dailyVwap>0?base.close>=base.dailyVwap?'above':'below':null;
   const high24=market.high24h;
@@ -88,7 +91,7 @@ function computeRecord(exchange:'Binance'|'Bybit'|'Gate', market:Market, candles
   const intervalHours=Number((market as any).fundingIntervalHours)||8;
   const fundingPerHour=market.hasPerpetualData&&Number.isFinite(market.funding)?market.funding*100/intervalHours:NaN;
   const oiChangePct1h=Number(market.metrics?.['oiPct:1h']);
-  return {...base,id:market.id,ema50_200State,priceVsEma20:Number.isFinite(base.ema20)?base.close>=base.ema20?'above':'below':null,priceVsEma50:Number.isFinite(base.ema50)?base.close>=base.ema50?'above':'below':null,priceVsEma100:Number.isFinite(base.ema100)?base.close>=base.ema100?'above':'below':null,priceVsEma200:Number.isFinite(base.ema200)?base.close>=base.ema200?'above':'below':null,priceVsVwap,distanceFrom24hHighPct,fundingPerHour,oiChangePct1h};
+  return {...base,id:market.id,ema50_200State,priceVsEma20:Number.isFinite(base.ema20)?base.close>=base.ema20?'above':'below':null,priceVsEma50:Number.isFinite(base.ema50)?base.close>=base.ema50?'above':'below':null,priceVsEma100:Number.isFinite(base.ema100)?base.close>=base.ema100?'above':'below':null,priceVsEma200:Number.isFinite(base.ema200)?base.close>=base.ema200?'above':'below':null,priceVsTrendEma:Number.isFinite(trendEma)?base.close>=trendEma?'above':'below':null,priceVsVwap,distanceFrom24hHighPct,fundingPerHour,oiChangePct1h};
 }
 
 export async function loadStrategyIndicators(args:{exchange:'Binance'|'Bybit'|'Gate';markets:Market[];timeframe:string;feedUrl:string;signal?:AbortSignal;onProgress?:(done:number,total:number)=>void;onResult?:(marketId:string,record:StrategyIndicatorRecord)=>void}):Promise<Record<string,StrategyIndicatorRecord>> {
@@ -103,7 +106,7 @@ export async function loadStrategyIndicators(args:{exchange:'Binance'|'Bybit'|'G
           for(const bar of fresh)mergedByOpenTime.set(bar.openTime,bar);
           const merged=[...mergedByOpenTime.values()];
           const candles=merged.sort((a,b)=>a.openTime-b.openTime).slice(-300);
-          const record=computeRecord(exchange,market,candles);
+          const record=computeRecord(exchange,market,timeframe as StrategyTimeframe,candles);
           if(record){entry={candles,result:record,lastClosedTime:candles.filter(c=>c.closeTime<Date.now()).at(-1)?.openTime||0};cache.set(key,entry)}
         }
         if(entry){results[market.id]=entry.result;onResult?.(market.id,entry.result)}
