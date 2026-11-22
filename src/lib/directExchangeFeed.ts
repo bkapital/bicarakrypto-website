@@ -8,11 +8,22 @@ export type DirectMarket = {
 const nan=Number.NaN;
 const finite=(value:unknown)=>{const n=Number(value);return Number.isFinite(n)?n:nan};
 const json=async(url:string):Promise<any>=>{
-  let response:Response;
-  try { response=await fetch(url,{headers:{accept:'application/json'},signal:AbortSignal.timeout(15_000)}); }
-  catch(error){throw new Error(`Could not reach ${new URL(url).host} from this browser. The exchange may block this network or browser CORS access. ${error instanceof Error?error.message:''}`.trim())}
-  if(!response.ok)throw new Error(`${new URL(url).host}${new URL(url).pathname} returned HTTP ${response.status}`);
-  return response.json();
+  const requested=new URL(url);
+  const hosts=requested.hostname==='api.bybit.com'?['api.bybit.com','api.bytick.com']:requested.hostname==='api.bytick.com'?['api.bytick.com','api.bybit.com']:[requested.hostname];
+  let lastError:unknown;
+  for(const host of hosts){
+    const target=new URL(url);target.hostname=host;
+    try{
+      const response=await fetch(target.toString(),{headers:{accept:'application/json'},signal:AbortSignal.timeout(15_000)});
+      if(!response.ok){const detail=(await response.text()).slice(0,180).replace(/\s+/g,' ');throw new Error(`${host}${target.pathname} returned HTTP ${response.status}${detail?`: ${detail}`:''}`)}
+      const payload=await response.json();
+      if(hosts.length>1&&payload?.retCode!==undefined&&Number(payload.retCode)!==0)throw new Error(`${host}${target.pathname} returned Bybit ${payload.retCode}: ${payload.retMsg||'request rejected'}`);
+      return payload;
+    }catch(error){lastError=error}
+  }
+  const message=lastError instanceof Error?lastError.message:String(lastError||'request failed');
+  if(hosts.length>1)throw new Error(`Bybit API failed on both official global hosts. Last error: ${message}`);
+  throw new Error(`Could not load ${requested.host}${requested.pathname}: ${message}`);
 };
 const stable=new Set(['USDT','USDC','FDUSD','BUSD','TUSD','USDP','DAI','USD','USD1','USDE']);
 const baseMarket=(exchange:Exchange,type:MarketType,exchangeSymbol:string,symbol:string,quote:string):DirectMarket=>({id:`${exchange}:${type}:${exchangeSymbol}`,marketType:type,assetClass:'Crypto',hasPerpetualData:type==='Futures',symbol,exchangeSymbol,quote,quoteUsd:stable.has(quote)?1:nan,price:nan,high24h:nan,m5:nan,h1:nan,d1:nan,v1:nan,v15:nan,v24:nan,oi:nan,oiChange:nan,funding:nan,vol:nan,trades:nan,trend:[],metrics:{}});
@@ -25,11 +36,13 @@ const bybitMeta=()=>bybitMetadata??=(async()=>{
   const result=await Promise.all(categories.map(async category=>{
     const types=category==='spot'?['xstocks','mstocks']:category==='linear'?['commodity','stock','forex','ETF']:[];
     const fetchInstruments=async(symbolType?:string)=>{const rows:any[]=[];let cursor='';do{const p=new URLSearchParams({category,limit:'1000'});if(symbolType)p.set('symbolType',symbolType);if(cursor)p.set('cursor',cursor);const page=await json(`https://api.bybit.com/v5/market/instruments-info?${p}`);if(page.retCode!==0)throw new Error(`Bybit ${category} instruments returned ${page.retCode}`);rows.push(...(page.result?.list||[]));cursor=page.result?.nextPageCursor||''}while(cursor);return rows};
-    const groups=await Promise.all([fetchInstruments(),...types.map(type=>fetchInstruments(type))]);
+    // The unfiltered endpoint contains the standard instruments. Newer asset
+    // classes are optional; an unsupported symbolType must not hide all markets.
+    const groups=await Promise.all([fetchInstruments(),...types.map(type=>fetchInstruments(type).catch(()=>[]))]);
     return {category,instruments:[...new Map(groups.flat().map((r:any)=>[r.symbol,r])).values()]};
   }));
-  const optionBases=await json('https://api.bybit.com/v5/market/option/base-coins');
-  if(optionBases.retCode!==0)throw new Error('Bybit option base-coin API returned an error');
+  let optionBases:any={result:{list:[]}};
+  try{optionBases=await json('https://api.bybit.com/v5/market/option/base-coins')}catch{/* Options are optional; spot and derivatives remain usable. */}
   return {categories:result,optionBases:(optionBases.result?.list||[]).filter((b:any)=>Number(b.hasSymbol)===1)};
 })();
 const gateMeta=()=>gateMetadata??=(async()=>Promise.all([

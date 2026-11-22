@@ -28,21 +28,30 @@ const parseRows = (rows:CandleRow[]): Candle[] => rows.map(row => ({
 })).filter(c => [c.openTime,c.open,c.high,c.low,c.close,c.closeTime,c.quoteVolume].every(Number.isFinite));
 
 async function requestJson(url:string, signal?:AbortSignal):Promise<any> {
+  const original=new URL(url);
+  const urls=original.hostname==='api.bybit.com'||original.hostname==='api.bytick.com'
+    ?['api.bybit.com','api.bytick.com'].map(host=>{const target=new URL(url);target.hostname=host;return target.toString()})
+    :[url];
   let last:unknown;
   for (let attempt=0;attempt<5;attempt++) {
-    try {
-      const response=await fetch(url,{signal});
-      if (!response.ok) {
-        const error=new Error(`Market candle request failed (${response.status})`);
-        if (response.status===418||response.status===429||response.status>=500) {
-          const retryAfter=Number(response.headers.get('Retry-After'));
-          await new Promise(resolve=>window.setTimeout(resolve,Math.min(30_000,retryAfter>0?retryAfter*1000:500*2**attempt)));
-          last=error;continue;
+    for(const candidate of urls){
+      try {
+        const response=await fetch(candidate,{signal});
+        if (!response.ok) {
+          const error=new Error(`Market candle request failed (${response.status})`);
+          last=error;
+          if (response.status===418||response.status===429||response.status>=500) {
+            const retryAfter=Number(response.headers.get('Retry-After'));
+            await new Promise(resolve=>window.setTimeout(resolve,Math.min(30_000,retryAfter>0?retryAfter*1000:500*2**attempt)));
+          }
+          continue;
         }
-        throw error;
-      }
-      return await response.json();
-    } catch(error) { if(signal?.aborted)throw error; last=error; if(attempt===4)break; await new Promise(resolve=>window.setTimeout(resolve,250*2**attempt)); }
+        const payload=await response.json();
+        if(urls.length>1&&payload?.retCode!==undefined&&Number(payload.retCode)!==0){last=new Error(`Bybit returned ${payload.retCode}: ${payload.retMsg||'request rejected'}`);continue}
+        return payload;
+      } catch(error) { if(signal?.aborted)throw error; last=error; }
+    }
+    if(attempt<4)await new Promise(resolve=>window.setTimeout(resolve,250*2**attempt));
   }
   throw last instanceof Error?last:new Error('Market candle request failed');
 }
