@@ -2,7 +2,7 @@ type MarketType = 'Spot' | 'Futures' | 'Options' | 'CFD';
 type AssetClass = 'Crypto' | 'Stocks' | 'Commodities' | 'Indices' | 'Forex';
 type Market = {
   id: string; marketType: MarketType; assetClass: AssetClass; hasPerpetualData: boolean;
-  symbol: string; exchangeSymbol: string; quote: string; quoteUsd: number; price: number;
+  symbol: string; exchangeSymbol: string; quote: string; quoteUsd: number; price: number; high24h: number;
   m5: number; h1: number; d1: number; v1: number; v15: number; v24: number;
   oi: number; oiChange: number; funding: number; vol: number; trades: number;
   trend: number[]; metrics: Record<string, number>;
@@ -51,7 +51,7 @@ const applyQuoteRates = (markets: Market[]) => {
 const baseMarket = (exchange: Exchange, marketType: MarketType, exchangeSymbol: string, symbol: string, quote: string): Market => ({
   id: `${exchange}:${marketType}:${exchangeSymbol}`, marketType, assetClass: 'Crypto',
   hasPerpetualData: marketType === 'Futures', symbol, exchangeSymbol, quote, quoteUsd: quoteUsd(quote),
-  price: Number.NaN, m5: Number.NaN, h1: Number.NaN, d1: Number.NaN,
+  price: Number.NaN, high24h: Number.NaN, m5: Number.NaN, h1: Number.NaN, d1: Number.NaN,
   v1: Number.NaN, v15: Number.NaN, v24: Number.NaN, oi: Number.NaN,
   oiChange: Number.NaN, funding: Number.NaN, vol: Number.NaN, trades: Number.NaN,
   trend: [], metrics: {},
@@ -108,6 +108,7 @@ async function binanceSnapshot(): Promise<Market[]> {
     if (!meta) continue;
     const market = baseMarket('Binance', 'Spot', ticker.symbol, ticker.symbol, meta.quoteAsset);
     market.price = finite(ticker.lastPrice);
+    market.high24h = finite(ticker.highPrice);
     market.d1 = finite(ticker.priceChangePercent);
     market.v24 = finite(ticker.quoteVolume);
     market.trades = finite(ticker.count);
@@ -120,6 +121,7 @@ async function binanceSnapshot(): Promise<Market[]> {
     market.assetClass = classifyBinance(String(meta.underlyingType || 'COIN'));
     market.hasPerpetualData = String(meta.contractType).includes('PERPETUAL');
     market.price = finite(ticker.lastPrice);
+    market.high24h = finite(ticker.highPrice);
     market.d1 = finite(ticker.priceChangePercent);
     market.v24 = finite(ticker.quoteVolume);
     market.trades = finite(ticker.count);
@@ -169,6 +171,7 @@ async function bybitSnapshot(): Promise<Market[]> {
       market.assetClass = classifyBybit(String(meta.symbolType || ''));
       market.hasPerpetualData = marketType === 'Futures' && String(meta.contractType || '').toLowerCase().includes('perpetual');
       market.price = finite(ticker.lastPrice);
+      market.high24h = finite(ticker.highPrice24h);
       market.d1 = finite(ticker.price24hPcnt) * 100;
       market.h1 = Number.isFinite(finite(ticker.prevPrice1h)) && finite(ticker.prevPrice1h) !== 0
         ? (market.price / finite(ticker.prevPrice1h) - 1) * 100 : Number.NaN;
@@ -211,6 +214,7 @@ async function bybitSnapshot(): Promise<Market[]> {
         market.assetClass = classifyBybitUnderlying(group.base.underlyingType);
         market.hasPerpetualData = false;
         market.price = finite(ticker.lastPrice);
+      market.high24h = finite(ticker.highPrice24h);
         const change24h = finite(ticker.change24h);
         const previousPrice = market.price - change24h;
         market.d1 = Number.isFinite(previousPrice) && previousPrice !== 0 ? change24h / previousPrice * 100 : Number.NaN;
@@ -242,6 +246,7 @@ async function gateSnapshot(): Promise<Market[]> {
     if (!meta) continue;
     const market = baseMarket('Gate', 'Spot', ticker.currency_pair, `${meta.base}${meta.quote}`, meta.quote);
     market.price = finite(ticker.last);
+    market.high24h = finite(ticker.high_24h);
     market.d1 = finite(ticker.change_percentage);
     market.v24 = finite(ticker.quote_volume);
     markets.push(market);
@@ -252,6 +257,7 @@ async function gateSnapshot(): Promise<Market[]> {
     const [base, quote = 'USDT'] = String(ticker.contract).split('_');
     const market = baseMarket('Gate', 'Futures', ticker.contract, `${base}${quote}`, quote);
     market.price = finite(ticker.last);
+    market.high24h = finite(ticker.high_24h);
     market.d1 = finite(ticker.change_percentage);
     market.v24 = finite(ticker.volume_24h_quote ?? ticker.volume_24h_usd ?? ticker.volume_24h);
     market.funding = finite(ticker.funding_rate);
@@ -357,15 +363,18 @@ export class MarketFeed {
       const symbol = url.searchParams.get('symbol') || '';
       const exchangeSymbol = url.searchParams.get('exchangeSymbol') || symbol;
       const quote = url.searchParams.get('quote') || 'USDT';
+      const timeframe = url.searchParams.get('timeframe');
+      const candleLimit = Math.max(200, Math.min(1000, Number(url.searchParams.get('limit')) || 300));
       if (!['Spot', 'Futures', 'Options'].includes(marketType || '') || !/^[A-Z0-9_-]{1,40}$/.test(symbol)
         || !/^[A-Z0-9_-]{1,40}$/.test(exchangeSymbol) || !/^[A-Z0-9]{2,12}$/.test(quote)) {
         return respond({ error: 'marketType, symbol and quote are required' }, 400);
       }
+      if (timeframe && !['5m','15m','1h','4h','8h','12h','1d'].includes(timeframe)) return respond({ error: 'Unsupported timeframe' }, 400);
       const snapshot = this.readSnapshot(exchange);
       if (!snapshot?.markets.some(market => market.marketType === marketType && market.exchangeSymbol === exchangeSymbol)) {
         return respond({ error: 'Market is not in the current exchange snapshot' }, 404);
       }
-      const cacheKey = `${exchange}:${marketType}:${exchangeSymbol}`;
+      const cacheKey = timeframe ? `${exchange}:${marketType}:${exchangeSymbol}:${timeframe}:${candleLimit}` : `${exchange}:${marketType}:${exchangeSymbol}`;
       const cached = this.ctx.storage.sql.exec<{ payload: string; updated_at: number }>(
         'SELECT payload, updated_at FROM market_details WHERE cache_key = ?', cacheKey,
       ).toArray()[0];
@@ -373,7 +382,9 @@ export class MarketFeed {
         return respond(JSON.parse(cached.payload), 200, { 'cache-control': 'public, max-age=0, s-maxage=15' });
       }
       try {
-        const payload = await this.loadDetails(exchange, marketType as MarketType, symbol, exchangeSymbol, quote);
+        const payload = timeframe
+          ? { exchange, marketType, symbol, timeframe, candles: await this.loadIndicatorCandles(exchange, marketType as MarketType, symbol, exchangeSymbol, quote, timeframe, candleLimit), updatedAt: new Date().toISOString() }
+          : await this.loadDetails(exchange, marketType as MarketType, symbol, exchangeSymbol, quote);
         this.ctx.storage.sql.exec(
           'INSERT INTO market_details (cache_key, payload, updated_at) VALUES (?, ?, ?) ON CONFLICT(cache_key) DO UPDATE SET payload = excluded.payload, updated_at = excluded.updated_at',
           cacheKey, JSON.stringify(payload), Date.now(),
@@ -408,6 +419,42 @@ export class MarketFeed {
       return new Response(null, { status: 101, webSocket: client, headers: cors });
     }
     return respond({ error: 'Not found' }, 404);
+  }
+
+  private async loadIndicatorCandles(exchange: Exchange, marketType: MarketType, symbol: string, exchangeSymbol: string, quote: string, timeframe: string, limit: number): Promise<number[][]> {
+    const stepMs: Record<string,number> = { '5m':300_000, '15m':900_000, '1h':3_600_000, '4h':14_400_000, '8h':28_800_000, '12h':43_200_000, '1d':86_400_000 };
+    const requestedStep = stepMs[timeframe];
+    const sourceTimeframe = exchange === 'Bybit' && timeframe === '8h' || timeframe === '12h' && exchange !== 'Bybit' ? '4h' : timeframe;
+    const sourceStep = stepMs[sourceTimeframe];
+    const factor = Math.max(1, Math.round(requestedStep / sourceStep));
+    const sourceLimit = Math.min(1000, limit * factor);
+    let rows: number[][];
+    if (exchange === 'Bybit') {
+      const category = marketType === 'Spot' ? 'spot' : quote === 'USD' ? 'inverse' : 'linear';
+      const interval: Record<string,string> = { '5m':'5', '15m':'15', '1h':'60', '4h':'240', '8h':'240', '12h':'720', '1d':'D' };
+      const result: any = await json(`https://api.bybit.com/v5/market/kline?category=${category}&symbol=${encodeURIComponent(symbol)}&interval=${interval[sourceTimeframe]}&limit=${sourceLimit}`);
+      if (result.retCode !== 0) throw new Error(`Bybit kline API returned ${result.retCode}`);
+      rows = (result.result?.list || []).map((row:any[]) => {
+        const openTime = finite(row[0]);
+        return [openTime,finite(row[1]),finite(row[2]),finite(row[3]),finite(row[4]),finite(row[5]),openTime+sourceStep-1,finite(row[6]),NaN,NaN];
+      }).sort((a:number[],b:number[])=>a[0]-b[0]);
+    } else {
+      const interval: Record<string,string> = { '5m':'5m', '15m':'15m', '1h':'1h', '4h':'4h', '8h':'8h', '12h':'4h', '1d':'1d' };
+      const path = marketType === 'Spot'
+        ? `https://api.gateio.ws/api/v4/spot/candlesticks?currency_pair=${encodeURIComponent(exchangeSymbol)}&interval=${interval[sourceTimeframe]}&limit=${sourceLimit}`
+        : `https://api.gateio.ws/api/v4/futures/${quote.toLowerCase()}/candlesticks?contract=${encodeURIComponent(exchangeSymbol)}&interval=${interval[sourceTimeframe]}&limit=${sourceLimit}`;
+      const data:any[] = await json(path);
+      rows = data.map((row:any) => {
+        if (marketType === 'Spot') { const t=finite(row[0])*1000; return [t,finite(row[5]),finite(row[3]),finite(row[4]),finite(row[2]),finite(row[6]),t+sourceStep-1,finite(row[1]),NaN,NaN]; }
+        const t=finite(row.t)*1000; return [t,finite(row.o),finite(row.h),finite(row.l),finite(row.c),finite(row.v),t+sourceStep-1,finite(row.sum),NaN,NaN];
+      }).sort((a:number[],b:number[])=>a[0]-b[0]);
+    }
+    if (factor === 1) return rows.slice(-limit);
+    const groups = new Map<number,number[][]>();
+    for (const row of rows) { const bucket=Math.floor(row[0]/requestedStep)*requestedStep; const group=groups.get(bucket)||[]; group.push(row); groups.set(bucket,group); }
+    return [...groups.entries()].sort((a,b)=>a[0]-b[0]).map(([openTime,group])=>[
+      openTime,group[0][1],Math.max(...group.map(row=>row[2])),Math.min(...group.map(row=>row[3])),group.at(-1)![4],group.reduce((sum,row)=>sum+row[5],0),openTime+requestedStep-1,group.reduce((sum,row)=>sum+row[7],0),group.reduce((sum,row)=>sum+(Number.isFinite(row[8])?row[8]:0),0),group.reduce((sum,row)=>sum+(Number.isFinite(row[9])?row[9]:0),0),
+    ]).slice(-limit);
   }
 
   private async loadDetails(exchange: Exchange, marketType: MarketType, symbol: string, exchangeSymbol: string, quote: string) {

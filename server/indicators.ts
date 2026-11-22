@@ -6,6 +6,8 @@ export interface Candle {
   low: number;
   close: number;
   quoteVolume: number;
+  volume?: number;
+  takerBuyQuoteVolume?: number;
 }
 
 export interface IndicatorResult {
@@ -13,8 +15,11 @@ export interface IndicatorResult {
   close: number;
   ema20: number;
   ema50: number;
+  ema100: number;
   ema200: number;
+  ema9_21Cross: 'up' | 'down' | null;
   ema20_50Cross: 'up' | 'down' | null;
+  ema50_200Cross: 'up' | 'down' | null;
   ema20_50CrossAge: number | null;
   rsi14: number;
   previousRsi14: number;
@@ -26,6 +31,11 @@ export interface IndicatorResult {
     histogramCrossAge: number | null;
   };
   adx14: number;
+  plusDi14: number;
+  minusDi14: number;
+  diDirection: 'above' | 'below';
+  supertrend: 'above' | 'below';
+  stochRsi: { k: number; d: number };
   bollinger: {
     upper: number;
     middle: number;
@@ -35,6 +45,11 @@ export interface IndicatorResult {
   };
   atr14Percent: number;
   rvol: number;
+  quoteVolume: number;
+  takerBuyRatio: number;
+  dailyVwap: number;
+  dailyVwapDistancePct: number;
+  changePct: number;
   breakout: boolean;
   breakdown: boolean;
 }
@@ -147,6 +162,61 @@ function adxSeries(candles: Candle[], period: number): number[] {
   return result;
 }
 
+function directionalIndex(candles: Candle[], period: number): { plus: number; minus: number } {
+  if (candles.length <= period) return { plus: NaN, minus: NaN };
+  let tr = 0, plus = 0, minus = 0;
+  for (let i = 1; i <= period; i++) {
+    const up = candles[i].high - candles[i - 1].high;
+    const down = candles[i - 1].low - candles[i].low;
+    tr += Math.max(candles[i].high-candles[i].low, Math.abs(candles[i].high-candles[i-1].close), Math.abs(candles[i].low-candles[i-1].close));
+    plus += up > down && up > 0 ? up : 0;
+    minus += down > up && down > 0 ? down : 0;
+  }
+  for (let i = period + 1; i < candles.length; i++) {
+    const up = candles[i].high - candles[i - 1].high;
+    const down = candles[i - 1].low - candles[i].low;
+    tr = tr - tr / period + Math.max(candles[i].high-candles[i].low, Math.abs(candles[i].high-candles[i-1].close), Math.abs(candles[i].low-candles[i-1].close));
+    plus = plus - plus / period + (up > down && up > 0 ? up : 0);
+    minus = minus - minus / period + (down > up && down > 0 ? down : 0);
+  }
+  return tr === 0 ? { plus: 0, minus: 0 } : { plus: plus / tr * 100, minus: minus / tr * 100 };
+}
+
+function stochRsi(rsi: number[], period = 14): { k: number; d: number } {
+  const raw = rsi.map((value, i) => {
+    const slice = rsi.slice(Math.max(0, i - period + 1), i + 1).filter(Number.isFinite);
+    if (!Number.isFinite(value) || slice.length < period) return NaN;
+    const low = Math.min(...slice), high = Math.max(...slice);
+    return high === low ? 0 : (value - low) / (high - low) * 100;
+  });
+  const smooth = (series: number[], i: number, length: number) => {
+    const window = series.slice(Math.max(0, i - length + 1), i + 1);
+    return window.length === length && window.every(Number.isFinite) ? window.reduce((sum, value) => sum + value, 0) / length : NaN;
+  };
+  const kSeries = raw.map((_, i) => smooth(raw, i, 3));
+  return { k: kSeries.at(-1) ?? NaN, d: smooth(kSeries, kSeries.length - 1, 3) };
+}
+
+function supertrendDirection(candles: Candle[], period = 10, multiplier = 3): 'above' | 'below' {
+  if (candles.length < period + 2) return 'below';
+  const tr = candles.map((c, i) => i === 0 ? c.high - c.low : Math.max(c.high-c.low, Math.abs(c.high-candles[i-1].close), Math.abs(c.low-candles[i-1].close)));
+  const atr = Array<number>(candles.length).fill(NaN);
+  atr[period - 1] = tr.slice(0, period).reduce((sum, n) => sum + n, 0) / period;
+  for (let i = period; i < tr.length; i++) atr[i] = (atr[i-1] * (period - 1) + tr[i]) / period;
+  let finalUpper = 0, finalLower = 0, direction: 'above'|'below' = 'below';
+  for (let i = period - 1; i < candles.length; i++) {
+    const midpoint = (candles[i].high + candles[i].low) / 2;
+    const upper = midpoint + multiplier * atr[i], lower = midpoint - multiplier * atr[i];
+    if (i === period - 1) { finalUpper = upper; finalLower = lower; direction = candles[i].close > midpoint ? 'above' : 'below'; continue; }
+    const prevClose = candles[i-1].close;
+    finalUpper = upper < finalUpper || prevClose > finalUpper ? upper : finalUpper;
+    finalLower = lower > finalLower || prevClose < finalLower ? lower : finalLower;
+    if (direction === 'below' && candles[i].close > finalUpper) direction = 'above';
+    else if (direction === 'above' && candles[i].close < finalLower) direction = 'below';
+  }
+  return direction;
+}
+
 interface BollingerPoint { upper: number; middle: number; lower: number; width: number }
 
 function bollingerSeries(closes: number[], period: number, multiplier: number): Array<BollingerPoint | null> {
@@ -170,7 +240,15 @@ export function calculateIndicators(candles: Candle[]): IndicatorResult | null {
   const closes = candles.map(c => c.close);
   const ema20Series = ema(closes, 20);
   const ema50Series = ema(closes, 50);
+  const ema100Series = ema(closes, 100);
   const ema200Series = ema(closes, 200);
+  const ema9Series = ema(closes, 9);
+  const ema21Series = ema(closes, 21);
+  const ema20_50CrossAge = lastCross(ema20Series, ema50Series, 'up') ?? null;
+  const ema9_21Up = lastCross(ema9Series, ema21Series, 'up');
+  const ema9_21Down = lastCross(ema9Series, ema21Series, 'down');
+  const ema50_200Up = lastCross(ema50Series, ema200Series, 'up');
+  const ema50_200Down = lastCross(ema50Series, ema200Series, 'down');
   const crossUpAge = lastCross(ema20Series, ema50Series, 'up');
   const crossDownAge = lastCross(ema20Series, ema50Series, 'down');
   const emaCross = crossUpAge !== null && (crossDownAge === null || crossUpAge <= crossDownAge) ? 'up' : crossDownAge !== null ? 'down' : null;
@@ -188,6 +266,7 @@ export function calculateIndicators(candles: Candle[]): IndicatorResult | null {
   const macdCross = lastZeroCross(histogram);
 
   const rsi = rsiSeries(closes, 14);
+  const stochastic = stochRsi(rsi);
   const bands = bollingerSeries(closes, 20, 2);
   const currentBands = bands.at(-1);
   const recentWidths = bands.slice(-120).filter((x): x is BollingerPoint => x !== null && Number.isFinite(x.width)).map(x => x.width).sort((a, b) => a - b);
@@ -202,15 +281,26 @@ export function calculateIndicators(candles: Candle[]): IndicatorResult | null {
   const averagePreviousQuoteVolume = previous20QuoteVolumes.reduce((sum, v) => sum + v, 0) / 20;
   const breakoutHigh = Math.max(...previous20.map(c => c.high));
   const breakdownLow = Math.min(...previous20.map(c => c.low));
+  const di = directionalIndex(candles, 14);
+  const dayStart = new Date(candles[last].closeTime).setUTCHours(0,0,0,0);
+  const today = candles.filter(c => c.openTime >= dayStart);
+  const dayBaseVolume = today.reduce((sum, c) => sum + (c.volume || 0), 0);
+  const dayQuoteVolume = today.reduce((sum, c) => sum + c.quoteVolume, 0);
+  const dailyVwap = dayBaseVolume > 0 ? dayQuoteVolume / dayBaseVolume : NaN;
+  const candleChangePct = last > 0 && candles[last-1].close !== 0 ? (candles[last].close / candles[last-1].close - 1) * 100 : NaN;
+  const currentCandle = candles[last];
 
   return {
     lastClosedCandleTime: candles[last].closeTime,
     close: candles[last].close,
     ema20: ema20Series[last],
     ema50: ema50Series[last],
+    ema100: ema100Series[last],
     ema200: ema200Series[last],
+    ema9_21Cross: ema9_21Up !== null && (ema9_21Down === null || ema9_21Up <= ema9_21Down) ? 'up' : ema9_21Down !== null ? 'down' : null,
     ema20_50Cross: emaCross,
-    ema20_50CrossAge: emaCrossAge,
+    ema50_200Cross: ema50_200Up !== null && (ema50_200Down === null || ema50_200Up <= ema50_200Down) ? 'up' : ema50_200Down !== null ? 'down' : null,
+    ema20_50CrossAge,
     rsi14: rsi[last],
     previousRsi14: rsi[last - 1],
     macd: {
@@ -221,6 +311,11 @@ export function calculateIndicators(candles: Candle[]): IndicatorResult | null {
       histogramCrossAge: macdCross?.age ?? null,
     },
     adx14: adxSeries(candles, 14)[last],
+    plusDi14: di.plus,
+    minusDi14: di.minus,
+    diDirection: di.plus >= di.minus ? 'above' : 'below',
+    supertrend: supertrendDirection(candles),
+    stochRsi: stochastic,
     bollinger: {
       upper: currentBands?.upper ?? NaN,
       middle: currentBands?.middle ?? NaN,
@@ -230,6 +325,11 @@ export function calculateIndicators(candles: Candle[]): IndicatorResult | null {
     },
     atr14Percent: candles[last].close === 0 ? NaN : atr / candles[last].close * 100,
     rvol: averagePreviousQuoteVolume === 0 ? NaN : candles[last].quoteVolume / averagePreviousQuoteVolume,
+    quoteVolume: currentCandle.quoteVolume,
+    takerBuyRatio: currentCandle.quoteVolume > 0 && Number.isFinite(currentCandle.takerBuyQuoteVolume) ? (currentCandle.takerBuyQuoteVolume as number) / currentCandle.quoteVolume : NaN,
+    dailyVwap,
+    dailyVwapDistancePct: dailyVwap > 0 ? (candles[last].close / dailyVwap - 1) * 100 : NaN,
+    changePct: candleChangePct,
     breakout: candles[last].close > breakoutHigh,
     breakdown: candles[last].close < breakdownLow,
   };
