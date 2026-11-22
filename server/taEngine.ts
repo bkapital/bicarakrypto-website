@@ -16,7 +16,8 @@ const INTERVAL_MS: Record<Timeframe, number> = {
 const FUTURES_BASE = (process.env.BINANCE_FAPI_BASE || 'https://fapi.binance.com').replace(/\/$/, '');
 const RATE_LIMIT_PER_MINUTE = Number(process.env.BINANCE_WEIGHT_LIMIT || 2400);
 const MAX_CONCURRENCY = 10;
-const INITIAL_CANDLES = 300;
+// Fetch 500 rows because the current row is still forming; the cache keeps 499 closed candles.
+const INITIAL_CANDLES = 500;
 const RETRY_LIMIT = 5;
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -170,7 +171,7 @@ export class BinanceTechnicalEngine {
 
   private updateSymbolCache(timeframe: Timeframe, symbol: string, rawCandles: Candle[], status: 'ready'): void {
     // Binance includes the active, still-forming candle as its last kline. Exclude it from every signal.
-    const closedCandles = rawCandles.slice(0, -1);
+    const closedCandles = rawCandles.filter(candle => candle.closeTime < Date.now()).slice(-499);
     const indicators = calculateIndicators(closedCandles);
     if (!indicators) {
       this.caches.get(timeframe)!.symbols[symbol] = { status: 'loading' };

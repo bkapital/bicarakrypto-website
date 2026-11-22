@@ -9,7 +9,10 @@ export type StrategyMarket = {
   quoteUsd: number;
   price: number;
   high24h?: number;
+  low24h?: number;
   funding: number;
+  fundingIntervalHours?: number;
+  contractMultiplier?: number;
   oiChange: number;
   metrics?: Record<string,number>;
 };

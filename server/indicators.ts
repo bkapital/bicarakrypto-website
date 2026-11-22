@@ -25,6 +25,7 @@ export interface IndicatorResult {
   rsi50Cross: 'up' | 'down' | null;
   rsi14: number;
   previousRsi14: number;
+  rsiRecentValues: number[];
   macd: {
     line: number;
     signal: number;
@@ -35,15 +36,16 @@ export interface IndicatorResult {
   adx14: number;
   plusDi14: number;
   minusDi14: number;
-  diDirection: 'above' | 'below';
-  supertrend: 'above' | 'below';
+  diDirection: 'above' | 'below' | null;
+  supertrend: 'above' | 'below' | null;
+  supertrendCross: 'up' | 'down' | null;
   stochRsi: { k: number; d: number };
   bollinger: {
     upper: number;
     middle: number;
     lower: number;
     width: number;
-    squeeze: boolean;
+    squeeze: boolean | null;
   };
   atr14Percent: number;
   rvol: number;
@@ -52,8 +54,11 @@ export interface IndicatorResult {
   dailyVwap: number;
   dailyVwapDistancePct: number;
   changePct: number;
-  breakout: boolean;
-  breakdown: boolean;
+  breakout: boolean | null;
+  breakdown: boolean | null;
+  rangeBreakouts: Record<string, { up: boolean | null; down: boolean | null }>;
+  greenCandleStreak: number;
+  redCandleStreak: number;
 }
 
 const SMA_SEED = (values: number[], period: number, end: number): number => {
@@ -123,7 +128,7 @@ function lastZeroCross(values: number[], maxCandles = 3): { direction: 'up' | 'd
 function adxSeries(candles: Candle[], period: number): number[] {
   const n = candles.length;
   const result = Array<number>(n).fill(NaN);
-  if (n <= period * 2) return result;
+  if (n < period * 2) return result;
   const tr = Array<number>(n).fill(0);
   const plusDm = Array<number>(n).fill(0);
   const minusDm = Array<number>(n).fill(0);
@@ -184,7 +189,7 @@ function directionalIndex(candles: Candle[], period: number): { plus: number; mi
   return tr === 0 ? { plus: 0, minus: 0 } : { plus: plus / tr * 100, minus: minus / tr * 100 };
 }
 
-function stochRsi(rsi: number[], period = 14): { k: number; d: number; cross: 'up'|'down'|null } {
+function stochRsi(rsi: number[], period = 14, crossWindow = 3): { k: number; d: number; cross: 'up'|'down'|null } {
   const raw = rsi.map((value, i) => {
     const slice = rsi.slice(Math.max(0, i - period + 1), i + 1).filter(Number.isFinite);
     if (!Number.isFinite(value) || slice.length < period) return NaN;
@@ -197,8 +202,8 @@ function stochRsi(rsi: number[], period = 14): { k: number; d: number; cross: 'u
   };
   const kSeries = raw.map((_, i) => smooth(raw, i, 3));
   const dSeries = kSeries.map((_, i) => smooth(kSeries, i, 3));
-  const up = lastCross(kSeries, dSeries, 'up');
-  const down = lastCross(kSeries, dSeries, 'down');
+  const up = lastCross(kSeries, dSeries, 'up', crossWindow);
+  const down = lastCross(kSeries, dSeries, 'down', crossWindow);
   return { k: kSeries.at(-1) ?? NaN, d: dSeries.at(-1) ?? NaN, cross: up !== null && (down === null || up <= down) ? 'up' : down !== null ? 'down' : null };
 }
 
@@ -212,8 +217,9 @@ function lastLevelCross(values: number[], level: number, maxCandles = 3): 'up'|'
   return null;
 }
 
-function supertrendDirection(candles: Candle[], period = 10, multiplier = 3): 'above' | 'below' {
-  if (candles.length < period + 2) return 'below';
+function supertrendDirections(candles: Candle[], period = 10, multiplier = 3): Array<'above' | 'below' | null> {
+  const directions: Array<'above' | 'below' | null> = Array(candles.length).fill(null);
+  if (candles.length < period + 1) return directions;
   const tr = candles.map((c, i) => i === 0 ? c.high - c.low : Math.max(c.high-c.low, Math.abs(c.high-candles[i-1].close), Math.abs(c.low-candles[i-1].close)));
   const atr = Array<number>(candles.length).fill(NaN);
   atr[period - 1] = tr.slice(0, period).reduce((sum, n) => sum + n, 0) / period;
@@ -222,14 +228,15 @@ function supertrendDirection(candles: Candle[], period = 10, multiplier = 3): 'a
   for (let i = period - 1; i < candles.length; i++) {
     const midpoint = (candles[i].high + candles[i].low) / 2;
     const upper = midpoint + multiplier * atr[i], lower = midpoint - multiplier * atr[i];
-    if (i === period - 1) { finalUpper = upper; finalLower = lower; direction = candles[i].close > midpoint ? 'above' : 'below'; continue; }
+    if (i === period - 1) { finalUpper = upper; finalLower = lower; direction = candles[i].close > midpoint ? 'above' : 'below'; directions[i] = direction; continue; }
     const prevClose = candles[i-1].close;
     finalUpper = upper < finalUpper || prevClose > finalUpper ? upper : finalUpper;
     finalLower = lower > finalLower || prevClose < finalLower ? lower : finalLower;
     if (direction === 'below' && candles[i].close > finalUpper) direction = 'above';
     else if (direction === 'above' && candles[i].close < finalLower) direction = 'below';
+    directions[i] = direction;
   }
-  return direction;
+  return directions;
 }
 
 interface BollingerPoint { upper: number; middle: number; lower: number; width: number }
@@ -251,7 +258,7 @@ function bollingerSeries(closes: number[], period: number, multiplier: number): 
 }
 
 export function calculateIndicators(candles: Candle[], options: { crossWindow?: number } = {}): IndicatorResult | null {
-  if (candles.length < 200) return null;
+  if (candles.length === 0) return null;
   const crossWindow = Math.max(1, Math.floor(options.crossWindow ?? 3));
   const closes = candles.map(c => c.close);
   const ema20Series = ema(closes, 20);
@@ -282,21 +289,32 @@ export function calculateIndicators(candles: Candle[], options: { crossWindow?: 
   const macdCross = lastZeroCross(histogram, crossWindow);
 
   const rsi = rsiSeries(closes, 14);
-  const stochastic = stochRsi(rsi);
+  const stochastic = stochRsi(rsi, 14, crossWindow);
   const bands = bollingerSeries(closes, 20, 2);
   const currentBands = bands.at(-1);
   const recentWidths = bands.slice(-120).filter((x): x is BollingerPoint => x !== null && Number.isFinite(x.width)).map(x => x.width).sort((a, b) => a - b);
+  // Squeeze is defined against a full 120-candle width window, not a partial warm-up window.
   const squeezeThreshold = recentWidths.length ? recentWidths[Math.max(0, Math.ceil(recentWidths.length * 0.1) - 1)] : NaN;
 
   const tr = candles.map((c, i) => i === 0 ? c.high - c.low : Math.max(c.high - c.low, Math.abs(c.high - candles[i - 1].close), Math.abs(c.low - candles[i - 1].close)));
-  let atr = tr.slice(0, 14).reduce((sum, x) => sum + x, 0) / 14;
+  let atr = tr.length >= 14 ? tr.slice(0, 14).reduce((sum, x) => sum + x, 0) / 14 : NaN;
   for (let i = 14; i < tr.length; i++) atr = (atr * 13 + tr[i]) / 14;
   const last = candles.length - 1;
   const previous20 = candles.slice(-21, -1);
   const previous20QuoteVolumes = candles.slice(-21, -1).map(c => c.quoteVolume);
-  const averagePreviousQuoteVolume = previous20QuoteVolumes.reduce((sum, v) => sum + v, 0) / 20;
-  const breakoutHigh = Math.max(...previous20.map(c => c.high));
-  const breakdownLow = Math.min(...previous20.map(c => c.low));
+  const averagePreviousQuoteVolume = previous20QuoteVolumes.length === 20 ? previous20QuoteVolumes.reduce((sum, v) => sum + v, 0) / 20 : NaN;
+  const breakoutHigh = previous20.length === 20 ? Math.max(...previous20.map(c => c.high)) : NaN;
+  const breakdownLow = previous20.length === 20 ? Math.min(...previous20.map(c => c.low)) : NaN;
+  const rangeBreakouts: Record<string,{up:boolean|null;down:boolean|null}> = {};
+  for (const period of [20,50,100]) {
+    const prior = candles.slice(-(period + 1), -1);
+    rangeBreakouts[String(period)] = prior.length === period ? {
+      up: candles[last].close > Math.max(...prior.map(c=>c.high)),
+      down: candles[last].close < Math.min(...prior.map(c=>c.low)),
+    } : {up:null,down:null};
+  }
+  let greenCandleStreak=0,redCandleStreak=0;
+  for(let i=last;i>=0;i--){if(candles[i].close>candles[i].open){if(redCandleStreak)break;greenCandleStreak++}else if(candles[i].close<candles[i].open){if(greenCandleStreak)break;redCandleStreak++}else break}
   const di = directionalIndex(candles, 14);
   const dayStart = new Date(candles[last].closeTime).setUTCHours(0,0,0,0);
   const today = candles.filter(c => c.openTime >= dayStart);
@@ -306,6 +324,13 @@ export function calculateIndicators(candles: Candle[], options: { crossWindow?: 
   const candleChangePct = last > 0 && candles[last-1].close !== 0 ? (candles[last].close / candles[last-1].close - 1) * 100 : NaN;
   const currentCandle = candles[last];
 
+  const trendDirections = supertrendDirections(candles);
+  let supertrendCross: 'up' | 'down' | null = null;
+  for (let age = 0; age < crossWindow && last - age > 0; age++) {
+    const i = last - age;
+    if (trendDirections[i - 1] === 'below' && trendDirections[i] === 'above') { supertrendCross = 'up'; break; }
+    if (trendDirections[i - 1] === 'above' && trendDirections[i] === 'below') { supertrendCross = 'down'; break; }
+  }
   return {
     lastClosedCandleTime: candles[last].closeTime,
     close: candles[last].close,
@@ -321,6 +346,7 @@ export function calculateIndicators(candles: Candle[], options: { crossWindow?: 
     rsi50Cross: lastLevelCross(rsi, 50, crossWindow),
     rsi14: rsi[last],
     previousRsi14: rsi[last - 1],
+    rsiRecentValues: rsi.slice(Math.max(0,last-crossWindow),last+1),
     macd: {
       line: macdLine[last],
       signal: signalLine[last],
@@ -331,24 +357,28 @@ export function calculateIndicators(candles: Candle[], options: { crossWindow?: 
     adx14: adxSeries(candles, 14)[last],
     plusDi14: di.plus,
     minusDi14: di.minus,
-    diDirection: di.plus >= di.minus ? 'above' : 'below',
-    supertrend: supertrendDirection(candles),
+    diDirection: Number.isFinite(di.plus) && Number.isFinite(di.minus) ? di.plus >= di.minus ? 'above' : 'below' : null,
+    supertrend: trendDirections[last],
+    supertrendCross,
     stochRsi: stochastic,
     bollinger: {
       upper: currentBands?.upper ?? NaN,
       middle: currentBands?.middle ?? NaN,
       lower: currentBands?.lower ?? NaN,
       width: currentBands?.width ?? NaN,
-      squeeze: Boolean(currentBands && Number.isFinite(squeezeThreshold) && currentBands.width <= squeezeThreshold),
+      squeeze: currentBands && recentWidths.length === 120 && Number.isFinite(squeezeThreshold) ? currentBands.width <= squeezeThreshold : null,
     },
     atr14Percent: candles[last].close === 0 ? NaN : atr / candles[last].close * 100,
-    rvol: averagePreviousQuoteVolume === 0 ? NaN : candles[last].quoteVolume / averagePreviousQuoteVolume,
+    rvol: Number.isFinite(averagePreviousQuoteVolume) && averagePreviousQuoteVolume > 0 ? candles[last].quoteVolume / averagePreviousQuoteVolume : NaN,
     quoteVolume: currentCandle.quoteVolume,
-    takerBuyRatio: currentCandle.quoteVolume > 0 && Number.isFinite(currentCandle.takerBuyQuoteVolume) ? (currentCandle.takerBuyQuoteVolume as number) / currentCandle.quoteVolume : NaN,
+    takerBuyRatio: currentCandle.quoteVolume > 0 && Number.isFinite(currentCandle.takerBuyQuoteVolume) ? (currentCandle.takerBuyQuoteVolume as number) / currentCandle.quoteVolume * 100 : NaN,
     dailyVwap,
     dailyVwapDistancePct: dailyVwap > 0 ? (candles[last].close / dailyVwap - 1) * 100 : NaN,
     changePct: candleChangePct,
-    breakout: candles[last].close > breakoutHigh,
-    breakdown: candles[last].close < breakdownLow,
+    breakout: Number.isFinite(breakoutHigh) ? candles[last].close > breakoutHigh : null,
+    breakdown: Number.isFinite(breakdownLow) ? candles[last].close < breakdownLow : null,
+    rangeBreakouts,
+    greenCandleStreak,
+    redCandleStreak,
   };
 }
