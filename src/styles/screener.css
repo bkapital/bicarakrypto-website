@@ -226,3 +226,20 @@
 @media(max-width:767px){.pair-action-backdrop{display:flex;align-items:flex-end;justify-content:center;padding:0;background:#030609bf;backdrop-filter:blur(2px)}.pair-action-dialog{width:100%;max-height:min(92dvh,900px);padding:8px 16px max(16px,env(safe-area-inset-bottom));border-radius:18px 18px 0 0;border-bottom:0;touch-action:pan-y;animation:pair-sheet-in .24s cubic-bezier(.2,.75,.25,1)}.pair-action-drag-handle{display:block;width:42px;height:4px;margin:2px auto 15px;border-radius:4px;background:#3a4553}.pair-action-header{margin-bottom:8px}.pair-action-header>button{width:32px;height:32px}.pair-action-summary{display:block}.pair-action-pair-line{gap:9px}.pair-action-pair-line h2{font-size:23px}.pair-open-link{width:29px;height:29px;justify-content:center;padding:0;border-radius:50%}.pair-open-desktop{display:none}.pair-action-price-line{gap:9px;margin-top:7px}.pair-action-price-line strong{font-size:24px}.pair-change-badge{font-size:11px;padding:4px 7px}.pair-action-market-stats{margin:6px 0 11px;font-size:12px}.pair-chart-caption{padding:9px 10px;font-size:9px}.pair-candle-chart{min-height:0}.pair-chart-skeleton{height:190px}.pair-chart-status{height:170px}.pair-offer-card{display:block;margin-top:11px;padding:12px;border-radius:10px}.pair-offer-logo{display:none}.pair-offer-copy h3{font-size:15px;margin-bottom:4px}.pair-offer-copy p{font-size:12px}.reward-desktop{display:none}.reward-mobile{display:inline}.pair-offer-actions{gap:8px;margin-top:11px}.pair-action-signup{width:100%;min-height:46px;font-size:14px}.pair-offer-existing{font-size:11px;padding:2px 0}.pair-action-disclosure{margin:9px 0 0;font-size:9px}.pair-action-dialog>header button{padding:0}.pair-chart-caption span:last-child{max-width:64%;text-align:right}}
 @keyframes pair-sheet-in{from{transform:translateY(30px);opacity:.8}to{transform:translateY(0);opacity:1}}
 @media(prefers-reduced-motion:reduce){.pair-action-backdrop,.pair-action-dialog,.pair-action-signup,.pair-chart-skeleton:after{animation:none;transition:none}}
+
+/* Keep the desktop snapshot compact enough to show the full offer without scrolling. */
+.pair-action-dialog{width:min(980px,calc(100vw - 40px));max-height:calc(100dvh - 32px);padding:17px 22px 14px}
+.pair-action-header{margin-bottom:7px}
+.pair-action-summary{gap:18px}
+.pair-action-market-stats{margin:5px 0 10px}
+.pair-chart-caption{padding:9px 12px}
+.pair-candle-chart{max-height:285px}
+.pair-chart-status{height:220px}
+.pair-chart-skeleton{height:250px}
+.pair-offer-card{margin-top:10px;padding:12px 14px;grid-template-columns:42px minmax(0,1fr) minmax(220px,310px);gap:12px}
+.pair-offer-logo{width:38px;height:38px}
+.pair-offer-copy h3{font-size:15px}
+.pair-action-signup{min-height:40px;padding:7px 12px;font-size:13px}
+.pair-action-disclosure{margin-top:7px}
+@media(max-height:760px) and (min-width:768px){.pair-action-dialog{padding:12px 18px 10px}.pair-action-header{margin-bottom:4px}.pair-action-pair-line h2{font-size:27px}.pair-action-price-line strong{font-size:24px}.pair-action-market-stats{margin:3px 0 7px}.pair-candle-chart{max-height:235px}.pair-chart-skeleton{height:220px}.pair-chart-status{height:190px}.pair-offer-card{margin-top:7px;padding:9px 12px}.pair-action-disclosure{margin-top:5px}}
+@media(max-width:767px){.pair-action-backdrop{display:flex;align-items:flex-end;justify-content:center;padding:0}.pair-action-dialog{width:100%;max-height:min(92dvh,900px);padding:8px 16px max(16px,env(safe-area-inset-bottom));border-radius:18px 18px 0 0}.pair-action-summary{display:block}.pair-action-header{margin-bottom:8px}.pair-action-market-stats{margin:6px 0 11px}.pair-candle-chart{max-height:none}.pair-chart-skeleton{height:190px}.pair-chart-status{height:170px}.pair-offer-card{display:block;margin-top:11px;padding:12px}.pair-offer-logo{display:none}.pair-offer-copy h3{font-size:15px}.pair-action-signup{min-height:46px;font-size:14px}.pair-action-disclosure{margin:9px 0 0}}
