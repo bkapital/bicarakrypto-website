@@ -76,33 +76,20 @@ export const defaultStrategies: Strategy[] = [
 type Props = {
   exchange: 'Binance'|'Bybit'|'Gate';
   customStrategies: Strategy[];
-  active: Strategy|null;
+  active: Strategy[];
   onSelect: (strategy: Strategy|null) => void;
+  onSave: (strategy: Strategy) => void;
   onCustomStrategiesChange: (strategies: Strategy[]) => void;
   onPreview: (strategy: Strategy) => void;
   ready: boolean;
   selectedTimeframe: StrategyTimeframe;
   updatedAt: string;
   insufficientHistoryCount: number;
-  minVolumeUsd: number | null;
-  maxVolumeUsd: number | null;
-  onVolumeRangeChange: (min: number | null, max: number | null) => void;
-  volumeRangeCount: { included: number; total: number };
-};
-
-const volumePresets = [1_000_000,5_000_000,10_000_000,50_000_000,100_000_000];
-const volumeLabel = (value:number) => value >= 1_000_000_000 ? `$${value/1_000_000_000}B` : `$${value/1_000_000}M`;
-const parseVolumeInput = (input:string):number|null => {
-  const match=input.trim().replace(/[$,\s]/g,'').match(/^(\d+(?:\.\d+)?)([KMB])?$/i);
-  if(!match)return null;
-  const multiplier=({K:1_000,M:1_000_000,B:1_000_000_000} as Record<string,number>)[(match[2]||'').toUpperCase()]||1;
-  const parsed=Number(match[1])*multiplier;
-  return Number.isFinite(parsed)&&parsed>0?parsed:null;
 };
 
 const tagClass = (type: StrategyType) => type.startsWith('Buy') ? 'strategy-tag-buy' : type.startsWith('Sell') ? 'strategy-tag-sell' : type === 'Avoid' ? 'strategy-tag-avoid' : 'strategy-tag-watch';
 
-export const StrategyControls: React.FC<Props> = ({ exchange, customStrategies, active, onSelect, onCustomStrategiesChange, onPreview, ready, selectedTimeframe, updatedAt, insufficientHistoryCount, minVolumeUsd, maxVolumeUsd, onVolumeRangeChange, volumeRangeCount }) => {
+export const StrategyControls: React.FC<Props> = ({ exchange, customStrategies, active, onSelect, onSave, onCustomStrategiesChange, onPreview, ready, selectedTimeframe, updatedAt, insufficientHistoryCount }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [builderStep, setBuilderStep] = useState<'conditions'|'details'>('conditions');
@@ -113,18 +100,12 @@ export const StrategyControls: React.FC<Props> = ({ exchange, customStrategies, 
   const [draftConditions, setDraftConditions] = useState<IndicatorCondition[]>([]);
   const [draftJoin, setDraftJoin] = useState<IndicatorJoin>('AND');
   const [draftTakerUnavailable,setDraftTakerUnavailable]=useState(false);
-  const [minVolumeInput,setMinVolumeInput]=useState(minVolumeUsd?String(minVolumeUsd):'');
-  const [maxVolumeInput,setMaxVolumeInput]=useState(maxVolumeUsd?String(maxVolumeUsd):'');
-  const [minCustomMode,setMinCustomMode]=useState(false);
-  const [maxCustomMode,setMaxCustomMode]=useState(false);
-  const [volumeInputError,setVolumeInputError]=useState('');
-  useEffect(()=>{setMinVolumeInput(minVolumeUsd?String(minVolumeUsd):'')},[minVolumeUsd]);
-  useEffect(()=>{setMaxVolumeInput(maxVolumeUsd?String(maxVolumeUsd):'')},[maxVolumeUsd]);
   const draftRequiresFutures=draftConditions.some(condition=>['oiChangePct1h','fundingPerHour','marketPositioning','longShortRatio','premiumBasisPct'].includes(condition.field));
   const draftHasInvalidCondition=draftConditions.some(validateCondition);
   const available = [...quickStrategies, ...defaultStrategies, ...customStrategies];
+  const primaryActive=active[0];
   const startDraft = (source?: Strategy) => {
-    const base = source || active;
+    const base = source || active[0];
     const resolvedBase = base && base.group !== 'My strategies' ? resolveStrategy(base,selectedTimeframe) : base;
     setDraftTakerUnavailable(Boolean(resolvedBase?.id==='beginner-volume-breakout'&&exchange!=='Binance'));
     const sourceConditions=resolvedBase?.id==='beginner-volume-breakout'&&exchange!=='Binance'?resolvedBase.conditions.filter(condition=>condition.field!=='takerBuyRatio'):resolvedBase?.conditions||[];
@@ -141,56 +122,38 @@ export const StrategyControls: React.FC<Props> = ({ exchange, customStrategies, 
     if (!draft || !draftName.trim() || draftConditions.length === 0 || draftHasInvalidCondition) return;
     const saved = { ...draft, name:draftName.trim(), type:draftType, marketScope:draftRequiresFutures?'Futures':draftScope, explanation:'Custom strategy', conditions:draftConditions, join:draftJoin };
     const remaining = customStrategies.filter(item => item.id !== saved.id);
-    const next = [...remaining, saved]; onCustomStrategiesChange(next); onSelect(saved); setEditing(false); setDraft(null);
+    const next = [...remaining, saved]; onCustomStrategiesChange(next); onSave(saved); setEditing(false); setDraft(null);
   };
   const saveConditions = () => {
     if (draftConditions.length === 0 || draftHasInvalidCondition) return;
     setBuilderStep('details');
   };
   const deleteActive = () => {
-    if (!active || active.group !== 'My strategies') return;
-    onCustomStrategiesChange(customStrategies.filter(item => item.id !== active.id)); onSelect(null); setEditing(false); setDraft(null);
+    const selected=active[0];
+    if (!selected || selected.group !== 'My strategies') return;
+    onCustomStrategiesChange(customStrategies.filter(item => item.id !== selected.id)); onSelect(selected); setEditing(false); setDraft(null);
   };
   const grouped: Array<[StrategyGroup, Strategy[]]> = [['Quick filters',quickStrategies],['Beginner strategies',defaultStrategies.filter(s=>s.group==='Beginner strategies')],['Intermediate strategies',defaultStrategies.filter(s=>s.group==='Intermediate strategies')],['My strategies',customStrategies]];
-  const minMode=minCustomMode?'custom':minVolumeUsd===null?'off':volumePresets.includes(minVolumeUsd)?String(minVolumeUsd):'custom';
-  const maxMode=maxCustomMode?'custom':maxVolumeUsd===null?'off':volumePresets.includes(maxVolumeUsd)?String(maxVolumeUsd):'custom';
-  const volumeRangeError=minVolumeUsd!==null&&maxVolumeUsd!==null&&maxVolumeUsd<=minVolumeUsd?'Maximum 24h volume must be greater than the minimum.':'';
-  const commitVolumeInput=(which:'min'|'max')=>{
-    const raw=which==='min'?minVolumeInput:maxVolumeInput;
-    const parsed=parseVolumeInput(raw);
-    if(parsed===null){setVolumeInputError('Enter a volume above zero, such as 500K, 2.5M or 1B.');return}
-    const nextMin=which==='min'?parsed:minVolumeUsd,nextMax=which==='max'?parsed:maxVolumeUsd;
-    if(nextMin!==null&&nextMax!==null&&nextMax<=nextMin){setVolumeInputError('Maximum 24h volume must be greater than the minimum.');return}
-    setVolumeInputError('');onVolumeRangeChange(nextMin,nextMax);
-  };
   return <div className="strategy-controls">
     <div className="strategy-toolbar">
       <div className="strategy-select-wrap">
-        <button className={`strategy-select ${active?'selected':''}`} type="button" onClick={()=>setMenuOpen(value=>!value)} aria-expanded={menuOpen}>
-          <span><small>STRATEGY</small>{active?.name || 'Choose a strategy'}</span><ChevronDown size={14}/>
+        <button className={`strategy-select ${active.length?'selected':''}`} type="button" onClick={()=>setMenuOpen(value=>!value)} aria-expanded={menuOpen}>
+          <span><small>STRATEGY</small>{active.length?`${active.length} strateg${active.length===1?'y':'ies'}`:'All markets · Pick a strategy to filter'}</span><ChevronDown size={14}/>
         </button>
         {menuOpen && <div className="strategy-menu" role="listbox" aria-label="Strategies">
-          {grouped.map(([group,items])=><section key={group}><h3>{group}</h3>{items.length===0&&<p className="strategy-empty-group">No saved strategies yet.</p>}{items.map(strategy=><button type="button" role="option" aria-selected={active?.id===strategy.id} className="strategy-option" key={strategy.id} onClick={()=>{onSelect(strategy);setMenuOpen(false);setEditing(false)}}><span className="strategy-option-top"><b>{strategy.name}</b><i className={tagClass(strategy.type)}>{strategy.type}</i></span><small>{strategy.explanation}</small></button>)}</section>)}
+          {grouped.map(([group,items])=><section key={group}><h3>{group}</h3>{items.length===0&&<p className="strategy-empty-group">No saved strategies yet.</p>}{items.map(strategy=><button type="button" role="option" aria-selected={active.some(item=>item.id===strategy.id)} className="strategy-option" key={strategy.id} onClick={()=>{onSelect(strategy);setEditing(false)}}><span className="strategy-option-top"><b>{strategy.name}</b><i className={tagClass(strategy.type)}>{strategy.type}</i></span><small>{strategy.explanation}</small></button>)}</section>)}
         </div>}
       </div>
-      <div className="strategy-volume-controls">
-        <label className="strategy-timeframe"><small>MIN 24H VOL</small><select aria-label="Minimum 24 hour volume" value={minMode} onChange={event=>{const value=event.target.value;if(value==='off'){setMinCustomMode(false);onVolumeRangeChange(null,maxVolumeUsd)}else if(value==='custom'){setMinCustomMode(true);setMinVolumeInput(minVolumeUsd?String(minVolumeUsd):'')}else{setMinCustomMode(false);onVolumeRangeChange(Number(value),maxVolumeUsd)}setVolumeInputError('')}}><option value="off">Off</option>{volumePresets.map(value=><option key={value} value={value}>{volumeLabel(value)}</option>)}<option value="custom">Custom</option></select></label>
-        {minMode==='custom'&&<input className="strategy-volume-input" aria-label="Custom minimum 24 hour volume" placeholder="e.g. 2.5M" value={minVolumeInput} onChange={event=>setMinVolumeInput(event.target.value)} onBlur={()=>commitVolumeInput('min')} onKeyDown={event=>{if(event.key==='Enter')commitVolumeInput('min')}}/>}
-        <label className="strategy-timeframe"><small>MAX 24H VOL</small><select aria-label="Maximum 24 hour volume" value={maxMode} onChange={event=>{const value=event.target.value;if(value==='off'){setMaxCustomMode(false);onVolumeRangeChange(minVolumeUsd,null)}else if(value==='custom'){setMaxCustomMode(true);setMaxVolumeInput(maxVolumeUsd?String(maxVolumeUsd):'')}else{setMaxCustomMode(false);onVolumeRangeChange(minVolumeUsd,Number(value))}setVolumeInputError('')}}><option value="off">No limit</option>{volumePresets.slice(2).map(value=><option key={value} value={value}>{volumeLabel(value)}</option>)}<option value="custom">Custom</option></select></label>
-        {maxMode==='custom'&&<input className="strategy-volume-input" aria-label="Custom maximum 24 hour volume" placeholder="e.g. 100M" value={maxVolumeInput} onChange={event=>setMaxVolumeInput(event.target.value)} onBlur={()=>commitVolumeInput('max')} onKeyDown={event=>{if(event.key==='Enter')commitVolumeInput('max')}}/>}
-        <span className="strategy-updated-at">{volumeRangeCount.included} of {volumeRangeCount.total} markets</span>
-      </div>
-      {(volumeInputError||volumeRangeError)&&<span className="strategy-volume-note strategy-volume-error">{volumeInputError||volumeRangeError}</span>}
-      {minVolumeUsd!==null&&minVolumeUsd<5_000_000&&<span className="strategy-volume-note">Low-volume coins can move sharply and may be hard to exit.</span>}
-      <span className="strategy-updated-at">Updated at {updatedAt}</span>
+      <span className="strategy-updated-at">Updated {updatedAt}</span>
       {insufficientHistoryCount > 0 && <span className="strategy-updated-at">{insufficientHistoryCount} {insufficientHistoryCount === 1 ? 'coin' : 'coins'} excluded: not enough history</span>}
-      <button type="button" className="strategy-action" onClick={()=>startDraft(active||undefined)}><Plus size={12}/> Customize</button>
-      {active?.group==='My strategies'&&<><button type="button" className="strategy-action" onClick={()=>startDraft(active)}>Edit</button><button type="button" className="strategy-action strategy-delete" onClick={deleteActive}>Delete</button></>}
-      <button type="button" className="strategy-action" onClick={()=>{onSelect(null);setEditing(false);setDraft(null)}}>Clear</button>
+      {active.length>0&&<button type="button" className="strategy-action" onClick={()=>startDraft(primaryActive)}><Plus size={12}/> Customize</button>}
+      {primaryActive?.group==='My strategies'&&<><button type="button" className="strategy-action" onClick={()=>startDraft(primaryActive)}>Edit</button><button type="button" className="strategy-action strategy-delete" onClick={deleteActive}>Delete</button></>}
+      {active.map(strategy=><span className="active-strategy-chip" key={strategy.id}><i className={tagClass(strategy.type)}/>{strategy.name}<small>{strategy.conditions[0]?.timeframe==='selected'?selectedTimeframe:strategy.conditions[0]?.timeframe||selectedTimeframe}</small><button type="button" aria-label={`Remove ${strategy.name}`} onClick={()=>onSelect(strategy)}><X size={12}/></button></span>)}
+      {active.length>0&&<button type="button" className="strategy-action strategy-clear-all" onClick={()=>{onSelect(null);setEditing(false);setDraft(null)}}>Clear all</button>}
       {!editing&&<button type="button" className="strategy-action strategy-create" onClick={()=>startDraft()}><Plus size={12}/> Create strategy</button>}
     </div>
     {editing && draft && <section className="strategy-builder" aria-label="Create your own strategy">
-      <header><div><b>Create your own strategy</b><span>Step {builderStep==='conditions'?'1 of 2 · Choose conditions':'2 of 2 · Name your strategy'}</span><span className="strategy-risk-note">Strategies find coins that fit a pattern. They are not trade signals.</span></div><div className="strategy-builder-header-actions"><button type="button" aria-label="Close strategy builder" onClick={()=>{setEditing(false);setDraft(null);onSelect(active)}}><X size={18}/></button></div></header>
+      <header><div><b>Create your own strategy</b><span>Step {builderStep==='conditions'?'1 of 2 · Choose conditions':'2 of 2 · Name your strategy'}</span><span className="strategy-risk-note">Strategies find coins that fit a pattern. They are not trade signals.</span></div><div className="strategy-builder-header-actions"><button type="button" aria-label="Close strategy builder" onClick={()=>{setEditing(false);setDraft(null)}}><X size={18}/></button></div></header>
       {builderStep==='conditions' ? <>
         {draftTakerUnavailable&&<p className="technical-filter-hint">Taker data not available on this exchange.</p>}
         <TechnicalFilters inline open onToggle={()=>{}} conditions={draftConditions} onConditionsChange={setDraftConditions} join={draftJoin} onJoinChange={setDraftJoin} ready={ready} exchange={exchange} selectedTimeframe={selectedTimeframe} onSaveConditions={saveConditions} saveConditionsDisabled={draftConditions.length===0||draftHasInvalidCondition}/>
@@ -208,7 +171,7 @@ export const StrategyControls: React.FC<Props> = ({ exchange, customStrategies, 
           <label>Strategy name<input value={draftName} maxLength={48} onChange={event=>setDraftName(event.target.value)} placeholder="Name your strategy"/></label>
           <label>Match<select value={draftJoin} onChange={event=>setDraftJoin(event.target.value as IndicatorJoin)}><option value="AND">All conditions</option><option value="OR">Any condition</option></select></label>
         </div>
-        <footer><button type="button" className="strategy-cancel" onClick={()=>setBuilderStep('conditions')}>Back to conditions</button><button type="button" className="strategy-save" disabled={!draftName.trim()||draftConditions.length===0||draftHasInvalidCondition} onClick={save}><Save size={13}/> Save strategy</button><button type="button" className="strategy-cancel" onClick={()=>{setEditing(false);setDraft(null);onSelect(active)}}>Cancel</button></footer>
+        <footer><button type="button" className="strategy-cancel" onClick={()=>setBuilderStep('conditions')}>Back to conditions</button><button type="button" className="strategy-save" disabled={!draftName.trim()||draftConditions.length===0||draftHasInvalidCondition} onClick={save}><Save size={13}/> Save strategy</button><button type="button" className="strategy-cancel" onClick={()=>{setEditing(false);setDraft(null)}}>Cancel</button></footer>
       </>}
     </section>}
   </div>;
