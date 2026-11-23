@@ -72,6 +72,8 @@
 .strategy-condition-editor .technical-filter-remove{width:32px;height:36px}
 .strategy-condition-editor footer{gap:12px;margin-top:12px}
 .strategy-condition-editor .technical-filter-add,.strategy-condition-editor .technical-filter-clear{height:38px;padding:0 13px;border-radius:6px;font-size:12px}
+.strategy-condition-editor .technical-filter-save{height:38px;display:inline-flex;align-items:center;gap:6px;padding:0 13px;border:1px solid #2d614e;border-radius:6px;background:#12241d;color:#64dcb2;font-size:12px;cursor:pointer}
+.strategy-condition-editor .technical-filter-save:disabled{opacity:.45;cursor:not-allowed}
 .strategy-builder .technical-filter-sentence{margin:12px 0;padding:12px 14px;font-size:13px}
 .strategy-builder .technical-filter-hint{font-size:11px}
 .strategy-builder>footer{gap:10px;margin-top:16px;padding-top:16px}

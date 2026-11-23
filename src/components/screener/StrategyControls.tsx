@@ -193,7 +193,7 @@ export const StrategyControls: React.FC<Props> = ({ exchange, customStrategies, 
         <label>Match<select value={draftJoin} onChange={event=>setDraftJoin(event.target.value as IndicatorJoin)}><option value="AND">All conditions</option><option value="OR">Any condition</option></select></label>
       </div>
       {draftTakerUnavailable&&<p className="technical-filter-hint">Taker data not available on this exchange.</p>}
-      <TechnicalFilters inline open onToggle={()=>{}} conditions={draftConditions} onConditionsChange={setDraftConditions} join={draftJoin} onJoinChange={setDraftJoin} ready={ready} exchange={exchange} selectedTimeframe={selectedTimeframe}/>
+      <TechnicalFilters inline open onToggle={()=>{}} conditions={draftConditions} onConditionsChange={setDraftConditions} join={draftJoin} onJoinChange={setDraftJoin} ready={ready} exchange={exchange} selectedTimeframe={selectedTimeframe} onSaveConditions={save} saveConditionsDisabled={!draftName.trim()||draftConditions.length===0||draftHasInvalidCondition}/>
       <footer><button type="button" className="strategy-save" disabled={!draftName.trim()||draftConditions.length===0||draftHasInvalidCondition} onClick={save}><Save size={13}/> Save strategy</button><button type="button" className="strategy-cancel" onClick={()=>{setEditing(false);setDraft(null);onSelect(active)}}>Cancel</button></footer>
     </section>}
   </div>;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, SlidersHorizontal, X } from 'lucide-react';
+import { Plus, Save, SlidersHorizontal, X } from 'lucide-react';
 import { ATR_PRESETS, INDICATOR_PRESETS, STRATEGY_THRESHOLDS } from '../../lib/strategyConfig';
 
 export type IndicatorField =
@@ -159,9 +159,9 @@ export const validateCondition=(condition:IndicatorCondition)=>{
   return '';
 };
 
-type Props = {open:boolean;onToggle:()=>void;conditions:IndicatorCondition[];onConditionsChange:(conditions:IndicatorCondition[])=>void;join:IndicatorJoin;onJoinChange:(join:IndicatorJoin)=>void;ready:boolean;inline?:boolean;exchange?:Exchange;selectedTimeframe?:string};
+type Props = {open:boolean;onToggle:()=>void;conditions:IndicatorCondition[];onConditionsChange:(conditions:IndicatorCondition[])=>void;join:IndicatorJoin;onJoinChange:(join:IndicatorJoin)=>void;ready:boolean;inline?:boolean;exchange?:Exchange;selectedTimeframe?:string;onSaveConditions?:()=>void;saveConditionsDisabled?:boolean};
 
-export const TechnicalFilters:React.FC<Props>=({open,onToggle,conditions,onConditionsChange,join,onJoinChange,ready,inline=false,exchange='Binance',selectedTimeframe='1h'})=>{
+export const TechnicalFilters:React.FC<Props>=({open,onToggle,conditions,onConditionsChange,join,onJoinChange,ready,inline=false,exchange='Binance',selectedTimeframe='1h',onSaveConditions,saveConditionsDisabled=false})=>{
   const update=(id:string,patch:Partial<IndicatorCondition>)=>onConditionsChange(conditions.map(condition=>condition.id===id?{...condition,...patch}:condition));
   const add=()=>onConditionsChange([...conditions,{id:crypto.randomUUID(),timeframe:'selected',field:'rsi14',operator:'<',value:INDICATOR_PRESETS.rsi.oversold,preset:'oversold'}]);
   const resolved=conditions.map(condition=>{const fieldMeta=indicatorFields.find(field=>field.value===condition.field);const options=recipesFor(condition.field,String(condition.setting??''),resolvedTimeframe(condition.timeframe,selectedTimeframe));const choice=options.find(item=>item.id===(condition.preset||''))||options.find(item=>item.operator===condition.operator&&item.value===condition.value&&item.secondValue===condition.secondValue&&(!item.setting||item.setting===String(condition.setting??'')));return {condition,fieldMeta,options,choice,custom:isCustom(condition,options)}});
@@ -191,7 +191,7 @@ export const TechnicalFilters:React.FC<Props>=({open,onToggle,conditions,onCondi
           {showCustom&&!error&&<small className="technical-filter-custom-hint">Typical: {typicalFor(condition.field)}{unitFor(condition.field)&&` · Unit: ${unitFor(condition.field)}`}</small>}{error&&<small className="technical-filter-validation">{error}</small>}
         </div>;
       })}
-      <footer><button type="button" className="technical-filter-add" onClick={add}><Plus size={13}/> Add condition</button><button type="button" className="technical-filter-clear" onClick={()=>onConditionsChange([])}>Clear</button></footer>
+      <footer><button type="button" className="technical-filter-add" onClick={add}><Plus size={13}/> Add condition</button>{inline&&onSaveConditions&&<button type="button" className="technical-filter-save" disabled={saveConditionsDisabled} title="Save this strategy with its current conditions" onClick={onSaveConditions}><Save size={13}/> Save condition</button>}<button type="button" className="technical-filter-clear" onClick={()=>onConditionsChange([])}>Clear</button></footer>
       <p className="technical-filter-hint">Indicators use completed candles. Missing or unsupported data never passes a condition.</p>
     </section>}
   </div>;
