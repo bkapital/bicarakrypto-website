@@ -40,6 +40,59 @@
 /* Keep the star and primary market identifiers visible while the wide table scrolls. */
 .table-scroll th.sticky-column,.table-scroll td.sticky-column{position:sticky;box-sizing:border-box}
 .table-scroll th.sticky-column{z-index:7;background:#0f141a}
+
+/* Give the strategy builder enough room for its condition controls and help text. */
+.strategy-filter-row .strategy-builder{
+  position:fixed;
+  z-index:100;
+  top:50%;
+  left:50%;
+  width:min(1240px,calc(100vw - 48px));
+  max-height:min(90vh,980px);
+  overflow:auto;
+  transform:translate(-50%,-50%);
+  padding:24px;
+  border-radius:12px;
+  box-shadow:0 24px 80px #000d,0 0 0 100vmax #0009;
+}
+.strategy-builder>header{gap:24px;padding-bottom:18px}
+.strategy-builder>header div{gap:7px}
+.strategy-builder>header b{font-size:20px;letter-spacing:-.02em}
+.strategy-builder>header span{font-size:13px;line-height:1.5}
+.strategy-builder>header button{padding:6px}
+.strategy-builder-fields{grid-template-columns:minmax(220px,2fr) repeat(3,minmax(150px,1fr));gap:16px;padding:20px 0}
+.strategy-builder-fields label{gap:8px;font-size:11px}
+.strategy-builder-fields input,.strategy-builder-fields select{height:44px;padding:0 12px;border-radius:7px;font-size:14px}
+.strategy-inline-panel{position:static;width:auto;max-height:none;overflow:visible;margin-top:16px;padding:16px;border:1px solid #29323d;border-radius:9px;background:#0c1117;box-shadow:none}
+.strategy-builder>.technical-filter-panel .technical-filter-condition{grid-template-columns:32px minmax(240px,2fr) minmax(110px,.8fr) minmax(130px,.9fr) minmax(180px,1.3fr) minmax(130px,.9fr) 32px;gap:10px;padding:9px 0}
+.strategy-condition-editor .technical-filter-condition-wrap{padding:9px 0}
+.strategy-condition-editor .technical-filter-index{width:28px;font-size:12px}
+.strategy-condition-editor .technical-filter-help,.strategy-condition-editor .technical-filter-custom-hint,.strategy-condition-editor .technical-filter-validation{font-size:11px}
+.strategy-condition-editor select,.strategy-condition-editor input{height:40px;padding:0 10px;border-radius:6px;font-size:13px}
+.strategy-condition-editor .technical-filter-remove{width:32px;height:36px}
+.strategy-condition-editor footer{gap:12px;margin-top:12px}
+.strategy-condition-editor .technical-filter-add,.strategy-condition-editor .technical-filter-clear{height:38px;padding:0 13px;border-radius:6px;font-size:12px}
+.strategy-builder .technical-filter-sentence{margin:12px 0;padding:12px 14px;font-size:13px}
+.strategy-builder .technical-filter-hint{font-size:11px}
+.strategy-builder>footer{gap:10px;margin-top:16px;padding-top:16px}
+.strategy-save,.strategy-cancel{height:40px;padding:0 15px;border-radius:6px;font-size:12px}
+@media(max-width:900px){
+  .strategy-builder-fields{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .strategy-builder>.technical-filter-panel .technical-filter-condition{grid-template-columns:28px minmax(190px,1.7fr) minmax(90px,.8fr) minmax(105px,.9fr) minmax(145px,1.2fr) minmax(110px,.9fr) 28px;gap:7px}
+}
+@media(max-width:600px){
+  .strategy-filter-row .strategy-builder{width:calc(100vw - 20px);max-height:94vh;padding:16px;border-radius:10px}
+  .strategy-builder>header b{font-size:17px}
+  .strategy-builder>header span{font-size:12px}
+  .strategy-builder-fields{grid-template-columns:1fr;gap:12px;padding:16px 0}
+  .strategy-builder>.technical-filter-panel .technical-filter-condition{grid-template-columns:24px minmax(0,1fr) 28px;gap:7px}
+  .strategy-builder>.technical-filter-panel .technical-filter-condition>*{grid-column:2}
+  .strategy-builder>.technical-filter-panel .technical-filter-condition>.technical-filter-index{grid-column:1;grid-row:1}
+  .strategy-builder>.technical-filter-panel .technical-filter-condition>.technical-filter-remove{grid-column:3;grid-row:1}
+  .strategy-builder>.technical-filter-panel .technical-filter-condition select,
+  .strategy-builder>.technical-filter-panel .technical-filter-condition input{width:100%}
+  .strategy-builder .technical-filter-custom-hint,.strategy-builder .technical-filter-validation{margin-left:31px}
+}
 .table-scroll td.sticky-column{z-index:2;background:#0d1117}
 .table-scroll tbody tr:hover td.sticky-column{background:#121921}
 .table-scroll .sticky-star{left:0;width:42px;min-width:42px;max-width:42px;padding-left:14px;padding-right:8px}
