@@ -93,6 +93,20 @@
   .strategy-builder>.technical-filter-panel .technical-filter-condition input{width:100%}
   .strategy-builder .technical-filter-custom-hint,.strategy-builder .technical-filter-validation{margin-left:31px}
 }
+.strategy-builder>header{position:sticky;top:-24px;z-index:5;margin:-24px -24px 0;padding:20px 24px 16px;background:#0f141a;border-bottom:1px solid #242b34}
+.strategy-builder-header-actions{display:flex!important;align-items:center;gap:12px;flex:none}
+.strategy-builder-header-actions .strategy-save{height:42px;padding:0 16px;font-size:13px}
+.strategy-builder-header-actions>button:last-child{display:grid;place-items:center;width:38px;height:38px;border:1px solid #303945;border-radius:7px;background:#151b23}
+.strategy-builder-fields{grid-template-columns:minmax(240px,2fr) minmax(200px,1fr)}
+.strategy-builder>footer{position:sticky;bottom:-24px;z-index:4;justify-content:flex-end;margin:18px -24px -24px;padding:14px 24px;background:#0f141a;border-top:1px solid #242b34}
+@media(max-width:600px){
+  .strategy-builder>header{top:-16px;margin:-16px -16px 0;padding:16px;background:#0f141a}
+  .strategy-builder-header-actions{gap:6px}
+  .strategy-builder-header-actions .strategy-save{height:36px;padding:0 9px;font-size:11px}
+  .strategy-builder-header-actions>button:last-child{width:34px;height:34px}
+  .strategy-builder-fields{grid-template-columns:1fr}
+  .strategy-builder>footer{bottom:-16px;margin:14px -16px -16px;padding:12px 16px}
+}
 .table-scroll td.sticky-column{z-index:2;background:#0d1117}
 .table-scroll tbody tr:hover td.sticky-column{background:#121921}
 .table-scroll .sticky-star{left:0;width:42px;min-width:42px;max-width:42px;padding-left:14px;padding-right:8px}

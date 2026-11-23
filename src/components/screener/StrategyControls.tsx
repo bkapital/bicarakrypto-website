@@ -187,11 +187,9 @@ export const StrategyControls: React.FC<Props> = ({ exchange, customStrategies, 
       {!editing&&<button type="button" className="strategy-action strategy-create" onClick={()=>startDraft()}><Plus size={12}/> Create strategy</button>}
     </div>
     {editing && draft && <section className="strategy-builder" aria-label="Create your own strategy">
-      <header><div><b>Create your own strategy</b><span>Preview rows update as conditions change. This strategy is saved in this browser.</span><span className="strategy-risk-note">Strategies find coins that fit a pattern. They are not trade signals.</span></div><button type="button" aria-label="Close strategy builder" onClick={()=>{setEditing(false);setDraft(null);onSelect(active)}}><X size={15}/></button></header>
+      <header><div><b>Create your own strategy</b><span>Preview rows update as conditions change. This strategy is saved in this browser.</span><span className="strategy-risk-note">Strategies find coins that fit a pattern. They are not trade signals.</span></div><div className="strategy-builder-header-actions"><button type="button" className="strategy-save" disabled={!draftName.trim()||draftConditions.length===0||draftHasInvalidCondition} onClick={save}><Save size={14}/> Save strategy</button><button type="button" aria-label="Close strategy builder" onClick={()=>{setEditing(false);setDraft(null);onSelect(active)}}><X size={18}/></button></div></header>
       <div className="strategy-builder-fields">
         <label>Strategy name<input value={draftName} maxLength={48} onChange={event=>setDraftName(event.target.value)} placeholder="Name your strategy"/></label>
-        <label>Type<select value={draftType} onChange={event=>setDraftType(event.target.value as StrategyType)}><option>Buy / Long idea</option><option>Sell / Short idea</option><option>Watch</option><option>Avoid</option></select></label>
-        <label>Market<select value={draftRequiresFutures?'Futures':draftScope} onChange={event=>setDraftScope(event.target.value as Strategy['marketScope'])}><option disabled={draftRequiresFutures}>All markets</option><option>Futures</option></select></label>
         <label>Match<select value={draftJoin} onChange={event=>setDraftJoin(event.target.value as IndicatorJoin)}><option value="AND">All conditions</option><option value="OR">Any condition</option></select></label>
       </div>
       {draftTakerUnavailable&&<p className="technical-filter-hint">Taker data not available on this exchange.</p>}
