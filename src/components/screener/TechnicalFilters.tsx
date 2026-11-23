@@ -191,7 +191,7 @@ export const TechnicalFilters:React.FC<Props>=({open,onToggle,conditions,onCondi
           {showCustom&&!error&&<small className="technical-filter-custom-hint">Typical: {typicalFor(condition.field)}{unitFor(condition.field)&&` · Unit: ${unitFor(condition.field)}`}</small>}{error&&<small className="technical-filter-validation">{error}</small>}
         </div>;
       })}
-      <footer><button type="button" className="technical-filter-add" onClick={add}><Plus size={13}/> Add condition</button>{inline&&onSaveConditions&&<button type="button" className="technical-filter-save" disabled={saveConditionsDisabled} title="Save this strategy with its current conditions" onClick={onSaveConditions}><Save size={13}/> Save condition</button>}<button type="button" className="technical-filter-clear" onClick={()=>onConditionsChange([])}>Clear</button></footer>
+      <footer><button type="button" className="technical-filter-add" onClick={add}><Plus size={13}/> Add condition</button>{inline&&onSaveConditions&&<button type="button" className="technical-filter-save" disabled={saveConditionsDisabled} title="Continue to strategy details with these conditions" onClick={onSaveConditions}><Save size={13}/> Save condition</button>}<button type="button" className="technical-filter-clear" onClick={()=>onConditionsChange([])}>Clear</button></footer>
       <p className="technical-filter-hint">Indicators use completed candles. Missing or unsupported data never passes a condition.</p>
     </section>}
   </div>;

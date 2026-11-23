@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ChevronDown, Plus, Save, X } from 'lucide-react';
-import { TechnicalFilters, validateCondition, type IndicatorCondition, type IndicatorJoin } from './TechnicalFilters';
+import { TechnicalFilters, indicatorFields, validateCondition, type IndicatorCondition, type IndicatorJoin } from './TechnicalFilters';
 import { STRATEGY_THRESHOLDS, STRATEGY_TIMEFRAMES, type StrategyTimeframe } from '../../lib/strategyConfig';
 
 export type StrategyType = 'Buy / Long idea' | 'Sell / Short idea' | 'Watch' | 'Avoid';
@@ -106,6 +106,7 @@ const tagClass = (type: StrategyType) => type.startsWith('Buy') ? 'strategy-tag-
 export const StrategyControls: React.FC<Props> = ({ exchange, customStrategies, active, onSelect, onCustomStrategiesChange, onPreview, ready, selectedTimeframe, onTimeframeChange, updatedAt, insufficientHistoryCount, minVolumeUsd, maxVolumeUsd, onVolumeRangeChange, volumeRangeCount }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [builderStep, setBuilderStep] = useState<'conditions'|'details'>('conditions');
   const [draft, setDraft] = useState<Strategy|null>(null);
   const [draftName, setDraftName] = useState('');
   const [draftType, setDraftType] = useState<StrategyType>('Watch');
@@ -129,7 +130,7 @@ export const StrategyControls: React.FC<Props> = ({ exchange, customStrategies, 
     setDraftTakerUnavailable(Boolean(resolvedBase?.id==='beginner-volume-breakout'&&exchange!=='Binance'));
     const sourceConditions=resolvedBase?.id==='beginner-volume-breakout'&&exchange!=='Binance'?resolvedBase.conditions.filter(condition=>condition.field!=='takerBuyRatio'):resolvedBase?.conditions||[];
     const newDraft: Strategy = resolvedBase ? { ...resolvedBase, id: resolvedBase.group === 'My strategies' ? resolvedBase.id : `custom-${crypto.randomUUID()}`, name:resolvedBase.group==='My strategies'?resolvedBase.name:`${resolvedBase.name} (my version)`, group: 'My strategies', conditions: sourceConditions.map(c => ({ ...migrateCondition(c), id: crypto.randomUUID() })) } : { id:`custom-${crypto.randomUUID()}`,name:'My strategy',group:'My strategies',type:'Watch',explanation:'Custom strategy',marketScope:'All markets',conditions:[],join:'AND' };
-    setDraft(newDraft); setDraftName(newDraft.name); setDraftType(newDraft.type); setDraftScope(newDraft.marketScope); setDraftConditions(newDraft.conditions); setDraftJoin(newDraft.join); setEditing(true);
+    setDraft(newDraft); setDraftName(newDraft.name); setDraftType(newDraft.type); setDraftScope(newDraft.marketScope); setDraftConditions(newDraft.conditions); setDraftJoin(newDraft.join); setBuilderStep('conditions'); setEditing(true);
     onPreview({ ...newDraft, name:newDraft.name, type:newDraft.type, marketScope:newDraft.marketScope, conditions:newDraft.conditions, join:newDraft.join });
     setMenuOpen(false);
   };
@@ -142,6 +143,10 @@ export const StrategyControls: React.FC<Props> = ({ exchange, customStrategies, 
     const saved = { ...draft, name:draftName.trim(), type:draftType, marketScope:draftRequiresFutures?'Futures':draftScope, explanation:'Custom strategy', conditions:draftConditions, join:draftJoin };
     const remaining = customStrategies.filter(item => item.id !== saved.id);
     const next = [...remaining, saved]; onCustomStrategiesChange(next); onSelect(saved); setEditing(false); setDraft(null);
+  };
+  const saveConditions = () => {
+    if (draftConditions.length === 0 || draftHasInvalidCondition) return;
+    setBuilderStep('details');
   };
   const deleteActive = () => {
     if (!active || active.group !== 'My strategies') return;
@@ -187,14 +192,26 @@ export const StrategyControls: React.FC<Props> = ({ exchange, customStrategies, 
       {!editing&&<button type="button" className="strategy-action strategy-create" onClick={()=>startDraft()}><Plus size={12}/> Create strategy</button>}
     </div>
     {editing && draft && <section className="strategy-builder" aria-label="Create your own strategy">
-      <header><div><b>Create your own strategy</b><span>Preview rows update as conditions change. This strategy is saved in this browser.</span><span className="strategy-risk-note">Strategies find coins that fit a pattern. They are not trade signals.</span></div><div className="strategy-builder-header-actions"><button type="button" className="strategy-save" disabled={!draftName.trim()||draftConditions.length===0||draftHasInvalidCondition} onClick={save}><Save size={14}/> Save strategy</button><button type="button" aria-label="Close strategy builder" onClick={()=>{setEditing(false);setDraft(null);onSelect(active)}}><X size={18}/></button></div></header>
-      <div className="strategy-builder-fields">
-        <label>Strategy name<input value={draftName} maxLength={48} onChange={event=>setDraftName(event.target.value)} placeholder="Name your strategy"/></label>
-        <label>Match<select value={draftJoin} onChange={event=>setDraftJoin(event.target.value as IndicatorJoin)}><option value="AND">All conditions</option><option value="OR">Any condition</option></select></label>
-      </div>
-      {draftTakerUnavailable&&<p className="technical-filter-hint">Taker data not available on this exchange.</p>}
-      <TechnicalFilters inline open onToggle={()=>{}} conditions={draftConditions} onConditionsChange={setDraftConditions} join={draftJoin} onJoinChange={setDraftJoin} ready={ready} exchange={exchange} selectedTimeframe={selectedTimeframe} onSaveConditions={save} saveConditionsDisabled={!draftName.trim()||draftConditions.length===0||draftHasInvalidCondition}/>
-      <footer><button type="button" className="strategy-save" disabled={!draftName.trim()||draftConditions.length===0||draftHasInvalidCondition} onClick={save}><Save size={13}/> Save strategy</button><button type="button" className="strategy-cancel" onClick={()=>{setEditing(false);setDraft(null);onSelect(active)}}>Cancel</button></footer>
+      <header><div><b>Create your own strategy</b><span>Step {builderStep==='conditions'?'1 of 2 · Choose conditions':'2 of 2 · Name your strategy'}</span><span className="strategy-risk-note">Strategies find coins that fit a pattern. They are not trade signals.</span></div><div className="strategy-builder-header-actions"><button type="button" aria-label="Close strategy builder" onClick={()=>{setEditing(false);setDraft(null);onSelect(active)}}><X size={18}/></button></div></header>
+      {builderStep==='conditions' ? <>
+        {draftTakerUnavailable&&<p className="technical-filter-hint">Taker data not available on this exchange.</p>}
+        <TechnicalFilters inline open onToggle={()=>{}} conditions={draftConditions} onConditionsChange={setDraftConditions} join={draftJoin} onJoinChange={setDraftJoin} ready={ready} exchange={exchange} selectedTimeframe={selectedTimeframe} onSaveConditions={saveConditions} saveConditionsDisabled={draftConditions.length===0||draftHasInvalidCondition}/>
+      </> : <>
+        <div className="strategy-saved-condition-list" aria-label="Saved conditions">
+          <b>{draftConditions.length} saved {draftConditions.length===1?'condition':'conditions'}</b>
+          {draftConditions.map((condition,index)=>{
+            const field=indicatorFields.find(item=>item.value===condition.field);
+            const timeframe=condition.timeframe==='selected'?`Selected (${selectedTimeframe})`:condition.timeframe;
+            const setting=condition.setting?` ${String(condition.setting).replace(':state','').replace(':cross','').replace('-up','').replace('-down','')}`:'';
+            return <span key={condition.id}>{index+1}. {field?.label||condition.field}{setting} · {timeframe}</span>;
+          })}
+        </div>
+        <div className="strategy-builder-fields">
+          <label>Strategy name<input value={draftName} maxLength={48} onChange={event=>setDraftName(event.target.value)} placeholder="Name your strategy"/></label>
+          <label>Match<select value={draftJoin} onChange={event=>setDraftJoin(event.target.value as IndicatorJoin)}><option value="AND">All conditions</option><option value="OR">Any condition</option></select></label>
+        </div>
+        <footer><button type="button" className="strategy-cancel" onClick={()=>setBuilderStep('conditions')}>Back to conditions</button><button type="button" className="strategy-save" disabled={!draftName.trim()||draftConditions.length===0||draftHasInvalidCondition} onClick={save}><Save size={13}/> Save strategy</button><button type="button" className="strategy-cancel" onClick={()=>{setEditing(false);setDraft(null);onSelect(active)}}>Cancel</button></footer>
+      </>}
     </section>}
   </div>;
 };
