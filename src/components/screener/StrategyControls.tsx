@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ChevronDown, Plus, Save, X } from 'lucide-react';
 import { TechnicalFilters, indicatorFields, validateCondition, type IndicatorCondition, type IndicatorJoin } from './TechnicalFilters';
-import { STRATEGY_THRESHOLDS, STRATEGY_TIMEFRAMES, type StrategyTimeframe } from '../../lib/strategyConfig';
+import { STRATEGY_THRESHOLDS, type StrategyTimeframe } from '../../lib/strategyConfig';
 
 export type StrategyType = 'Buy / Long idea' | 'Sell / Short idea' | 'Watch' | 'Avoid';
 export type StrategyGroup = 'Quick filters' | 'Beginner strategies' | 'Intermediate strategies' | 'My strategies';
@@ -82,7 +82,6 @@ type Props = {
   onPreview: (strategy: Strategy) => void;
   ready: boolean;
   selectedTimeframe: StrategyTimeframe;
-  onTimeframeChange: (timeframe: StrategyTimeframe) => void;
   updatedAt: string;
   insufficientHistoryCount: number;
   minVolumeUsd: number | null;
@@ -103,7 +102,7 @@ const parseVolumeInput = (input:string):number|null => {
 
 const tagClass = (type: StrategyType) => type.startsWith('Buy') ? 'strategy-tag-buy' : type.startsWith('Sell') ? 'strategy-tag-sell' : type === 'Avoid' ? 'strategy-tag-avoid' : 'strategy-tag-watch';
 
-export const StrategyControls: React.FC<Props> = ({ exchange, customStrategies, active, onSelect, onCustomStrategiesChange, onPreview, ready, selectedTimeframe, onTimeframeChange, updatedAt, insufficientHistoryCount, minVolumeUsd, maxVolumeUsd, onVolumeRangeChange, volumeRangeCount }) => {
+export const StrategyControls: React.FC<Props> = ({ exchange, customStrategies, active, onSelect, onCustomStrategiesChange, onPreview, ready, selectedTimeframe, updatedAt, insufficientHistoryCount, minVolumeUsd, maxVolumeUsd, onVolumeRangeChange, volumeRangeCount }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [builderStep, setBuilderStep] = useState<'conditions'|'details'>('conditions');
@@ -174,7 +173,6 @@ export const StrategyControls: React.FC<Props> = ({ exchange, customStrategies, 
           {grouped.map(([group,items])=><section key={group}><h3>{group}</h3>{items.length===0&&<p className="strategy-empty-group">No saved strategies yet.</p>}{items.map(strategy=><button type="button" role="option" aria-selected={active?.id===strategy.id} className="strategy-option" key={strategy.id} onClick={()=>{onSelect(strategy);setMenuOpen(false);setEditing(false)}}><span className="strategy-option-top"><b>{strategy.name}</b><i className={tagClass(strategy.type)}>{strategy.type}</i></span><small>{strategy.explanation}</small></button>)}</section>)}
         </div>}
       </div>
-      <label className="strategy-timeframe"><small>TIMEFRAME</small><select aria-label="Strategy timeframe" value={selectedTimeframe} onChange={event=>onTimeframeChange(event.target.value as StrategyTimeframe)}>{STRATEGY_TIMEFRAMES.map(timeframe=><option key={timeframe}>{timeframe}</option>)}</select></label>
       <div className="strategy-volume-controls">
         <label className="strategy-timeframe"><small>MIN 24H VOL</small><select aria-label="Minimum 24 hour volume" value={minMode} onChange={event=>{const value=event.target.value;if(value==='off'){setMinCustomMode(false);onVolumeRangeChange(null,maxVolumeUsd)}else if(value==='custom'){setMinCustomMode(true);setMinVolumeInput(minVolumeUsd?String(minVolumeUsd):'')}else{setMinCustomMode(false);onVolumeRangeChange(Number(value),maxVolumeUsd)}setVolumeInputError('')}}><option value="off">Off</option>{volumePresets.map(value=><option key={value} value={value}>{volumeLabel(value)}</option>)}<option value="custom">Custom</option></select></label>
         {minMode==='custom'&&<input className="strategy-volume-input" aria-label="Custom minimum 24 hour volume" placeholder="e.g. 2.5M" value={minVolumeInput} onChange={event=>setMinVolumeInput(event.target.value)} onBlur={()=>commitVolumeInput('min')} onKeyDown={event=>{if(event.key==='Enter')commitVolumeInput('min')}}/>}
