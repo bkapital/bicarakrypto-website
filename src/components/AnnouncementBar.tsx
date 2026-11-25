@@ -12,7 +12,7 @@ export const AnnouncementBar: React.FC = () => {
             <Calendar className="w-3 h-3" />
           </span>
           <span className="text-[#5CF2C0] font-medium">
-            Intake {CONFIG.intakeMonth} dibuka:
+            Intake Kelas dibuka:
           </span>
           <span>
             CAB {CONFIG.cab.dates} · KITA {CONFIG.kita.dates} · Pendaftaran Kini Dibuka
