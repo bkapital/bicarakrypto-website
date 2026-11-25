@@ -1,0 +1,1726 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Screener Guide · Bicara Krypto Pulse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#0a0e13;--panel:#10151c;--panel2:#151b24;--line:#1f2732;--line2:#2a3442;
+  --fg:#e7ecf2;--muted:#8a96a6;--faint:#5d6878;
+  --green:#3fd68a;--green-bg:#0f2a1e;--green-line:#1e5a3d;--amber:#f2a93b;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:84px}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.65 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--green)}
+.top{position:sticky;top:0;z-index:10;background:rgba(10,14,19,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1200px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.back{color:var(--muted);text-decoration:none;font-size:14px;display:inline-flex;gap:6px;align-items:center}
+.back:hover{color:var(--fg)}
+.brand{font-weight:600;letter-spacing:.08em;font-size:13px;text-transform:uppercase;color:var(--muted)}
+.brand b{color:var(--fg)}
+.sp{flex:1}
+.lang{display:flex;background:var(--panel);border:1px solid var(--line2);border-radius:10px;padding:3px}
+.lang button{background:none;border:0;color:var(--muted);font:inherit;font-size:13px;font-weight:500;padding:6px 12px;border-radius:7px;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--green-bg);color:var(--green)}
+.wrap{max-width:1200px;margin:0 auto;padding:0 20px;display:grid;grid-template-columns:250px minmax(0,1fr);gap:40px}
+nav.toc{position:sticky;top:72px;align-self:start;max-height:calc(100vh - 90px);overflow:auto;padding:28px 0 40px;font-size:13.5px}
+.toc .grp{margin-bottom:16px}
+.toc .gt{display:block;font-weight:600;color:var(--fg);text-decoration:none;padding:4px 10px;border-radius:7px;margin-bottom:2px}
+.toc .gl{display:block;color:var(--muted);text-decoration:none;padding:4px 10px 4px 18px;border-left:2px solid var(--line);margin-left:10px}
+.toc a:hover{color:var(--fg)}
+.toc a.on{color:var(--green);border-left-color:var(--green)}
+.toc .gt.on{background:var(--green-bg)}
+.mob{display:none;margin:16px 0 0}
+.mob select{width:100%;background:var(--panel);color:var(--fg);border:1px solid var(--line2);border-radius:10px;padding:10px 12px;font:inherit}
+main{padding:28px 0 80px;min-width:0;max-width:820px}
+h1.title{font-size:clamp(26px,4vw,36px);letter-spacing:-.02em;line-height:1.15;margin:4px 0 14px}
+h1.part{font-size:24px;margin:56px 0 4px;padding-top:24px;border-top:1px solid var(--line);letter-spacing:-.01em}
+h2{font-size:19px;margin:36px 0 10px;letter-spacing:-.01em}
+h2 .num{color:var(--green);margin-right:4px}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 16px;padding-left:22px}
+li{margin:4px 0}
+li>ul{margin:6px 0 0}
+strong{color:#fff;font-weight:600}
+blockquote{margin:16px 0 22px;padding:12px 16px;border:1px solid #4a3612;background:#1c160b;border-radius:10px;color:#f5dfb8}
+blockquote p{margin:0}
+blockquote strong{color:var(--amber)}
+.tw{overflow-x:auto;margin:6px 0 22px;border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:520px}
+th{text-align:left;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--panel);padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:#0e141b}
+h2,h1.part{scroll-margin-top:84px}
+@media (max-width:860px){
+  .wrap{grid-template-columns:minmax(0,1fr);gap:0}
+  nav.toc{display:none}
+  .mob{display:block}
+  main{padding-top:16px}
+  .brand{display:none}
+}
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <a class="back" href="/">&larr; <span data-t="back">Back to screener</span></a>
+  <span class="brand"><b>Bicara Krypto Pulse</b> · <span data-t="guide">Guide</span></span>
+  <span class="sp"></span>
+  <div class="lang" role="group" aria-label="Language">
+    <button type="button" data-lang="en" aria-pressed="true">English</button>
+    <button type="button" data-lang="bm" aria-pressed="false">Bahasa Malaysia</button>
+  </div>
+</div></header>
+
+<div class="wrap">
+  <nav class="toc" id="toc" aria-label="Sections"></nav>
+  <div>
+    <div class="mob"><select id="mobsel" aria-label="Sections"></select></div>
+    <main id="content"></main>
+  </div>
+</div>
+
+<template id="tpl-en"><h1 class="title">Bicara Krypto Pulse Screener Guide</h1>
+<p>Bicara Krypto Pulse is a market screener: it scans every trading pair on our supported exchanges and shows you only the ones that fit what you are looking for. We currently support Binance, Bybit and Gate, with more exchanges coming.</p>
+<blockquote>
+<p><strong>Important:</strong> Strategies find coins that fit a pattern. They are not buy or sell signals, and nothing in the screener is financial advice. Always check the chart and manage your risk.</p>
+</blockquote>
+<p><strong>Start at your level:</strong></p>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Level</th>
+<th>Read this if</th>
+<th>You will learn</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Part 1: Beginner</strong></td>
+<td>You are new to the screener or to indicators.</td>
+<td>How to use the page, the ready-made strategies, the 6 key indicators and the basic columns.</td>
+</tr>
+<tr class="even">
+<td><strong>Part 2: Intermediate</strong></td>
+<td>You know RSI and EMA and want to use futures data.</td>
+<td>Open Interest and funding, the intermediate strategies, and building your own strategy.</td>
+</tr>
+<tr class="odd">
+<td><strong>Part 3: Advanced</strong></td>
+<td>You want full control and exact numbers.</td>
+<td>Every condition, custom values, multi-timeframe setups, the threshold tables and how the data works.</td>
+</tr>
+</tbody>
+</table></div>
+<h1 id="part-1" class="part">Part 1: Beginner</h1>
+<h2 id="1-1"><span class="num">1.1</span> Quick start</h2>
+<p>You can find your first setups in five steps: pick an exchange, pick a strategy, narrow the markets, read the list, then click a pair for its chart.</p>
+<ol type="1">
+<li><strong>Pick an exchange</strong> at the top. The list shows every pair on that exchange.</li>
+<li><strong>Pick a strategy</strong> from the <strong>Strategy</strong> dropdown. Start with a Quick filter such as <strong>High Volume</strong> or a beginner strategy such as <strong>Buy the dip</strong>. The list now shows only pairs that match. You can select more than one.</li>
+<li><strong>Narrow the markets</strong> in the second row:
+<ul>
+<li><strong>Market:</strong> spot, futures, or all.</li>
+<li><strong>Asset class</strong> and <strong>Quote</strong> (for example USDT pairs only).</li>
+<li><strong>24h volume:</strong> set a minimum and maximum. <strong>$10M+</strong> is a good start to remove tiny coins that are hard to buy and sell.</li>
+</ul></li>
+<li><strong>Read the list.</strong> The count on the right (for example "12 of 1,472 markets") shows how many pairs passed. Use <strong>Search</strong> to find a coin.</li>
+<li><strong>Click a pair</strong> to open its snapshot: price, 24h change, 24h volume and a 1h chart. From there you can open the pair on the exchange.</li>
+</ol>
+<p>Other buttons:</p>
+<ul>
+<li>Each active strategy shows as a chip with <strong>✕</strong> to remove only that one. <strong>Clear all</strong> removes every strategy and shows the full list again.</li>
+<li><strong>Reset all</strong> appears when you change a filter and puts every filter back to default.</li>
+<li>The star icon adds a pair to your watchlist.</li>
+</ul>
+<h2 id="1-2"><span class="num">1.2</span> Ready-made strategies</h2>
+<p>A strategy is a saved set of conditions; choosing one shows only the pairs that match. When you select several, a pair shows if it matches <strong>any</strong> of them, so the list gets longer, not shorter.</p>
+<p>Each strategy has a tag:</p>
+<ul>
+<li><strong>Buy / Long idea:</strong> price may go up.</li>
+<li><strong>Sell / Short idea:</strong> price may go down.</li>
+<li><strong>Watch:</strong> something is happening, but the direction is unclear.</li>
+<li><strong>Avoid:</strong> a warning sign.</li>
+</ul>
+<p><strong>Quick filters</strong> (one-click lists):</p>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Strategy</th>
+<th>What it finds</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>High Volume</strong></td>
+<td>The most traded pairs: top 20% by 24h volume.</td>
+</tr>
+<tr class="even">
+<td><strong>OI Spike</strong></td>
+<td>Futures where many traders just opened new positions.</td>
+</tr>
+<tr class="odd">
+<td><strong>Big Movers</strong></td>
+<td>Pairs that moved a lot, up or down.</td>
+</tr>
+<tr class="even">
+<td><strong>High Funding</strong></td>
+<td>Futures where one side (longs or shorts) is crowded.</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Beginner strategies:</strong></p>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Strategy</th>
+<th>Tag</th>
+<th>What it finds</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Ride the trend</strong></td>
+<td>Buy / Long idea</td>
+<td>A strong, healthy uptrend that isn't overheated yet.</td>
+</tr>
+<tr class="even">
+<td><strong>Buy the dip</strong></td>
+<td>Buy / Long idea</td>
+<td>A coin in an uptrend that pulled back, so you can enter cheaper.</td>
+</tr>
+<tr class="odd">
+<td><strong>Oversold bounce</strong></td>
+<td>Buy / Long idea</td>
+<td>A coin that sold off hard and is starting to turn up. Riskier, because it goes against the trend.</td>
+</tr>
+<tr class="even">
+<td><strong>Volume breakout</strong></td>
+<td>Buy / Long idea</td>
+<td>Price breaking out to a new high with strong buying.</td>
+</tr>
+<tr class="odd">
+<td><strong>Calm before the move</strong></td>
+<td>Watch</td>
+<td>A quiet coin that often moves big soon. Direction unknown.</td>
+</tr>
+<tr class="even">
+<td><strong>Trend turning down</strong></td>
+<td>Sell / Short idea</td>
+<td>A downtrend continuing after a short bounce. Futures only.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="1-3"><span class="num">1.3</span> The 6 indicators beginners need</h2>
+<p>The beginner strategies are built from these six. Learn them first.</p>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Indicator</th>
+<th>What it tells you</th>
+<th>How to read it</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>EMA</strong> (moving average)</td>
+<td>The average price over time.</td>
+<td>Price above EMA = uptrend. Below = downtrend. EMA 200 = long-term, EMA 20 = short-term.</td>
+</tr>
+<tr class="even">
+<td><strong>RSI (14)</strong></td>
+<td>Momentum, from 0 to 100.</td>
+<td>Below 30 = oversold (sold too much). Above 70 = overbought (bought too much). Above 50 = buyers stronger.</td>
+</tr>
+<tr class="odd">
+<td><strong>ADX (14)</strong></td>
+<td>How strong the trend is, not its direction.</td>
+<td>Above 25 = strong trend. Below 20 = choppy, no clear trend.</td>
+</tr>
+<tr class="even">
+<td><strong>SuperTrend</strong></td>
+<td>A simple trend signal.</td>
+<td>Green (bullish) = uptrend. Red (bearish) = downtrend.</td>
+</tr>
+<tr class="odd">
+<td><strong>Bollinger Bands</strong></td>
+<td>How tight or wide price swings are.</td>
+<td>A <strong>squeeze</strong> (very tight bands) often comes before a big move.</td>
+</tr>
+<tr class="even">
+<td><strong>RVOL</strong></td>
+<td>Volume compared with normal.</td>
+<td>2x = twice the usual volume. People are paying attention.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="1-4"><span class="num">1.4</span> Basic columns</h2>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Column</th>
+<th>What it means</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>24h trend</strong></td>
+<td>Small chart of recent price movement.</td>
+</tr>
+<tr class="even">
+<td><strong>Symbol</strong></td>
+<td>The pair and market type (spot or futures). Click it to open the snapshot.</td>
+</tr>
+<tr class="odd">
+<td><strong>Price</strong></td>
+<td>Latest live price.</td>
+</tr>
+<tr class="even">
+<td><strong>CHG % (period)</strong></td>
+<td>Price change in % over the period, for example <strong>CHG % (1H)</strong> = last hour.</td>
+</tr>
+<tr class="odd">
+<td><strong>VOL (period)</strong></td>
+<td>Money traded over the period, in USD.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Open <strong>Columns</strong> to show or hide columns.</p>
+<h2 id="1-5"><span class="num">1.5</span> Beginner mistakes</h2>
+<ul>
+<li><strong>Treating a match as a buy signal.</strong> A strategy only shows coins that fit a pattern, and patterns fail often. Open the chart and plan your stop loss before entering.</li>
+<li><strong>No volume filter.</strong> Tiny coins jump on small trades and can be hard to sell. Set <strong>24h volume</strong> to at least <strong><span class="math inline">5<em>M</em>–</span>10M</strong> unless you understand the risk.</li>
+<li><strong>Expecting results to change every few seconds.</strong> Indicators update when a candle closes, so a 1h strategy changes once an hour. Check <strong>Updated at</strong>.</li>
+</ul>
+<h1 id="part-2" class="part">Part 2: Intermediate</h1>
+<h2 id="2-1"><span class="num">2.1</span> Futures data basics</h2>
+<p>Futures data shows <strong>who is positioned and how crowded they are</strong>, which price charts alone can't tell you. This data exists for futures only, so strategies that use it never show spot pairs.</p>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Term</th>
+<th>What it means</th>
+<th>How to read it</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Open Interest (OI)</strong></td>
+<td>The number of futures contracts still open.</td>
+<td>OI rising = new money entering. OI falling = positions closing.</td>
+</tr>
+<tr class="even">
+<td><strong>Funding rate</strong></td>
+<td>What longs and shorts pay each other to keep positions open, shown per hour.</td>
+<td>Positive = longs crowded (longs pay shorts). Negative = shorts crowded.</td>
+</tr>
+<tr class="odd">
+<td><strong>Premium / basis</strong></td>
+<td>Futures price compared with spot (index) price.</td>
+<td>Premium = traders paying extra to be long. Discount = the opposite.</td>
+</tr>
+<tr class="even">
+<td><strong>Long/short ratio</strong></td>
+<td>How many accounts are long vs short.</td>
+<td>Above 1.5 = mostly long. Below 0.7 = mostly short.</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Market positioning</strong> combines price and OI into one plain answer:</p>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Price</th>
+<th>OI</th>
+<th>Name</th>
+<th>What it means</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Up</td>
+<td>Up</td>
+<td><strong>New longs</strong></td>
+<td>New buyers are opening positions. Strong move.</td>
+</tr>
+<tr class="even">
+<td>Down</td>
+<td>Up</td>
+<td><strong>New shorts</strong></td>
+<td>New sellers are opening positions.</td>
+</tr>
+<tr class="odd">
+<td>Up</td>
+<td>Down</td>
+<td><strong>Short covering</strong></td>
+<td>Shorts are closing. The move is often temporary.</td>
+</tr>
+<tr class="even">
+<td>Down</td>
+<td>Down</td>
+<td><strong>Long liquidation</strong></td>
+<td>Longs are exiting or getting liquidated.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="2-2"><span class="num">2.2</span> Intermediate strategies (all futures only)</h2>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Strategy</th>
+<th>Tag</th>
+<th>What it finds</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Breakout with new money</strong></td>
+<td>Buy / Long idea</td>
+<td>New 20-candle high, high volume, rising OI, and price above the trend EMA. New positions back the breakout, so it's more likely to hold.</td>
+</tr>
+<tr class="even">
+<td><strong>Short squeeze watch</strong></td>
+<td>Buy / Long idea</td>
+<td>Negative funding (shorts crowded), rising OI, and RSI just crossed above 50. Shorts may be forced to buy back, pushing price up fast.</td>
+</tr>
+<tr class="odd">
+<td><strong>Overheated longs</strong></td>
+<td>Sell / Short idea</td>
+<td>RSI above 75, high funding (longs crowded), and a large OI rise. A small drop can trigger a chain of liquidations.</td>
+</tr>
+<tr class="even">
+<td><strong>Fake pump warning</strong></td>
+<td>Avoid</td>
+<td>Big price jump with extreme volume while OI falls. The move came from shorts closing, not new buyers, and often fades. Don't chase.</td>
+</tr>
+<tr class="odd">
+<td><strong>Strong trend, healthy leverage</strong></td>
+<td>Buy / Long idea</td>
+<td>SuperTrend bullish, rising OI, and funding between 0 and 0.003% per hour. An uptrend that isn't crowded.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="2-3"><span class="num">2.3</span> Customize and create your own strategy</h2>
+<p>You can change any built-in strategy or build your own from scratch; each condition checks one indicator on one timeframe.</p>
+<ol type="1">
+<li>Click <strong>Customize</strong> on a built-in strategy to start from a copy, or <strong>Create strategy</strong> to start empty.</li>
+<li>Give it a <strong>name</strong> and a <strong>type</strong> (Buy / Long idea, Sell / Short idea, Watch, Avoid).</li>
+<li>Add conditions. For each one, pick the <strong>indicator</strong>, the <strong>timeframe</strong>, and a ready-made <strong>choice</strong> in plain words, such as <strong>Oversold (below 30)</strong>.</li>
+<li>Choose <strong>Match all</strong> (a pair must pass every condition) or <strong>Match any</strong> (one is enough).</li>
+<li>Read the sentence at the top to check your logic, for example "Find coins where RSI on 1h is oversold (below 30) AND SuperTrend on 4h just turned bullish". The list previews results live.</li>
+<li>Click <strong>Save</strong>. It appears under <strong>My strategies</strong>, with <strong>Edit</strong> and <strong>Delete</strong>.</li>
+</ol>
+<p>Keep it simple: start with <strong>2–3 conditions</strong>. With Match all, every extra condition removes more coins, and the list is often empty.</p>
+<p>Saved strategies live <strong>in this browser only</strong>. They won't appear on another device, and clearing your browser data removes them.</p>
+<h2 id="2-4"><span class="num">2.4</span> More columns</h2>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Column</th>
+<th>What it means</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>OI $</strong></td>
+<td>Total value of open futures positions, in USD.</td>
+</tr>
+<tr class="even">
+<td><strong>OI CHG % (period)</strong></td>
+<td>Change in the number of open contracts, in %. Rising = new money in.</td>
+</tr>
+<tr class="odd">
+<td><strong>Funding/h</strong></td>
+<td>Current funding rate per hour. Positive = longs pay shorts.</td>
+</tr>
+<tr class="even">
+<td><strong>RVOL</strong></td>
+<td>Recent volume vs its usual level.</td>
+</tr>
+<tr class="odd">
+<td><strong>VLT (period)</strong></td>
+<td>Volatility: high-to-low range as % of price. Higher = moves more.</td>
+</tr>
+<tr class="even">
+<td><strong>TRADES (period)</strong></td>
+<td>Number of trades in the period. Not every exchange provides it.</td>
+</tr>
+<tr class="odd">
+<td><strong>MCAP</strong></td>
+<td>Market cap, when the exchange provides it; otherwise <strong>N/A</strong>.</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>OI $ vs OI CHG %:</strong> OI $ is a dollar value, so it rises when price rises even if nobody opens a new position. <strong>OI CHG %</strong> counts contracts, so it shows real new positions. Use OI CHG % to judge whether new money is entering.</p>
+<h1 id="part-3" class="part">Part 3: Advanced</h1>
+<h2 id="3-1"><span class="num">3.1</span> Every condition</h2>
+<p>All conditions use <strong>completed candles only</strong>, so values don't change while a candle is still forming. "Just crossed" means the cross happened in the last 3 candles (5m to 4h) or the last 2 candles (8h to 1d).</p>
+<p><strong>Trend: which way is it moving?</strong></p>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Condition</th>
+<th>What it tells you</th>
+<th>Choices</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Price vs EMA</strong> (20, 50, 100, 200)</td>
+<td>Price above or below its average.</td>
+<td>Above, Below, Just crossed above, Just crossed below</td>
+</tr>
+<tr class="even">
+<td><strong>EMA cross</strong> (9/21, 20/50, 50/200)</td>
+<td>A fast average crossing a slow one = trend changing. 50/200 = golden cross / death cross.</td>
+<td>Bullish (fast above slow), Bearish, Just crossed up, Just crossed down</td>
+</tr>
+<tr class="odd">
+<td><strong>Trend direction (+DI / −DI)</strong></td>
+<td>Whether buyers or sellers are in control.</td>
+<td>Buyers in control, Sellers in control</td>
+</tr>
+<tr class="even">
+<td><strong>ADX (14)</strong></td>
+<td>Trend strength, not direction.</td>
+<td>Strong trend (&gt;25), Very strong (&gt;40), Choppy (&lt;20), Custom</td>
+</tr>
+<tr class="odd">
+<td><strong>SuperTrend (10, 3)</strong></td>
+<td>Volatility-based trend direction.</td>
+<td>Bullish, Bearish, Just turned bullish, Just turned bearish</td>
+</tr>
+<tr class="even">
+<td><strong>Distance from EMA %</strong></td>
+<td>How far price has stretched from its average.</td>
+<td>Stretched above (&gt;10%), Stretched below (&lt;−10%), Custom</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Momentum: is it stretched or speeding up?</strong></p>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Condition</th>
+<th>What it tells you</th>
+<th>Choices</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>RSI (14)</strong></td>
+<td>Momentum, 0 to 100.</td>
+<td>Oversold (&lt;30), Pulled back (&lt;40), Bullish (&gt;50), Overbought (&gt;70), Just crossed above 50, Just crossed below 50, Custom</td>
+</tr>
+<tr class="even">
+<td><strong>Stoch RSI</strong></td>
+<td>A faster RSI, for timing entries.</td>
+<td>Oversold (%K&lt;20), Overbought (%K&gt;80), Turning up (%K crosses above %D), Turning down, Custom</td>
+</tr>
+<tr class="odd">
+<td><strong>MACD (12, 26, 9)</strong></td>
+<td>Momentum building or fading. No raw numbers, because MACD is in price units and can't be compared across coins.</td>
+<td>Bullish (above signal), Bearish, Just turned bullish, Just turned bearish</td>
+</tr>
+<tr class="even">
+<td><strong>Price change %</strong></td>
+<td>Price move over the timeframe; "big" depends on the timeframe (3.3).</td>
+<td>Big move up, Big move down, Big move either way, Custom</td>
+</tr>
+<tr class="odd">
+<td><strong>Consecutive candles</strong></td>
+<td>Green or red candles in a row.</td>
+<td>3+ green in a row, 3+ red in a row, Custom</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Volatility: is a big move coming?</strong></p>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Condition</th>
+<th>What it tells you</th>
+<th>Choices</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Bollinger Bands (20, 2)</strong></td>
+<td>Squeeze = tight bands before a move. Closing outside = strong push.</td>
+<td>Squeeze, Breaking above upper band, Breaking below lower band</td>
+</tr>
+<tr class="even">
+<td><strong>ATR % (14)</strong></td>
+<td>Average move per candle as % of price; levels depend on the timeframe (3.3).</td>
+<td>Calm, Active, Very volatile, Custom</td>
+</tr>
+<tr class="odd">
+<td><strong>Range breakout</strong> (20, 50, 100 candles)</td>
+<td>Close at a new high or low vs the last N candles.</td>
+<td>New high, New low</td>
+</tr>
+<tr class="even">
+<td><strong>Distance from 24h high %</strong></td>
+<td>How close price is to its 24h high.</td>
+<td>Near the high (within 2%), Custom</td>
+</tr>
+<tr class="odd">
+<td><strong>Distance from 24h low %</strong></td>
+<td>How close price is to its 24h low.</td>
+<td>Near the low (within 2%), Custom</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Volume: is the move real?</strong></p>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Condition</th>
+<th>What it tells you</th>
+<th>Choices</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Quote volume (USD)</strong></td>
+<td>Money traded.</td>
+<td>Custom amount</td>
+</tr>
+<tr class="even">
+<td><strong>RVOL (20)</strong></td>
+<td>Last closed candle's volume ÷ average of the previous 20.</td>
+<td>Above normal (≥1.5x), Unusual (≥2x), Extreme (≥3x), Custom</td>
+</tr>
+<tr class="odd">
+<td><strong>Taker buy ratio (%)</strong></td>
+<td>Share of volume from aggressive buyers. Not available on every exchange (3.5).</td>
+<td>Buyers dominant (&gt;55%), Sellers dominant (&lt;45%), Custom</td>
+</tr>
+<tr class="even">
+<td><strong>VWAP (daily)</strong></td>
+<td>Volume-weighted average price since 00:00 UTC (8am Malaysia time). 5m, 15m and 1h only.</td>
+<td>Price above, Price below, Custom distance</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Derivatives: who is positioned? (futures only)</strong></p>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Condition</th>
+<th>What it tells you</th>
+<th>Choices</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>OI change %</strong></td>
+<td>Change in open contracts; levels depend on the timeframe (3.3).</td>
+<td>Rising, Falling, Spike, Custom</td>
+</tr>
+<tr class="even">
+<td><strong>Funding per hour %</strong></td>
+<td>Live funding, normalised per hour.</td>
+<td>Crowded longs (&gt;0.005%/h), Crowded shorts (&lt;−0.002%/h), Neutral (−0.002% to 0.005%/h), Custom</td>
+</tr>
+<tr class="odd">
+<td><strong>Market positioning</strong></td>
+<td>Price + OI direction (2.1).</td>
+<td>New longs, New shorts, Short covering, Long liquidation</td>
+</tr>
+<tr class="even">
+<td><strong>Long/short ratio</strong></td>
+<td>Accounts long vs short. Not available on every exchange (3.5).</td>
+<td>More longs (&gt;1.5), More shorts (&lt;0.7), Custom</td>
+</tr>
+<tr class="odd">
+<td><strong>Premium / basis %</strong></td>
+<td>(mark price − index price) ÷ index price × 100.</td>
+<td>Futures at premium (&gt;0.05%), Futures at discount (&lt;−0.05%), Custom</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="3-2"><span class="num">3.2</span> Custom values and multi-timeframe setups</h2>
+<p><strong>Custom</strong> lets you type your own number, using plain words: <strong>is above</strong>, <strong>is below</strong>, <strong>is between</strong>, and <strong>moved more than (up or down)</strong> for values that can be negative. Invalid values, such as RSI 150 or a range whose low is above its high, show a message and can't be saved.</p>
+<p>Each condition's timeframe can be <strong>Selected timeframe</strong> (follows the default, 1h) or pinned to a fixed one. Pinning lets you combine timeframes: use a <strong>bigger timeframe for direction</strong> and a <strong>smaller one for timing</strong>.</p>
+<ul>
+<li>Price above EMA 200 on <strong>4h</strong> AND RSI just crossed above 50 on <strong>1h</strong>: uptrend, momentum just turned up.</li>
+<li>SuperTrend bullish on <strong>1d</strong> AND Stoch RSI turning up on <strong>1h</strong>: daily uptrend, short-term entry.</li>
+<li>Bollinger squeeze on <strong>4h</strong> AND Market positioning: New longs on <strong>1h</strong>: a coiled market where new longs are starting to open.</li>
+</ul>
+<h2 id="3-3"><span class="num">3.3</span> Numbers behind each timeframe</h2>
+<p>Some choices scale with the timeframe, because a 3% move means a lot in 5 minutes but little in a day.</p>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Timeframe</th>
+<th>Big move (±)</th>
+<th>Price jump</th>
+<th>OI rising (small)</th>
+<th>OI rising (medium)</th>
+<th>OI spike (large)</th>
+<th>OI falling</th>
+<th>Trend EMA</th>
+<th>"Just crossed" window</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>5m</td>
+<td>1%</td>
+<td>2%</td>
+<td>0.5%</td>
+<td>1%</td>
+<td>1.5%</td>
+<td>−1%</td>
+<td>200</td>
+<td>3 candles</td>
+</tr>
+<tr class="even">
+<td>15m</td>
+<td>1.5%</td>
+<td>3%</td>
+<td>1%</td>
+<td>1.5%</td>
+<td>2%</td>
+<td>−1%</td>
+<td>200</td>
+<td>3 candles</td>
+</tr>
+<tr class="odd">
+<td>1h</td>
+<td>3%</td>
+<td>5%</td>
+<td>2%</td>
+<td>3%</td>
+<td>4%</td>
+<td>−2%</td>
+<td>200</td>
+<td>3 candles</td>
+</tr>
+<tr class="even">
+<td>4h</td>
+<td>5%</td>
+<td>8%</td>
+<td>3%</td>
+<td>5%</td>
+<td>7%</td>
+<td>−3%</td>
+<td>200</td>
+<td>3 candles</td>
+</tr>
+<tr class="odd">
+<td>8h</td>
+<td>7%</td>
+<td>10%</td>
+<td>4%</td>
+<td>7%</td>
+<td>9%</td>
+<td>−4%</td>
+<td>50</td>
+<td>2 candles</td>
+</tr>
+<tr class="even">
+<td>12h</td>
+<td>8%</td>
+<td>12%</td>
+<td>4%</td>
+<td>8%</td>
+<td>11%</td>
+<td>−4%</td>
+<td>50</td>
+<td>2 candles</td>
+</tr>
+<tr class="odd">
+<td>1d</td>
+<td>10%</td>
+<td>15%</td>
+<td>5%</td>
+<td>10%</td>
+<td>15%</td>
+<td>−5%</td>
+<td>50</td>
+<td>2 candles</td>
+</tr>
+</tbody>
+</table></div>
+<p>ATR % choices by timeframe:</p>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Timeframe</th>
+<th>Calm (below)</th>
+<th>Active (above)</th>
+<th>Very volatile (above)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>5m</td>
+<td>0.2%</td>
+<td>0.4%</td>
+<td>0.9%</td>
+</tr>
+<tr class="even">
+<td>15m</td>
+<td>0.35%</td>
+<td>0.75%</td>
+<td>1.5%</td>
+</tr>
+<tr class="odd">
+<td>1h</td>
+<td>0.7%</td>
+<td>1.5%</td>
+<td>3%</td>
+</tr>
+<tr class="even">
+<td>4h</td>
+<td>1.4%</td>
+<td>3%</td>
+<td>6%</td>
+</tr>
+<tr class="odd">
+<td>8h</td>
+<td>2%</td>
+<td>4.2%</td>
+<td>8.5%</td>
+</tr>
+<tr class="even">
+<td>12h</td>
+<td>2.4%</td>
+<td>5.2%</td>
+<td>10%</td>
+</tr>
+<tr class="odd">
+<td>1d</td>
+<td>3.5%</td>
+<td>7%</td>
+<td>15%</td>
+</tr>
+</tbody>
+</table></div>
+<p>The built-in strategies use these: "trend EMA" is EMA 200 on 5m to 4h and EMA 50 on 8h to 1d; "OI rising" uses the medium level; OI Spike and Overheated longs use the large level; Big Movers uses Big move; Fake pump warning uses Price jump and OI falling.</p>
+<h2 id="3-4"><span class="num">3.4</span> Remaining columns</h2>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Column</th>
+<th>What it means</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>CHG $ (period)</strong></td>
+<td>Price change in dollars over the period.</td>
+</tr>
+<tr class="even">
+<td><strong>OI CHG $ (period)</strong></td>
+<td>Change in Open Interest value, in USD.</td>
+</tr>
+<tr class="odd">
+<td><strong>VOL Δ (period)</strong></td>
+<td>Volume this period minus the period before.</td>
+</tr>
+<tr class="even">
+<td><strong>VOL CHG % (period)</strong></td>
+<td>Volume change in % vs the period before.</td>
+</tr>
+<tr class="odd">
+<td><strong>BTC CORR (period)</strong></td>
+<td>How closely the coin moves with BTC, from −1 (opposite) to +1 (same). Near 0 = moves on its own. Needs enough history.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="3-5"><span class="num">3.5</span> How the data works</h2>
+<p>The page refreshes about every <strong>30 seconds</strong>, but indicator conditions only change when a candle closes. Price and funding are live; RSI, EMA and the other indicators use completed candles. <strong>Updated at</strong> shows the last candle close.</p>
+<p>A dash or <strong>N/A</strong> means the value is still loading, the coin doesn't have enough history yet (new listings), or the exchange doesn't provide it. A missing value never passes a condition.</p>
+<p>Not every exchange provides every data point. Current support:</p>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Data</th>
+<th>Binance</th>
+<th>Bybit</th>
+<th>Gate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Taker buy ratio</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr class="even">
+<td>Long/short ratio</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr class="odd">
+<td>Volume breakout strategy</td>
+<td>Full</td>
+<td>Runs without the taker buy check</td>
+<td>Runs without the taker buy check</td>
+</tr>
+<tr class="even">
+<td>Open Interest, funding, premium</td>
+<td>Futures only</td>
+<td>Futures only</td>
+<td>Futures only</td>
+</tr>
+</tbody>
+</table></div>
+<p>As we add exchanges, this table will grow.</p>
+<p><strong>Exchange availability:</strong> some exchanges don't serve every country. Using a VPN to get around this usually breaks the exchange's terms of service, and exchanges can freeze accounts, with funds inside, when they detect it. Check whether an exchange accepts users from your country before you sign up and deposit.</p>
+</template>
+<template id="tpl-bm"><h1 class="title">Panduan Screener Bicara Krypto Pulse</h1>
+<p>Bicara Krypto Pulse ni screener market. Dia scan semua trading pair kat exchange yang kami support, lepas tu tunjuk yang match dengan apa yang korang cari je. Sekarang kami support Binance, Bybit dan Gate, dan lebih banyak exchange akan ditambah nanti. Term trading macam RSI, Open Interest dan funding rate kekal dalam English sebab itulah yang korang nampak kat screen dan exchange.</p>
+<blockquote>
+<p><strong>Penting:</strong> Strategy cuma cari coin yang ikut pattern tertentu. Ia bukan signal beli atau jual, dan bukan nasihat kewangan. Selalu check chart dan jaga risk korang sendiri.</p>
+</blockquote>
+<p><strong>Mula ikut level korang:</strong></p>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Level</th>
+<th>Baca kalau</th>
+<th>Korang akan belajar</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Bahagian 1: Beginner</strong></td>
+<td>Korang baru dengan screener ni atau dengan indicator.</td>
+<td>Cara guna page, strategy siap, 6 indicator penting dan column asas.</td>
+</tr>
+<tr class="even">
+<td><strong>Bahagian 2: Intermediate</strong></td>
+<td>Korang dah tahu RSI dan EMA, dan nak guna data futures.</td>
+<td>Open Interest dan funding, strategy intermediate, dan buat strategy sendiri.</td>
+</tr>
+<tr class="odd">
+<td><strong>Bahagian 3: Advanced</strong></td>
+<td>Korang nak kawalan penuh dan nombor tepat.</td>
+<td>Semua condition, nilai custom, setup multi-timeframe, table threshold dan cara data berfungsi.</td>
+</tr>
+</tbody>
+</table></div>
+<h1 id="part-1" class="part">Bahagian 1: Beginner</h1>
+<h2 id="1-1"><span class="num">1.1</span> Cara mula</h2>
+<p>Boleh jumpa setup pertama dalam 5 langkah: pilih exchange, pilih strategy, tapis market, baca list, lepas tu klik pair untuk tengok chart.</p>
+<ol type="1">
+<li><strong>Pilih exchange</strong> kat atas. List akan tunjuk semua pair kat exchange tu.</li>
+<li><strong>Pilih strategy</strong> dari dropdown <strong>Strategy</strong>. Mula dengan Quick filter macam <strong>High Volume</strong>, atau strategy beginner macam <strong>Buy the dip</strong>. List akan tunjuk pair yang match je. Boleh pilih lebih dari satu.</li>
+<li><strong>Tapis market</strong> kat row kedua:
+<ul>
+<li><strong>Market:</strong> spot, futures, atau semua.</li>
+<li><strong>Asset class</strong> dan <strong>Quote</strong> (contoh, pair USDT je).</li>
+<li><strong>24h volume:</strong> set minimum dan maximum. <strong>$10M+</strong> permulaan yang bagus untuk buang coin kecil yang susah nak jual beli.</li>
+</ul></li>
+<li><strong>Baca list.</strong> Nombor kat kanan (contoh "12 of 1,472 markets") tunjuk berapa pair yang lepas. Guna <strong>Search</strong> untuk cari coin.</li>
+<li><strong>Klik pair</strong> untuk buka snapshot: harga, 24h change, 24h volume dan chart 1h. Dari situ boleh terus buka pair tu kat exchange.</li>
+</ol>
+<p>Butang lain:</p>
+<ul>
+<li>Setiap strategy yang aktif ada chip dengan <strong>✕</strong> untuk buang yang tu je. <strong>Clear all</strong> buang semua strategy dan tunjuk list penuh balik.</li>
+<li><strong>Reset all</strong> keluar bila korang ubah filter, dan set balik semua filter ke default.</li>
+<li>Icon bintang tambah pair ke watchlist.</li>
+</ul>
+<h2 id="1-2"><span class="num">1.2</span> Strategy siap</h2>
+<p>Strategy ni set condition yang dah siap. Bila pilih satu, list akan tunjuk pair yang match je. Kalau pilih banyak, pair akan keluar kalau dia match <strong>mana-mana satu</strong>, jadi list jadi makin panjang, bukan makin pendek.</p>
+<p>Setiap strategy ada tag:</p>
+<ul>
+<li><strong>Buy / Long idea:</strong> harga mungkin naik.</li>
+<li><strong>Sell / Short idea:</strong> harga mungkin turun.</li>
+<li><strong>Watch:</strong> ada benda tengah jadi, tapi arah belum jelas.</li>
+<li><strong>Avoid:</strong> tanda bahaya.</li>
+</ul>
+<p><strong>Quick filters</strong> (list sekali klik):</p>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Strategy</th>
+<th>Apa yang dia cari</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>High Volume</strong></td>
+<td>Pair yang paling banyak diniagakan: top 20% ikut volume 24 jam.</td>
+</tr>
+<tr class="even">
+<td><strong>OI Spike</strong></td>
+<td>Futures yang ramai orang baru buka posisi.</td>
+</tr>
+<tr class="odd">
+<td><strong>Big Movers</strong></td>
+<td>Pair yang bergerak besar, naik atau turun.</td>
+</tr>
+<tr class="even">
+<td><strong>High Funding</strong></td>
+<td>Futures yang satu pihak (long atau short) dah terlalu ramai.</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Strategy beginner:</strong></p>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Strategy</th>
+<th>Tag</th>
+<th>Apa yang dia cari</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Ride the trend</strong></td>
+<td>Buy / Long idea</td>
+<td>Uptrend yang kuat dan sihat, tapi belum overbought.</td>
+</tr>
+<tr class="even">
+<td><strong>Buy the dip</strong></td>
+<td>Buy / Long idea</td>
+<td>Coin dalam uptrend yang tengah turun sikit, peluang masuk harga lebih murah.</td>
+</tr>
+<tr class="odd">
+<td><strong>Oversold bounce</strong></td>
+<td>Buy / Long idea</td>
+<td>Coin yang dah kena jual teruk dan mula nak pusing naik. Risk lebih tinggi sebab lawan trend.</td>
+</tr>
+<tr class="even">
+<td><strong>Volume breakout</strong></td>
+<td>Buy / Long idea</td>
+<td>Harga pecah paras tertinggi baru dengan belian yang kuat.</td>
+</tr>
+<tr class="odd">
+<td><strong>Calm before the move</strong></td>
+<td>Watch</td>
+<td>Coin yang tengah senyap, selalunya akan bergerak besar tak lama lagi. Arah belum tahu.</td>
+</tr>
+<tr class="even">
+<td><strong>Trend turning down</strong></td>
+<td>Sell / Short idea</td>
+<td>Downtrend sambung turun lepas bounce sekejap. Futures je.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="1-3"><span class="num">1.3</span> 6 indicator yang beginner kena tahu</h2>
+<p>Strategy beginner dibina dari enam indicator ni. Belajar ni dulu.</p>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Indicator</th>
+<th>Apa dia tunjuk</th>
+<th>Cara baca</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>EMA</strong> (moving average)</td>
+<td>Harga purata dalam satu tempoh.</td>
+<td>Harga atas EMA = uptrend. Bawah = downtrend. EMA 200 = jangka panjang, EMA 20 = jangka pendek.</td>
+</tr>
+<tr class="even">
+<td><strong>RSI (14)</strong></td>
+<td>Momentum, dari 0 hingga 100.</td>
+<td>Bawah 30 = oversold (dah kena jual terlalu banyak). Atas 70 = overbought (dah naik terlalu banyak). Atas 50 = pembeli lebih kuat.</td>
+</tr>
+<tr class="odd">
+<td><strong>ADX (14)</strong></td>
+<td>Kekuatan trend, bukan arah.</td>
+<td>Atas 25 = trend kuat. Bawah 20 = sideways, takde trend jelas.</td>
+</tr>
+<tr class="even">
+<td><strong>SuperTrend</strong></td>
+<td>Signal trend yang mudah.</td>
+<td>Hijau (bullish) = uptrend. Merah (bearish) = downtrend.</td>
+</tr>
+<tr class="odd">
+<td><strong>Bollinger Bands</strong></td>
+<td>Berapa sempit atau luas pergerakan harga.</td>
+<td><strong>Squeeze</strong> (band sangat sempit) selalunya datang sebelum pergerakan besar.</td>
+</tr>
+<tr class="even">
+<td><strong>RVOL</strong></td>
+<td>Volume berbanding biasa.</td>
+<td>2x = dua kali ganda dari biasa. Ramai orang tengah perhati.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="1-4"><span class="num">1.4</span> Column asas</h2>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Column</th>
+<th>Apa maksudnya</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>24h trend</strong></td>
+<td>Chart kecil pergerakan harga terkini.</td>
+</tr>
+<tr class="even">
+<td><strong>Symbol</strong></td>
+<td>Nama pair dan jenis market (spot atau futures). Klik untuk buka snapshot.</td>
+</tr>
+<tr class="odd">
+<td><strong>Price</strong></td>
+<td>Harga terkini (live).</td>
+</tr>
+<tr class="even">
+<td><strong>CHG % (period)</strong></td>
+<td>Perubahan harga dalam % untuk tempoh tu, contoh <strong>CHG % (1H)</strong> = sejam terakhir.</td>
+</tr>
+<tr class="odd">
+<td><strong>VOL (period)</strong></td>
+<td>Jumlah duit yang diniagakan dalam tempoh tu, dalam USD.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Buka <strong>Columns</strong> untuk tunjuk atau sorok column.</p>
+<h2 id="1-5"><span class="num">1.5</span> Mistake beginner</h2>
+<ul>
+<li><strong>Anggap match = signal beli.</strong> Strategy cuma tunjuk coin yang ikut pattern, dan pattern selalu gagal. Buka chart dan plan stop loss sebelum masuk.</li>
+<li><strong>Tak letak filter volume.</strong> Coin kecil senang melonjak dengan trade kecil dan susah nak jual. Set <strong>24h volume</strong> sekurang-kurangnya <strong><span class="math inline">5<em>M</em>–</span>10M</strong> kecuali korang faham risikonya.</li>
+<li><strong>Harap result berubah setiap beberapa saat.</strong> Indicator update bila candle tutup, jadi strategy 1h berubah sejam sekali. Tengok <strong>Updated at</strong>.</li>
+</ul>
+<h1 id="part-2" class="part">Bahagian 2: Intermediate</h1>
+<h2 id="2-1"><span class="num">2.1</span> Asas data futures</h2>
+<p>Data futures tunjuk <strong>siapa yang tengah pegang posisi dan berapa ramai</strong>, benda yang chart harga je tak boleh bagitahu. Data ni untuk futures je, jadi strategy yang guna data ni takkan tunjuk spot pair.</p>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Term</th>
+<th>Apa maksudnya</th>
+<th>Cara baca</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Open Interest (OI)</strong></td>
+<td>Jumlah kontrak futures yang masih terbuka.</td>
+<td>OI naik = duit baru masuk. OI turun = orang tengah tutup posisi.</td>
+</tr>
+<tr class="even">
+<td><strong>Funding rate</strong></td>
+<td>Bayaran antara long dan short untuk kekalkan posisi, ditunjuk ikut sejam.</td>
+<td>Positif = terlalu ramai long (long bayar short). Negatif = terlalu ramai short.</td>
+</tr>
+<tr class="odd">
+<td><strong>Premium / basis</strong></td>
+<td>Beza harga futures dengan harga spot (index).</td>
+<td>Premium = orang sanggup bayar lebih untuk long. Discount = sebaliknya.</td>
+</tr>
+<tr class="even">
+<td><strong>Long/short ratio</strong></td>
+<td>Nisbah akaun yang long berbanding short.</td>
+<td>Atas 1.5 = kebanyakan long. Bawah 0.7 = kebanyakan short.</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Market positioning</strong> gabungkan harga dan OI dalam satu jawapan mudah:</p>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Harga</th>
+<th>OI</th>
+<th>Nama</th>
+<th>Apa maksudnya</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Naik</td>
+<td>Naik</td>
+<td><strong>New longs</strong></td>
+<td>Pembeli baru tengah buka posisi. Pergerakan yang kuat.</td>
+</tr>
+<tr class="even">
+<td>Turun</td>
+<td>Naik</td>
+<td><strong>New shorts</strong></td>
+<td>Penjual baru tengah buka posisi.</td>
+</tr>
+<tr class="odd">
+<td>Naik</td>
+<td>Turun</td>
+<td><strong>Short covering</strong></td>
+<td>Short tengah tutup posisi. Selalunya pergerakan sementara je.</td>
+</tr>
+<tr class="even">
+<td>Turun</td>
+<td>Turun</td>
+<td><strong>Long liquidation</strong></td>
+<td>Long tengah keluar atau kena liquidate.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="2-2"><span class="num">2.2</span> Strategy intermediate (semua futures je)</h2>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Strategy</th>
+<th>Tag</th>
+<th>Apa yang dia cari</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Breakout with new money</strong></td>
+<td>Buy / Long idea</td>
+<td>Pecah paras tertinggi 20 candle, volume tinggi, OI naik, dan harga atas trend EMA. Breakout yang disokong duit baru masuk, jadi lebih berpeluang untuk bertahan.</td>
+</tr>
+<tr class="even">
+<td><strong>Short squeeze watch</strong></td>
+<td>Buy / Long idea</td>
+<td>Funding negatif (terlalu ramai short), OI naik, dan RSI baru lepas 50 ke atas. Short mungkin terpaksa beli balik, harga boleh melonjak laju.</td>
+</tr>
+<tr class="odd">
+<td><strong>Overheated longs</strong></td>
+<td>Sell / Short idea</td>
+<td>RSI atas 75, funding tinggi (terlalu ramai long), dan OI naik banyak. Sikit turun je boleh trigger liquidation berantai.</td>
+</tr>
+<tr class="even">
+<td><strong>Fake pump warning</strong></td>
+<td>Avoid</td>
+<td>Harga naik mendadak dengan volume sangat tinggi tapi OI turun. Naik sebab short tutup posisi, bukan pembeli baru, dan selalu tak tahan lama. Jangan kejar.</td>
+</tr>
+<tr class="odd">
+<td><strong>Strong trend, healthy leverage</strong></td>
+<td>Buy / Long idea</td>
+<td>SuperTrend bullish, OI naik, dan funding antara 0 dan 0.003% sejam. Uptrend yang belum terlalu ramai.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="2-3"><span class="num">2.3</span> Customize dan buat strategy sendiri</h2>
+<p>Korang boleh ubah mana-mana strategy built-in atau buat sendiri dari kosong. Setiap condition check satu indicator pada satu timeframe.</p>
+<ol type="1">
+<li>Klik <strong>Customize</strong> pada strategy built-in untuk mula dari copy, atau <strong>Create strategy</strong> untuk mula dari kosong.</li>
+<li>Bagi <strong>nama</strong> dan <strong>type</strong> (Buy / Long idea, Sell / Short idea, Watch, Avoid).</li>
+<li>Tambah condition. Untuk setiap satu, pilih <strong>indicator</strong>, <strong>timeframe</strong>, dan <strong>choice</strong> siap dalam ayat mudah, contoh <strong>Oversold (below 30)</strong>.</li>
+<li>Pilih <strong>Match all</strong> (pair kena lepas semua condition) atau <strong>Match any</strong> (lepas satu pun dah cukup).</li>
+<li>Baca ayat kat atas untuk check logic korang, contoh "Find coins where RSI on 1h is oversold (below 30) AND SuperTrend on 4h just turned bullish". List akan tunjuk result terus.</li>
+<li>Klik <strong>Save</strong>. Strategy akan keluar bawah <strong>My strategies</strong>, dengan <strong>Edit</strong> dan <strong>Delete</strong>.</li>
+</ol>
+<p>Buat simple dulu: mula dengan <strong>2–3 condition</strong>. Dengan Match all, setiap condition tambahan buang lebih banyak coin, dan list selalu jadi kosong.</p>
+<p>Strategy yang disave ada <strong>dalam browser ni je</strong>. Takkan keluar kat device lain, dan kalau clear browser data, strategy akan hilang.</p>
+<h2 id="2-4"><span class="num">2.4</span> Column tambahan</h2>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Column</th>
+<th>Apa maksudnya</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>OI $</strong></td>
+<td>Nilai semua posisi futures yang masih terbuka, dalam USD.</td>
+</tr>
+<tr class="even">
+<td><strong>OI CHG % (period)</strong></td>
+<td>Perubahan bilangan kontrak terbuka dalam %. Naik = duit baru masuk.</td>
+</tr>
+<tr class="odd">
+<td><strong>Funding/h</strong></td>
+<td>Kadar funding sejam. Positif = long bayar short.</td>
+</tr>
+<tr class="even">
+<td><strong>RVOL</strong></td>
+<td>Volume terkini berbanding biasa.</td>
+</tr>
+<tr class="odd">
+<td><strong>VLT (period)</strong></td>
+<td>Volatility: julat harga tinggi ke rendah dalam % harga. Makin tinggi, makin liar.</td>
+</tr>
+<tr class="even">
+<td><strong>TRADES (period)</strong></td>
+<td>Bilangan transaksi dalam tempoh tu. Bukan semua exchange bagi data ni.</td>
+</tr>
+<tr class="odd">
+<td><strong>MCAP</strong></td>
+<td>Market cap, kalau exchange ada bagi. Kalau takde, keluar <strong>N/A</strong>.</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>OI $ vs OI CHG %:</strong> OI $ ni nilai dalam dollar, jadi dia naik bila harga naik walaupun takde orang buka posisi baru. <strong>OI CHG %</strong> kira bilangan kontrak, jadi dia tunjuk posisi baru yang betul. Guna OI CHG % untuk tengok duit baru masuk ke tak.</p>
+<h1 id="part-3" class="part">Bahagian 3: Advanced</h1>
+<h2 id="3-1"><span class="num">3.1</span> Semua condition</h2>
+<p>Semua condition guna <strong>candle yang dah tutup je</strong>, jadi nilai tak berubah-ubah masa candle tengah terbentuk. "Just crossed" maksudnya cross tu berlaku dalam 3 candle terakhir (5m hingga 4h) atau 2 candle terakhir (8h hingga 1d).</p>
+<p><strong>Trend: arah ke mana?</strong></p>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Condition</th>
+<th>Apa dia tunjuk</th>
+<th>Pilihan</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Price vs EMA</strong> (20, 50, 100, 200)</td>
+<td>Harga atas atau bawah purata.</td>
+<td>Above, Below, Just crossed above, Just crossed below</td>
+</tr>
+<tr class="even">
+<td><strong>EMA cross</strong> (9/21, 20/50, 50/200)</td>
+<td>EMA laju potong EMA perlahan = trend bertukar. 50/200 = golden cross / death cross.</td>
+<td>Bullish (fast above slow), Bearish, Just crossed up, Just crossed down</td>
+</tr>
+<tr class="odd">
+<td><strong>Trend direction (+DI / −DI)</strong></td>
+<td>Pembeli atau penjual yang tengah kawal.</td>
+<td>Buyers in control, Sellers in control</td>
+</tr>
+<tr class="even">
+<td><strong>ADX (14)</strong></td>
+<td>Kekuatan trend, bukan arah.</td>
+<td>Strong trend (&gt;25), Very strong (&gt;40), Choppy (&lt;20), Custom</td>
+</tr>
+<tr class="odd">
+<td><strong>SuperTrend (10, 3)</strong></td>
+<td>Arah trend berdasarkan volatility.</td>
+<td>Bullish, Bearish, Just turned bullish, Just turned bearish</td>
+</tr>
+<tr class="even">
+<td><strong>Distance from EMA %</strong></td>
+<td>Berapa jauh harga dah lari dari purata.</td>
+<td>Stretched above (&gt;10%), Stretched below (&lt;−10%), Custom</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Momentum: dah terlebih atau tengah laju?</strong></p>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Condition</th>
+<th>Apa dia tunjuk</th>
+<th>Pilihan</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>RSI (14)</strong></td>
+<td>Momentum, 0 hingga 100.</td>
+<td>Oversold (&lt;30), Pulled back (&lt;40), Bullish (&gt;50), Overbought (&gt;70), Just crossed above 50, Just crossed below 50, Custom</td>
+</tr>
+<tr class="even">
+<td><strong>Stoch RSI</strong></td>
+<td>RSI yang lebih laju, untuk timing masuk.</td>
+<td>Oversold (%K&lt;20), Overbought (%K&gt;80), Turning up (%K potong ke atas %D), Turning down, Custom</td>
+</tr>
+<tr class="odd">
+<td><strong>MACD (12, 26, 9)</strong></td>
+<td>Momentum bertambah atau makin lemah. Takde nombor mentah sebab MACD ikut unit harga dan tak boleh dibanding antara coin.</td>
+<td>Bullish (above signal), Bearish, Just turned bullish, Just turned bearish</td>
+</tr>
+<tr class="even">
+<td><strong>Price change %</strong></td>
+<td>Pergerakan harga dalam timeframe tu; saiz "besar" ikut timeframe (3.3).</td>
+<td>Big move up, Big move down, Big move either way, Custom</td>
+</tr>
+<tr class="odd">
+<td><strong>Consecutive candles</strong></td>
+<td>Candle hijau atau merah berturut-turut.</td>
+<td>3+ green in a row, 3+ red in a row, Custom</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Volatility: ada pergerakan besar nak datang?</strong></p>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Condition</th>
+<th>Apa dia tunjuk</th>
+<th>Pilihan</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Bollinger Bands (20, 2)</strong></td>
+<td>Squeeze = band sempit sebelum pergerakan. Tutup luar band = tolakan kuat.</td>
+<td>Squeeze, Breaking above upper band, Breaking below lower band</td>
+</tr>
+<tr class="even">
+<td><strong>ATR % (14)</strong></td>
+<td>Purata pergerakan setiap candle dalam % harga; paras ikut timeframe (3.3).</td>
+<td>Calm, Active, Very volatile, Custom</td>
+</tr>
+<tr class="odd">
+<td><strong>Range breakout</strong> (20, 50, 100 candle)</td>
+<td>Tutup paling tinggi atau paling rendah berbanding N candle sebelum.</td>
+<td>New high, New low</td>
+</tr>
+<tr class="even">
+<td><strong>Distance from 24h high %</strong></td>
+<td>Berapa dekat harga dengan paras tertinggi 24 jam.</td>
+<td>Near the high (within 2%), Custom</td>
+</tr>
+<tr class="odd">
+<td><strong>Distance from 24h low %</strong></td>
+<td>Berapa dekat harga dengan paras terendah 24 jam.</td>
+<td>Near the low (within 2%), Custom</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Volume: pergerakan ni betul ke?</strong></p>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Condition</th>
+<th>Apa dia tunjuk</th>
+<th>Pilihan</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Quote volume (USD)</strong></td>
+<td>Jumlah duit yang diniagakan.</td>
+<td>Custom amount</td>
+</tr>
+<tr class="even">
+<td><strong>RVOL (20)</strong></td>
+<td>Volume candle terakhir ÷ purata 20 candle sebelum.</td>
+<td>Above normal (≥1.5x), Unusual (≥2x), Extreme (≥3x), Custom</td>
+</tr>
+<tr class="odd">
+<td><strong>Taker buy ratio (%)</strong></td>
+<td>Peratus volume dari pembeli agresif. Bukan semua exchange ada (3.5).</td>
+<td>Buyers dominant (&gt;55%), Sellers dominant (&lt;45%), Custom</td>
+</tr>
+<tr class="even">
+<td><strong>VWAP (daily)</strong></td>
+<td>Harga purata ikut volume sejak 00:00 UTC (8 pagi waktu Malaysia). Untuk 5m, 15m dan 1h je.</td>
+<td>Price above, Price below, Custom distance</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Derivatives: siapa yang tengah pegang posisi? (futures je)</strong></p>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Condition</th>
+<th>Apa dia tunjuk</th>
+<th>Pilihan</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>OI change %</strong></td>
+<td>Perubahan kontrak terbuka; paras ikut timeframe (3.3).</td>
+<td>Rising, Falling, Spike, Custom</td>
+</tr>
+<tr class="even">
+<td><strong>Funding per hour %</strong></td>
+<td>Funding live, dikira ikut sejam.</td>
+<td>Crowded longs (&gt;0.005%/h), Crowded shorts (&lt;−0.002%/h), Neutral (−0.002% hingga 0.005%/h), Custom</td>
+</tr>
+<tr class="odd">
+<td><strong>Market positioning</strong></td>
+<td>Arah harga + OI (2.1).</td>
+<td>New longs, New shorts, Short covering, Long liquidation</td>
+</tr>
+<tr class="even">
+<td><strong>Long/short ratio</strong></td>
+<td>Akaun long berbanding short. Bukan semua exchange ada (3.5).</td>
+<td>More longs (&gt;1.5), More shorts (&lt;0.7), Custom</td>
+</tr>
+<tr class="odd">
+<td><strong>Premium / basis %</strong></td>
+<td>(harga mark − harga index) ÷ harga index × 100.</td>
+<td>Futures at premium (&gt;0.05%), Futures at discount (&lt;−0.05%), Custom</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="3-2"><span class="num">3.2</span> Nilai custom dan setup multi-timeframe</h2>
+<p><strong>Custom</strong> bagi korang taip nombor sendiri, guna perkataan mudah: <strong>is above</strong>, <strong>is below</strong>, <strong>is between</strong>, dan <strong>moved more than (up or down)</strong> untuk nilai yang boleh negatif. Nilai yang tak masuk akal, macam RSI 150 atau julat yang nilai rendah lebih tinggi dari nilai tinggi, akan keluar mesej dan tak boleh save.</p>
+<p>Timeframe setiap condition boleh jadi <strong>Selected timeframe</strong> (ikut default, 1h) atau tetap pada satu timeframe. Bila tetapkan timeframe, korang boleh gabung banyak timeframe: guna <strong>timeframe besar untuk arah</strong> dan <strong>timeframe kecil untuk timing</strong>.</p>
+<ul>
+<li>Price above EMA 200 on <strong>4h</strong> AND RSI just crossed above 50 on <strong>1h</strong>: uptrend, dan momentum baru pusing naik.</li>
+<li>SuperTrend bullish on <strong>1d</strong> AND Stoch RSI turning up on <strong>1h</strong>: uptrend harian, masuk ikut timing jangka pendek.</li>
+<li>Bollinger squeeze on <strong>4h</strong> AND Market positioning: New longs on <strong>1h</strong>: market tengah mampat dan long baru mula masuk.</li>
+</ul>
+<h2 id="3-3"><span class="num">3.3</span> Nombor untuk setiap timeframe</h2>
+<p>Sesetengah pilihan berubah ikut timeframe, sebab naik 3% dalam 5 minit tu besar, tapi dalam sehari biasa je.</p>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Timeframe</th>
+<th>Big move (±)</th>
+<th>Price jump</th>
+<th>OI naik (kecil)</th>
+<th>OI naik (sederhana)</th>
+<th>OI spike (besar)</th>
+<th>OI turun</th>
+<th>Trend EMA</th>
+<th>Tempoh "Just crossed"</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>5m</td>
+<td>1%</td>
+<td>2%</td>
+<td>0.5%</td>
+<td>1%</td>
+<td>1.5%</td>
+<td>−1%</td>
+<td>200</td>
+<td>3 candle</td>
+</tr>
+<tr class="even">
+<td>15m</td>
+<td>1.5%</td>
+<td>3%</td>
+<td>1%</td>
+<td>1.5%</td>
+<td>2%</td>
+<td>−1%</td>
+<td>200</td>
+<td>3 candle</td>
+</tr>
+<tr class="odd">
+<td>1h</td>
+<td>3%</td>
+<td>5%</td>
+<td>2%</td>
+<td>3%</td>
+<td>4%</td>
+<td>−2%</td>
+<td>200</td>
+<td>3 candle</td>
+</tr>
+<tr class="even">
+<td>4h</td>
+<td>5%</td>
+<td>8%</td>
+<td>3%</td>
+<td>5%</td>
+<td>7%</td>
+<td>−3%</td>
+<td>200</td>
+<td>3 candle</td>
+</tr>
+<tr class="odd">
+<td>8h</td>
+<td>7%</td>
+<td>10%</td>
+<td>4%</td>
+<td>7%</td>
+<td>9%</td>
+<td>−4%</td>
+<td>50</td>
+<td>2 candle</td>
+</tr>
+<tr class="even">
+<td>12h</td>
+<td>8%</td>
+<td>12%</td>
+<td>4%</td>
+<td>8%</td>
+<td>11%</td>
+<td>−4%</td>
+<td>50</td>
+<td>2 candle</td>
+</tr>
+<tr class="odd">
+<td>1d</td>
+<td>10%</td>
+<td>15%</td>
+<td>5%</td>
+<td>10%</td>
+<td>15%</td>
+<td>−5%</td>
+<td>50</td>
+<td>2 candle</td>
+</tr>
+</tbody>
+</table></div>
+<p>Pilihan ATR % ikut timeframe:</p>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Timeframe</th>
+<th>Calm (bawah)</th>
+<th>Active (atas)</th>
+<th>Very volatile (atas)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>5m</td>
+<td>0.2%</td>
+<td>0.4%</td>
+<td>0.9%</td>
+</tr>
+<tr class="even">
+<td>15m</td>
+<td>0.35%</td>
+<td>0.75%</td>
+<td>1.5%</td>
+</tr>
+<tr class="odd">
+<td>1h</td>
+<td>0.7%</td>
+<td>1.5%</td>
+<td>3%</td>
+</tr>
+<tr class="even">
+<td>4h</td>
+<td>1.4%</td>
+<td>3%</td>
+<td>6%</td>
+</tr>
+<tr class="odd">
+<td>8h</td>
+<td>2%</td>
+<td>4.2%</td>
+<td>8.5%</td>
+</tr>
+<tr class="even">
+<td>12h</td>
+<td>2.4%</td>
+<td>5.2%</td>
+<td>10%</td>
+</tr>
+<tr class="odd">
+<td>1d</td>
+<td>3.5%</td>
+<td>7%</td>
+<td>15%</td>
+</tr>
+</tbody>
+</table></div>
+<p>Strategy built-in guna nombor ni: "trend EMA" ialah EMA 200 untuk 5m hingga 4h dan EMA 50 untuk 8h hingga 1d; "OI naik" guna paras sederhana; OI Spike dan Overheated longs guna paras besar; Big Movers guna Big move; Fake pump warning guna Price jump dan OI turun.</p>
+<h2 id="3-4"><span class="num">3.4</span> Column lain</h2>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Column</th>
+<th>Apa maksudnya</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>CHG $ (period)</strong></td>
+<td>Perubahan harga dalam dollar untuk tempoh tu.</td>
+</tr>
+<tr class="even">
+<td><strong>OI CHG $ (period)</strong></td>
+<td>Perubahan nilai Open Interest dalam USD.</td>
+</tr>
+<tr class="odd">
+<td><strong>VOL Δ (period)</strong></td>
+<td>Volume tempoh ni tolak volume tempoh sebelum.</td>
+</tr>
+<tr class="even">
+<td><strong>VOL CHG % (period)</strong></td>
+<td>Perubahan volume dalam % berbanding tempoh sebelum.</td>
+</tr>
+<tr class="odd">
+<td><strong>BTC CORR (period)</strong></td>
+<td>Berapa rapat coin ni bergerak ikut BTC, dari −1 (terbalik) hingga +1 (sama). Dekat 0 = gerak sendiri. Perlukan history yang cukup.</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="3-5"><span class="num">3.5</span> Cara data berfungsi</h2>
+<p>Page refresh lebih kurang setiap <strong>30 saat</strong>, tapi condition indicator hanya berubah bila candle tutup. Harga dan funding adalah live. RSI, EMA dan indicator lain guna candle yang dah tutup. <strong>Updated at</strong> tunjuk bila candle terakhir tutup.</p>
+<p>Dash atau <strong>N/A</strong> maksudnya data tengah loading, coin tu baru listing dan history belum cukup, atau exchange tak bagi data tu. Data yang takde takkan lepas mana-mana condition.</p>
+<p>Bukan semua exchange bagi semua data. Sokongan sekarang:</p>
+<div class="tw"><table>
+<thead>
+<tr class="header">
+<th>Data</th>
+<th>Binance</th>
+<th>Bybit</th>
+<th>Gate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Taker buy ratio</td>
+<td>Ada</td>
+<td>Takde</td>
+<td>Takde</td>
+</tr>
+<tr class="even">
+<td>Long/short ratio</td>
+<td>Ada</td>
+<td>Takde</td>
+<td>Takde</td>
+</tr>
+<tr class="odd">
+<td>Strategy Volume breakout</td>
+<td>Penuh</td>
+<td>Jalan tanpa check taker buy</td>
+<td>Jalan tanpa check taker buy</td>
+</tr>
+<tr class="even">
+<td>Open Interest, funding, premium</td>
+<td>Futures je</td>
+<td>Futures je</td>
+<td>Futures je</td>
+</tr>
+</tbody>
+</table></div>
+<p>Table ni akan bertambah bila kami tambah exchange baru.</p>
+<p><strong>Ketersediaan exchange:</strong> sesetengah exchange tak terima pengguna dari semua negara. Guna VPN untuk elak sekatan ni selalunya langgar terms of service exchange, dan exchange boleh freeze akaun, termasuk duit dalam tu, bila dia detect. Check dulu exchange tu terima pengguna dari negara korang ke tak sebelum daftar dan deposit.</p>
+</template>
+
+<script>
+(function(){
+  var UI={en:{back:"Back to screener",guide:"Guide",sections:"Jump to section"},bm:{back:"Kembali ke screener",guide:"Panduan",sections:"Pergi ke bahagian"}};
+  var main=document.getElementById('content'),toc=document.getElementById('toc'),sel=document.getElementById('mobsel');
+  var observer=null;
+  function getLang(){
+    var q=new URLSearchParams(location.search).get('lang');
+    if(q==='en'||q==='bm')return q;
+    try{var s=localStorage.getItem('bkp-guide-lang');if(s==='en'||s==='bm')return s}catch(e){}
+    return 'en';
+  }
+  function setLang(l,keepScroll){
+    try{localStorage.setItem('bkp-guide-lang',l)}catch(e){}
+    document.documentElement.lang=l==='bm'?'ms':'en';
+    document.querySelectorAll('.lang button').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.lang===l))});
+    document.querySelectorAll('[data-t]').forEach(function(el){el.textContent=UI[l][el.dataset.t]});
+    var cur=location.hash;
+    main.innerHTML='';
+    main.appendChild(document.getElementById('tpl-'+l).content.cloneNode(true));
+    buildNav(l);
+    if(cur&&document.getElementById(cur.slice(1))){document.getElementById(cur.slice(1)).scrollIntoView()}
+    else if(!keepScroll){window.scrollTo(0,0)}
+  }
+  function buildNav(l){
+    toc.innerHTML='';sel.innerHTML='<option value="">'+UI[l].sections+'</option>';
+    var grp=null,links=[];
+    main.querySelectorAll('h1.part,h2[id]').forEach(function(h){
+      var a=document.createElement('a');a.href='#'+h.id;a.textContent=h.textContent.trim();
+      var o=document.createElement('option');o.value=h.id;
+      if(h.tagName==='H1'){grp=document.createElement('div');grp.className='grp';a.className='gt';grp.appendChild(a);toc.appendChild(grp);o.textContent=a.textContent}
+      else{a.className='gl';(grp||toc).appendChild(a);o.textContent='  '+a.textContent}
+      sel.appendChild(o);links.push([h,a]);
+    });
+    if(observer)observer.disconnect();
+    if('IntersectionObserver' in window){
+      observer=new IntersectionObserver(function(entries){
+        entries.forEach(function(e){if(e.isIntersecting){
+          links.forEach(function(p){p[1].classList.toggle('on',p[0]===e.target)});
+        }});
+      },{rootMargin:'-80px 0px -70% 0px'});
+      links.forEach(function(p){observer.observe(p[0])});
+    }
+  }
+  document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setLang(b.dataset.lang,true)})});
+  sel.addEventListener('change',function(){if(sel.value){location.hash=sel.value;sel.value=''}});
+  setLang(getLang(),false);
+})();
+</script>
+</body>
+</html>
