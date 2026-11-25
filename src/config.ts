@@ -462,7 +462,7 @@ export const CONFIG = {
   combo: {
     price: 699,
     saving: 99,
-    link: "https://pay.chip-in.asia/comboalphakita",
+    link: "https://bitzarventuressdnbhd.bcl.my/form/combo-cab-kita",
   },
 
   socials: {
