@@ -174,7 +174,7 @@ export const PRODUCTS: ProductItem[] = [
     description: "Ramai beli crypto masa pasaran naik, kemudian panik bila harga jatuh. CAB ajar cara bina portfolio sendiri yang kekal kukuh dalam bull dan bear market, tanpa perlu ikut orang.",
     focus: ["Bina Portfolio", "Cari & Nilai Projek", "DCA & Ambil Untung", "Data On-chain", "Keselamatan Wallet"],
     poster: {
-      topLine: "Jom! 21 - 22 Nov ni belajar",
+      topLine: "Jom! 12 & 13 Dis ni belajar",
       headline: "PILIH COIN MACAM VC!",
       sticker1: "Fundamental",
       sticker2: "On-chain",
@@ -439,8 +439,8 @@ export const CONFIG = {
 
   cab: {
     price: 299,
-    dates: "21 - 22 November 2026",
-    link: "https://pay.chip-in.asia/cryptoalpha",
+    dates: "12 & 13 Disember 2026",
+    link: "https://bitzarventuressdnbhd.bcl.my/form/crypto-alpha-bootcamp-2026",
     poster: CAB_POSTER_URL,
     label: "LEVEL 1 · PEMULA · LIVE ZOOM 2 HARI",
     subtitle: "Bina portfolio yang tahan bull & bear",
