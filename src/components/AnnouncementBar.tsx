@@ -15,7 +15,7 @@ export const AnnouncementBar: React.FC = () => {
             Intake Kelas dibuka:
           </span>
           <span>
-            CAB {CONFIG.cab.dates} · KITA {CONFIG.kita.dates} · Pendaftaran Kini Dibuka
+            CAB {CONFIG.cab.dates} · KITA {CONFIG.kita.dates}
           </span>
         </div>
 
