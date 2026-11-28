@@ -450,8 +450,8 @@ export const CONFIG = {
 
   kita: {
     price: 499,
-    dates: "28 - 29 November 2026",
-    link: "https://pay.chip-in.asia/kita",
+    dates: "26 & 27 Disember 2026",
+    link: "https://bitzarventuressdnbhd.bcl.my/form/kita-2026",
     poster: KITA_POSTER_URL,
     label: "LEVEL 2 · TRADER · LIVE ZOOM 2 HARI",
     subtitle: "Trade ikut pelan, bukan ikut perasaan",
